@@ -15,7 +15,8 @@
             "jQuery",
             "easejs",
             "tabs",
-            "studio"
+            "studio",
+            "assetLoader"
         ]
     },
     "window": {
