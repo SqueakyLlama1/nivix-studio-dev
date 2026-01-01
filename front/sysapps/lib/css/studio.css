@@ -1,0 +1,63 @@
+:root {
+    --col1: #43a4eb;
+    --col2: #0079cf;
+    --tSpeed: 125ms;
+}
+
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.loader {
+    border-radius: 50%;
+    height: 1.5em;
+    aspect-ratio: 1;
+    border-top: 4px solid var(--col1);
+    border-left: 4px solid var(--col1);
+    border-right: 4px solid var(--col1);
+    border-bottom: 4px solid transparent;
+    animation: rotate 0.5s linear infinite;
+}
+
+/* Layout Elements */
+
+.middle,
+.footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    overflow: auto;
+}
+
+.middle {
+    height: 100%;
+}
+
+center {
+    text-align: center;
+}
+
+.footer {
+    height: 3em;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background: transparent;
+    border: none;
+    font-weight: bold;
+}

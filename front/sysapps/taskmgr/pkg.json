@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "displayName": "Task Manager",
+    "type": "sysapp",
+    "executable": "index.js",
+    "lib": {
+        "css": [
+            "immersive",
+            "no-select"
+        ],
+        "js": [
+            "jQuery",
+            "easejs"
+        ]
+    },
+    "window": {
+        "width": 800,
+        "height": 600,
+        "resizable": false,
+        "titlebar-blocks": [
+            "fullscreen"
+        ]
+    },
+    "deskpad": {
+        "enabled": false
+    }
+}

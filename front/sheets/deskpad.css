@@ -1,0 +1,74 @@
+/* Base */
+
+#deskpad {
+	position: relative;
+	flex-wrap: wrap;
+	flex-direction: column;
+
+	background: url('http://127.0.0.1:58000/userdata/background/1.png'); /* Make dynamic soon */
+	background-size: cover;
+	background-position: center;
+
+	overflow-y: auto;
+
+	transition: 0.5s opacity ease-in-out;
+}
+
+/* Apps */
+.app {
+	position: relative;
+	display: block;
+
+	width: 4em;
+	max-width: 250px;
+
+	margin-top: .3em;
+	margin: .3em 5px;
+	padding: 4px;
+
+	border: none;
+
+	color: #3b3b3b;
+	text-align: center;
+
+	cursor: pointer;
+}
+
+.app .upd, .app .ns {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	position: absolute;
+	top: 2px;
+	right: 2px;
+
+	width: 1.3em;
+	aspect-ratio: 1 / 1;
+
+	border-radius: 50%;
+
+	z-index: 2;
+}
+
+.app .upd {
+	background: #ffa600;
+}
+
+.app .ns {
+	background: #ff552b;
+}
+
+.app img {
+	width: 85%;
+	aspect-ratio: 1/1;
+
+	background: linear-gradient(135deg, var(--col1), var(--col2));
+	border-radius: 4px;
+
+	z-index: 1;
+}
+
+.app:hover {
+	background: rgba(180, 180, 180, 0.5);
+}

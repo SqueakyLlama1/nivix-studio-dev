@@ -1,0 +1,99 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    width: 100%;
+
+    background: white;
+    border-radius: 12px;
+}
+
+.options {
+    display: flex;
+    flex-direction: row;
+
+    gap: 4px;
+    padding: 8px;
+}
+
+.options button {
+    flex: 1;
+
+    border-radius: 4px;
+
+    background: #cecece;
+    border: none;
+
+    font-weight: bold;
+
+    padding: 6px;
+    margin-bottom: 2px;
+}
+
+#content {
+    flex: 1;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 8px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+
+    height: 5em;
+
+    background: #cecece;
+    border: none;
+    border-radius: 4px;
+
+    gap: 8px;
+    padding: 4px;
+    margin-bottom: 4px;
+}
+
+.item > img {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+
+    background: linear-gradient(135deg, var(--col1), var(--col2));
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.itemText {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.item button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    height: 100%;
+    aspect-ratio: 1 / 1;
+
+    background: #c2c2c2;
+    border-radius: 4px;
+    border: none;
+
+    cursor: pointer;
+    
+    transition: 0.15s background linear;
+}
+
+.item button img {
+    height: 75%;
+    aspect-ratio: 1 / 1;
+}

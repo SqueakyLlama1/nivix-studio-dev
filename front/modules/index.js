@@ -1,9 +1,7 @@
-// ======================
 // Filesystem Initialization
-// ======================
 
 async function initFs() {
-    studio.log.new("log", "[FS] Initializing filesystem...");
+    console.log("[FS] Initializing filesystem...");
     try {
         const temp = await window.ndutil.fileExists('temp');
         if (temp) await window.ndutil.deleteFile('temp');
@@ -12,87 +10,110 @@ async function initFs() {
         const appdata = await window.ndutil.fileExists('appdata');
         if (!appdata) await window.ndutil.createDirectory('appdata');
         
-        const logs = await window.ndutil.fileExists('logs');
-        if (!logs) await window.ndutil.createDirectory('logs');
-        
         const pkg = await window.ndutil.fileExists('pkg.json');
         if (pkg) await window.ndutil.deleteFile('pkg.json');
         await window.ndutil.writeJSON('pkg.json', { version: studio.sessionVersion });
         
-        studio.log.new("log", "[FS] Filesystem ready");
-    } catch (err) {
-        studio.log.new("error", "[FS] Error initializing:", err);
+        console.log("[FS] Filesystem ready");
+    } catch (e) {
+        console.error("[FS] Error initializing:", err);
     }
 }
 
-// ======================
 // Init
-// ======================
 
 window.onload = async () => {
-    studio.log.new("log", `[INFO] Running Nivix Studio Release ${studio.sessionVersion}`);
-    studio.log.new("log", "[Init] Window loaded, starting app initialization...");
+    // Required Objects
+    const deps = {
+        studio,
+        ndutil: window.ndutil,
+        util
+    };
+    
+    const missing = Object.entries(deps)
+    .filter(([, v]) => v == null)
+    .map(([k]) => k);
+    
+    if (missing.length) {
+        throw new Error(`Missing dependencies: ${missing.join(", ")}`);
+    }
+    
+    console.log("[Init] Prechecks passed, beginning initialization");
+    console.log(`[INFO] Running Nivix Studio Release ${studio.sessionVersion}`);
+    
     try {
-        try { await prefs.init(); } 
-        catch(err) { studio.log.new("warn", `[LOAD] Failed to load prefs: ${err}`); noti("Failed to load settings"); }
+        const footer_version_tag = getEBD('load-footer-version');
+        footer_version_tag.textContent = `v${studio.sessionVersion}`;
+    } catch {}
+    
+    try {
+        const defaultEULA = { accepted: false, version: 1 };
+        
+        const prefsPromise = prefs.init().catch(err => {
+            console.warn(`[LOAD] Failed to load prefs: ${err}`);
+            noti("Failed to load settings");
+        });
+        
+        const tickPromise = Promise.resolve().then(() => {
+            try { ticks.start.timeTick(); }
+            catch (e) { console.warn(`[LOAD] Failed to start time/date tick: ${err}`); }
+        });
         
         await initFs();
+        try {
+            await convert.run();
+        } catch(e) {
+            console.error(`[Init] failed to convert files: ${e}`);
+        }
         
-        try { ticks.start.timeTick(); } 
-        catch(err) { studio.log.new("warn", `[LOAD] Failed to start time/date tick: ${err}`); }
+        const eulaExists = await window.ndutil.fileExists("eula.json");
+        if (!eulaExists) await window.ndutil.writeJSON("eula.json", defaultEULA);
         
-        ticks.start.logSave();
-        
-        let loadTime = 100;
-        if (prefs?.loaded["loadTime"]) loadTime = prefs.loaded["loadTime"];
-        
-        // Check EULA
-        studio.log.new("log", "[EULA] Checking EULA status");
-        const defaultEULA = {
-            accepted: false,
-            version: 1
-        };
-        const eulaFileExists = await window.ndutil.fileExists("eula.json");
-        if (!eulaFileExists) await window.ndutil.writeJSON("eula.json", defaultEULA);
         const eulaFile = await window.ndutil.readJSON("eula.json");
         
-        const eulaAgree = getEBD('termsAgree');
-        const eulaDisagree = getEBD('termsDisagree');
-
         if (!eulaFile.accepted) {
-            studio.log.new("warn", "[EULA] EULA has not accepted by user, asking for acceptance");
-            const eulapopup = getEBD('termsPopup');
-            eulapopup.style.display = "block";
-
-            eulaAgree.addEventListener('click', async function() {
+            console.warn("[EULA] EULA not accepted, blocking startup");
+            
+            const popup = getEBD("termsPopup");
+            popup.style.display = "block";
+            
+            getEBD("termsAgree").onclick = async () => {
                 eulaFile.accepted = true;
-                await window.ndutil.writeJSON('eula.json', eulaFile);
+                await window.ndutil.writeJSON("eula.json", eulaFile);
                 location.reload();
-            });
-
-            eulaDisagree.addEventListener('click', function() {
-                eulapopup.style.display = "none";
+            };
+            
+            getEBD("termsDisagree").onclick = () => {
+                popup.style.display = "none";
                 studio.exit();
-            });
-        } else if (eulaFile.accepted) {
-            if (eulaFile.version !== defaultEULA.version) {
-                await window.ndutil.deleteFile("eula.json");
-                studio.log.new("warn", "[EULA] New EULA version, reloading");
-                location.reload();
-            }
-            await wait(loadTime);
-            openTab('dashboard');
-            dock.open();
-            await loadSectionContent();
-            await studio.checkUpdate();
-            studio.log.new("log", "[Init] Initialization complete");
-        } else {
-            studio.log.new("log", "[EULA] EULA was invalid, resetting and reloading");
-            studio.log.new("log", `[EULA] EULA default value should be false, is: ${defaultEULA.accepted}`);
-            eulaFile.accepted = false;
-            location.reload();
+            };
+            
+            return;
         }
-    } catch (err) {
-        studio.log.new("error", `[Init] Error during startup: ${err.message}, on line ${err.stack}`);
+        
+        if (eulaFile.version !== defaultEULA.version) {
+            await window.ndutil.deleteFile("eula.json");
+            console.warn("[EULA] EULA version changed, forcing reload");
+            location.reload();
+            return;
+        }
+        
+        await Promise.allSettled([prefsPromise, tickPromise]);
+        
+        const loadTime = prefs?.loaded?.loadTime ?? 100;
+        try { await wait(loadTime); } catch {}
+        
+        try { deskpad.init(); } catch {}
+        try { dock.init(); } catch {}
+        tabs.change("deskpad", "flex");
+        try { dock.open(); }
+        catch (e) { console.warn(`[Init] Failed to show dock: ${e}`); }
+        
+        studio.checkUpdate().catch(() => {});
+        console.log("[Init] Initialization complete");
+        
+    } catch (e) {
+        console.error(`[Init] Fatal startup error: ${e.message}`);
+        throw err;
     }
 };

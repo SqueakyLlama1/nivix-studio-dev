@@ -9,7 +9,7 @@ async function showNextNotification() {
     
     const notiElement = getEBD('notiContainer');
     const notiMessage = getEBD('notiMessage');
-    if (!notiElement || !notiMessage) return studio.log.new("warn", "[Notification] Missing elements");
+    if (!notiElement || !notiMessage) return console.warn("[Notification] Missing elements");
     
     notiMessage.textContent = message;
     notiElement.style.top = "1em";

@@ -1,15 +1,28 @@
-/* ======================== Base Layout ======================== */
+/* Base Layout */
 html, head, body {
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+
+    height: 100%;
+    
+    background: white;
+
+    user-select: none;
+
     margin: 0;
     padding: 0;
-    height: 100%;
-    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
-    user-select: none;
-    background: white;
 }
 
 body {
-    overflow-y: auto;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+	background: #f2eded;
+
+	color: #333;
+
+    margin-bottom: 3em;
+
+    overflow: hidden;
+	transition: background 0.3s ease;
 }
 
 :root {
@@ -18,12 +31,13 @@ body {
     --tc: #ffffff;
 }
 
-.title, .welcomeMessage {
-    font-size: 48px;
-    font-weight: bold;
+.title {
     background: linear-gradient(135deg, var(--col1), var(--col2));
     -webkit-background-clip: text;
     background-clip: text;
+
+    font-size: 48px;
+    font-weight: bold;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 1px var(--col2);
 }
@@ -47,37 +61,32 @@ body {
 
 #closeShade {
     display: none;
+    opacity: 0;
+
 	width: 100vw;
     height: 100vw;
+
     background: black;
-    opacity: 0;
+
     transition: 0.65s opacity ease-in-out;
 }
 
-/* ======================== Tabs ======================== */
-.tab {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100%;
-    display: none;
-    overflow: hidden;
-}
-
-/* ======================== Loader Styles ======================== */
+/* Loader Styles */
 .loader {
-    border-radius: 50%;
     height: 1.5em;
     aspect-ratio: 1 / 1;
+
+    border-radius: 50%;
+
     border-top: 4px solid var(--col1);
     border-left: 4px solid var(--col1);
     border-right: 4px solid var(--col1);
     border-bottom: 4px solid transparent;
+
     animation: rotate 0.5s linear infinite;
 }
 
-/* ======================== Layout Elements ======================== */
+/* Layout Elements */
 
 .middle,
 .footer {
@@ -85,6 +94,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     width: 100%;
 }
 
@@ -96,19 +106,20 @@ center {
     text-align: center;
 }
 
-/* Compatiblity layer in use!
-0.2.0 added footer as an element instead of a class, compatiblity for 0.1.0, remove in 1.0.0 */
-footer, .footer {
-    height: 3em;
+.footer {
     position: fixed;
     left: 0;
     bottom: 0;
+
+    height: 3em;
+
     background: transparent;
     border: none;
+    
     font-weight: bold;
 }
 
-/* ======================== Animations ======================== */
+/* Animations */
 @keyframes rotate {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

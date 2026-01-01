@@ -1,49 +1,52 @@
-/* ======================== Dock ======================== */
+/* Dock */
 
 #dock {
 	display: none;
+
 	position: absolute;
 	bottom: -2.1em;
 	left: 0;
+
 	width: 100%;
 	height: 2.1em;
+
 	background: linear-gradient(135deg, var(--col1), var(--col2));
+
 	overflow-x: auto;
 	overflow-y: hidden;
+
+	z-index: 8000;
 	transition: 0.5s bottom ease-in-out;
-	z-index: 2000;
 }
 
-#dock #timeDisplay, #dock #dateDisplay {
+#dock button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: rgba(205, 205, 205, 0.5);
-	border: none;
-	border-radius: 8px;
-	font-weight: bold;
+
 	height: 80%;
+
 	padding: 0 10px;
 	margin-right: 6px;
+
+	background: rgba(205, 205, 205, 0.5);
+
+	border: none;
+	border-radius: 4px;
+
+	font-weight: bold;
+}
+
+#dock #timeDisplay, #dock #dateDisplay {
 	color: black;
 }
 
 #dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay) {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(205, 205, 205, 0.5);
-	border: none;
-	border-radius: 8px;
-	font-weight: bold;
-	height: 80%;
-	padding: 0 10px;
-	margin-right: 6px;
 	cursor: pointer;
 	transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
 }
 
-#dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay):nth-child(1) {
+#dock button:nth-child(1) {
 	margin-left: 6px;
 }
 
@@ -62,6 +65,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
 	width: fit-content;
 }
 
@@ -70,18 +74,19 @@
 	flex-direction: row;
 	align-items: center;
 	flex: 1;
+
 	overflow-x: auto;
 }
 
 #dock #dockContent button {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 100%;
-	background: transparent;
+	height: 85%;
 	aspect-ratio: 1;
+
+	background: transparent;
 	border: none;
+
 	padding: 3px;
+	
 	transition: background 0.1s linear;
 }
 

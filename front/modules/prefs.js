@@ -7,7 +7,7 @@ const prefsAboutBtn = getEBD('prefsAbout');
 const prefsCls = getEBD('prefsCls');
 const prefsReset = getEBD('prefsReset');
 
-const prefs = {
+window.prefs = {
     defaults: {
         appUpdNoti: true,
         stdoUpdNoti: true,

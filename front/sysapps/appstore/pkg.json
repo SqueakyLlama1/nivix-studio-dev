@@ -1,0 +1,29 @@
+{
+    "version": "0.1.0",
+    "displayName": "App Store",
+    "type": "sysapp",
+    "executable": "modules/index.js",
+    "lib": {
+        "css": [
+            "immersive",
+            "no-select",
+            "tooltips",
+            "studio",
+            "tabs"
+        ],
+        "js": [
+            "jQuery",
+            "easejs",
+            "tabs",
+            "studio"
+        ]
+    },
+    "window": {
+        "width": 800,
+        "height": 600,
+        "resizable": true
+    },
+    "deskpad": {
+        "enabled": false
+    }
+}

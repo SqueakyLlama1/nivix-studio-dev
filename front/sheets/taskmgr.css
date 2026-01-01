@@ -1,0 +1,100 @@
+.task {
+	position: fixed;
+	top: 0;
+	left: 0;
+
+	width: 100vw;
+	height: calc(100% - 2.1em);
+
+	background: linear-gradient(145deg, #fafbfc, #f0f3f7);
+	border: none;
+
+	z-index: 1999;
+
+	box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+	transition: background 0.2s linear, transform 0.2s linear,
+				width 0.2s linear, height 0.2s linear,
+				top 0.2s linear, left 0.2s linear;
+}
+
+.task.resizable {
+    min-width: 400px;
+    min-height: calc(400px + 2.1em);
+    max-width: 100vw;
+    max-height: calc(100vh - 2.1em);
+
+	resize: both;
+
+	overflow: auto;
+}
+
+.task:not(.resizable) {
+    max-width: 100vw;
+    max-height: calc(100vh - 2.1em);
+}
+
+.task .bar {
+	height: 1.3em;
+
+	background: #edf1f6;
+	border-bottom: 1px solid #cfd3d9;
+
+	user-select: none;
+	cursor: grab;
+
+	transition: transform 0.15s linear, box-shadow 0.15s linear;
+}
+
+.task .bar:active {
+	cursor: grabbing;
+}
+
+.task .bar span {
+	float: left;
+
+	margin-left: 6px;
+
+	line-height: 1.3em;
+}
+
+.task .bar button {
+	float: right;
+
+	height: 100%;
+	aspect-ratio: 1;
+
+	margin-right: 2px;
+
+	background: #d8dbe0;
+	border: none;
+
+	font-weight: bolder;
+	color: #111;
+
+	cursor: pointer;
+
+	transition: background 0.2s linear;
+}
+
+.task .bar button:disabled {
+	background: #c8cdd3;
+
+    color: #9b9b9b;
+
+    cursor: not-allowed;
+}
+
+.task .bar button:hover:not(button:disabled) {
+	background: #c8cdd3;
+}
+
+.task iframe {
+	display: block;
+
+	width: 100%;
+
+	height: calc(100% - 1.5em);
+	border: none;
+
+	transition: opacity 0.2s linear;
+}

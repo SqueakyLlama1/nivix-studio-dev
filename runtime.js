@@ -4,22 +4,72 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
-const open = require('open');
 const express = require('express');
 const unzipper = require('unzipper');
+const webview = require('webview');
 
-const PORT = 58000;         // Main server (frontend + SSE)
-const BACKEND_PORT = 52321; // API / filesystem server
+const PORT = 58000;
+const BACKEND_PORT = 52321;
 const FRONT_DIR = path.join(__dirname, 'front');
 const SESSION_TOKEN = crypto.randomBytes(32).toString('hex');
 
 let server = null;
 let backendServer = null;
-
-// SSE clients
 let sseClients = [];
 
-// Graceful shutdown
+// --------------------
+// Paths
+// --------------------
+
+const USERDATA_ROOT = path.join(os.homedir(), 'nvxstdo');
+const SYSAPPS_ROOT = path.join(__dirname, 'front', 'sysapps');
+
+// --------------------
+// Helpers
+// --------------------
+
+function resolveReadPath(p, source = 'userdata') {
+    if (source !== 'userdata' && source !== 'sysapps') {
+        throw new Error('Invalid source');
+    }
+
+    const base = source === 'sysapps' ? SYSAPPS_ROOT : USERDATA_ROOT;
+
+    if (!p) throw new Error('Path missing');
+
+    const resolved = Array.isArray(p)
+    ? path.join(base, ...p)
+    : path.join(base, p);
+
+    const normalized = path.normalize(resolved);
+
+    if (!normalized.startsWith(base)) {
+        throw new Error('Path traversal blocked');
+    }
+
+    return normalized;
+}
+
+function resolveWritePath(p) {
+    if (!p) throw new Error('Path missing');
+
+    const resolved = Array.isArray(p)
+    ? path.join(USERDATA_ROOT, ...p)
+    : path.join(USERDATA_ROOT, p);
+
+    const normalized = path.normalize(resolved);
+
+    if (!normalized.startsWith(USERDATA_ROOT)) {
+        throw new Error('Path traversal blocked');
+    }
+
+    return normalized;
+}
+
+// --------------------
+// Shutdown
+// --------------------
+
 function shutdown() {
     console.log('Shutting down server...');
     setTimeout(() => {
@@ -29,44 +79,37 @@ function shutdown() {
     }, 200);
 }
 
-// Start main server (frontend + SSE)
+// --------------------
+// Frontend server
+// --------------------
+
 async function startServer() {
-    return new Promise((resolve) => {
-        const nvxDir = path.join(os.homedir(), 'nvxstdo');
-        const appsDir = path.join(nvxDir, 'apps');
-        
-        if (!fs.existsSync(nvxDir)) fs.mkdirSync(nvxDir, { recursive: true });
-        if (!fs.existsSync(appsDir)) fs.mkdirSync(appsDir, { recursive: true });
-        
-        console.log('Using app directory:', appsDir);
-        
+    return new Promise(resolve => {
+        fs.mkdirSync(USERDATA_ROOT, { recursive: true });
+
         const app = express();
-        
-        // Serve frontend
+
         app.use('/', express.static(FRONT_DIR));
-        app.use('/apps', express.static(appsDir));
-        
-        // SSE
+        app.use('/userdata', express.static(USERDATA_ROOT));
+
         app.get('/events', (req, res) => {
-            
             res.writeHead(200, {
                 'Content-Type': 'text/event-stream',
                 'Cache-Control': 'no-cache',
                 'Connection': 'keep-alive'
             });
-            
+
             res.write('\n');
             sseClients.push(res);
-            
+
             const heartbeat = setInterval(() => res.write(':\n\n'), 15000);
-            
+
             req.on('close', () => {
                 clearInterval(heartbeat);
                 sseClients = sseClients.filter(c => c !== res);
             });
         });
-        
-        // Shutdown
+
         app.post('/shutdown', express.json(), (req, res) => {
             if (req.body.token !== SESSION_TOKEN) {
                 return res.status(403).send('Forbidden');
@@ -74,8 +117,7 @@ async function startServer() {
             res.send('Shutting down...');
             shutdown();
         });
-        
-        // LOCAL ONLY: 127.0.0.1
+
         server = app.listen(PORT, '127.0.0.1', () => {
             console.log(`Main server running at http://127.0.0.1:${PORT}`);
             resolve();
@@ -83,170 +125,192 @@ async function startServer() {
     });
 }
 
-// Start backend server (filesystem/API)
+// --------------------
+// Backend API
+// --------------------
+
 function startBackendServer() {
-    const homedir = path.join(os.homedir(), 'nvxstdo');
-    if (!fs.existsSync(homedir)) fs.mkdirSync(homedir, { recursive: true });
-    console.log('Using homedir at', homedir);
-    
-    backendServer = http.createServer(async (req, res) => {
+    fs.mkdirSync(USERDATA_ROOT, { recursive: true });
+
+    backendServer = http.createServer((req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token');
-        
-        if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
-        
-        if (req.method === 'GET' && req.url === '/userdir') {
-            if (req.headers['x-auth-token'] !== SESSION_TOKEN) {
-                res.writeHead(403); return res.end('Forbidden');
-            }
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ userDirectory: homedir }));
+        res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+        if (req.method === 'OPTIONS') {
+            res.writeHead(204);
+            return res.end();
         }
-        
-        if (req.method === 'POST' && req.url === '/api/filesystem') {
-            let body = '';
-            req.on('data', chunk => body += chunk);
-            req.on('end', async () => {
-                try {
-                    const data = JSON.parse(body);
-                    const sendJSON = (obj) => { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(obj)); };
-                    const sendError = (err) => sendJSON({ error: err.message || String(err) });
-                    
-                    const fullPath = (p) => {
-                        if (!p) throw new Error('Path argument missing');
-                        if (Array.isArray(p)) return path.join(homedir, ...p);
-                        if (typeof p === 'string') return path.join(homedir, p);
-                        throw new Error('Invalid path type');
-                    };
-                    
-                    switch (data.action) {
-                        case 'createDirectory':
-                        fs.mkdirSync(fullPath(data.path), { recursive: true });
-                        return sendJSON({ success: true });
-                        
-                        case 'list':
-                        return sendJSON({ files: fs.readdirSync(fullPath(data.path)) });
-                        
-                        case 'readFile':
-                        return sendJSON({ content: fs.readFileSync(fullPath(data.path), 'utf8') });
-                        
-                        case 'write':
-                        fs.mkdirSync(path.dirname(fullPath(data.path)), { recursive: true });
-                        fs.writeFileSync(fullPath(data.path), data.content);
-                        return sendJSON({ success: true });
-                        
-                        case 'delete': {
-                            const target = fullPath(data.path);
-                            if (!fs.existsSync(target)) return sendJSON({ success: false, error: 'Not found' });
-                            const stat = fs.statSync(target);
-                            if (stat.isDirectory()) fs.rmSync(target, { recursive: true, force: true });
-                            else fs.unlinkSync(target);
-                            return sendJSON({ success: true });
-                        }
-                        
-                        case 'copyFile':
-                        const src = fullPath(data.src);
-                        const dest = fullPath(data.dest);
-                        fs.mkdirSync(path.dirname(dest), { recursive: true }); 
-                        fs.copyFileSync(src, dest);
-                        return sendJSON({ success: true });
-                        
-                        case 'pathjoin':
-                        if (!Array.isArray(data.path)) throw new Error('Path must be array');
-                        return sendJSON({ result: path.join(...data.path) });
-                        
-                        case 'fileExists':
-                        const exists = fs.existsSync(fullPath(data.path));
-                        const isDirectory = exists && fs.statSync(fullPath(data.path)).isDirectory();
-                        return sendJSON({ exists: String(exists), isDirectory: String(isDirectory) });
-                        
-                        case 'readNDJSON':
-                        if (!fs.existsSync(fullPath(data.path))) return sendJSON([]);
-                        const lines = fs.readFileSync(fullPath(data.path), 'utf8')
-                        .split("\n").map(l => l.trim()).filter(Boolean)
+
+        if (req.method !== 'POST' || req.url !== '/api/filesystem') {
+            res.writeHead(404);
+            return res.end('Not Found');
+        }
+
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', async () => {
+            try {
+                const data = JSON.parse(body);
+                const send = obj => {
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify(obj));
+                };
+
+                switch (data.action) {
+                    // -------- READ --------
+                    case 'list':
+                    return send({
+                        files: fs.readdirSync(resolveReadPath(data.path, data.source))
+                    });
+
+                    case 'readFile':
+                    return send({
+                        content: fs.readFileSync(resolveReadPath(data.path, data.source), 'utf8')
+                    });
+
+                    case 'fileExists': {
+                        const p = resolveReadPath(data.path, data.source);
+                        const exists = fs.existsSync(p);
+                        const isDirectory = exists && fs.statSync(p).isDirectory();
+                        return send({ exists: String(exists), isDirectory: String(isDirectory) });
+                    }
+
+                    case 'readNDJSON': {
+                        const p = resolveReadPath(data.path, data.source);
+                        if (!fs.existsSync(p)) return send([]);
+                        const lines = fs.readFileSync(p, 'utf8')
+                        .split('\n')
+                        .map(l => l.trim())
+                        .filter(Boolean)
                         .map(l => { try { return JSON.parse(l); } catch { return null; } })
                         .filter(Boolean);
-                        return sendJSON(lines);
-                        
-                        case 'cache': {
-                            if (!data.url) throw new Error('Missing "url" field');
-                            const tempDir = path.join(homedir, 'temp');
-                            fs.mkdirSync(tempDir, { recursive: true });
-                            const urlObj = new URL(data.url);
-                            const filename = path.basename(urlObj.pathname) || `cached_${Date.now()}`;
-                            const destPath = path.join(tempDir, filename);
-                            const proto = urlObj.protocol === 'https:' ? https : http;
-                            const file = fs.createWriteStream(destPath);
-                            const returnPath = path.join('temp', filename);
-                            proto.get(data.url, (response) => {
-                                if (response.statusCode == 404) {
-                                    fs.unlinkSync(destPath);
-                                    return sendError(new Error(`404`));
-                                }
-                                response.pipe(file);
-                                file.on('finish', () => { file.close(); sendJSON({ success: true, path: returnPath }); });
-                            }).on('error', (err) => { fs.unlink(destPath, () => {}); sendError(err); });
-                            return;
-                        }
-                        
-                        case 'ping': {
-                            if (!data.url) throw new Error('Missing "url" field');
-                            const urlObj = new URL(data.url);
-                            const proto = urlObj.protocol === 'https:' ? https : http;
-                            const reqPing = proto.get({
-                                method: 'HEAD',
-                                host: urlObj.hostname,
-                                path: urlObj.pathname || '/',
-                                port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
-                                timeout: 5000
-                            }, (resp) => {
-                                sendJSON({ reachable: resp.statusCode < 500 });
-                                reqPing.destroy();
-                            });
-                            reqPing.on('timeout', () => { reqPing.destroy(); sendJSON({ reachable: false }); });
-                            reqPing.on('error', () => sendJSON({ reachable: false }));
-                            return;
-                        }
-                        
-                        case 'unzip': {
-                            if (!data.zipPath || !data.dest) throw new Error('Missing zipPath or dest');
-                            const zipFile = fullPath(data.zipPath);
-                            const destPath = fullPath(data.dest);
-                            if (!fs.existsSync(zipFile)) throw new Error('Zip file not found');
-                            await fs.createReadStream(zipFile).pipe(unzipper.Extract({ path: destPath })).promise();
-                            return sendJSON({ success: true });
-                        }
-                        
-                        default:
-                        res.writeHead(400);
-                        return res.end('Invalid action');
+                        return send(lines);
                     }
-                    
-                } catch (err) {
-                    console.error(err);
-                    res.writeHead(500);
-                    res.end('Server error');
+
+                    // -------- WRITE (userdata only) --------
+                    case 'createDirectory':
+                    fs.mkdirSync(resolveWritePath(data.path), { recursive: true });
+                    return send({ success: true });
+
+                    case 'write':
+                    fs.mkdirSync(path.dirname(resolveWritePath(data.path)), { recursive: true });
+                    fs.writeFileSync(resolveWritePath(data.path), data.content);
+                    return send({ success: true });
+
+                    case 'delete': {
+                        const target = resolveWritePath(data.path);
+                        if (!fs.existsSync(target)) return send({ success: false });
+                        fs.rmSync(target, { recursive: true, force: true });
+                        return send({ success: true });
+                    }
+
+                    case 'copyFile': {
+                        const src = resolveReadPath(data.src, data.source);
+                        const dest = resolveWritePath(data.dest);
+                        fs.mkdirSync(path.dirname(dest), { recursive: true });
+                        fs.copyFileSync(src, dest);
+                        return send({ success: true });
+                    }
+
+                    case 'unzip': {
+                        const zipFile = resolveReadPath(data.zipPath, data.source);
+                        const dest = resolveWritePath(data.dest);
+                        fs.mkdirSync(dest, { recursive: true });
+                        await fs.createReadStream(zipFile)
+                        .pipe(unzipper.Extract({ path: dest }))
+                        .promise();
+                        return send({ success: true });
+                    }
+
+                    // -------- UTILS --------
+                    case 'pathjoin':
+                    return send({ result: path.join(...data.path) });
+
+                    case 'ping': {
+                        const url = new URL(data.url);
+                        const proto = url.protocol === 'https:' ? https : http;
+                        const r = proto.request({ method: 'HEAD', host: url.hostname, path: url.pathname }, resp => {
+                            send({ reachable: resp.statusCode < 500 });
+                            r.destroy();
+                        });
+                        r.on('error', () => send({ reachable: false }));
+                        r.end();
+                        return;
+                    }
+
+                    case 'getUserDir':
+                    return send({ userDirectory: USERDATA_ROOT });
+
+                    case 'cache': {
+                        if (!data.url) throw new Error('Missing "url" field');
+
+                        const tempDir = path.join(USERDATA_ROOT, 'temp');
+                        fs.mkdirSync(tempDir, { recursive: true });
+
+                        const urlObj = new URL(data.url);
+                        const filename = path.basename(urlObj.pathname) || `cached_${Date.now()}`;
+                        const destPath = path.join(tempDir, filename);
+                        const proto = urlObj.protocol === 'https:' ? https : http;
+                        const file = fs.createWriteStream(destPath);
+                        const returnPath = path.join('temp', filename);
+
+                        const sendError = (err) => {
+                            res.writeHead(500, { 'Content-Type': 'application/json' });
+                            res.end(JSON.stringify({ error: err.message || String(err) }));
+                        };
+
+                        proto.get(data.url, (response) => {
+                            if (response.statusCode === 404) {
+                                fs.unlinkSync(destPath);
+                                return sendError(new Error('404 Not Found'));
+                            }
+                            response.pipe(file);
+                            file.on('finish', () => {
+                                file.close();
+                                send({ success: true, path: returnPath });
+                            });
+                        }).on('error', (err) => {
+                            fs.unlink(destPath, () => {});
+                            sendError(err);
+                        });
+
+                        return;
+                    }
+
+                    default:
+                    res.writeHead(400);
+                    res.end('Invalid action');
                 }
-            });
-            return;
-        }
-        
-        res.writeHead(404);
-        res.end('Not Found');
+            } catch (err) {
+                console.error(err);
+                res.writeHead(500);
+                res.end('Server error');
+            }
+        });
     });
-    
-    // LOCAL ONLY
+
     backendServer.listen(BACKEND_PORT, '127.0.0.1', () => {
         console.log(`Backend server running at http://127.0.0.1:${BACKEND_PORT}`);
     });
 }
 
-// Main entry
+// --------------------
+// Main
+// --------------------
+
 async function main() {
     await startServer();
     startBackendServer();
-    await open.default("http://127.0.0.1:58000");
+
+    const child = webview.spawn({
+        title: 'Nivix Studio',
+        width: 800,
+        height: 600,
+        url: `http://127.0.0.1:${PORT}`
+    });
+
+    child.on('exit', shutdown);
 }
 
 main();

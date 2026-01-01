@@ -1,34 +1,37 @@
-let installedApps = [];
-let availableApps = [];
+window.installedApps = [];
+window.availableApps = [];
 
 // ======================
 // Install App Logic
 // ======================
 
-async function installApp(appId, installBtn, version = "latest") {
-    studio.log.new("log", `[App Installer] Starting installation for: ${appId}`);
-    let preContent = installBtn.textContent;
+async function installApp(appId, installBtn, version = "latest", force = false) {
+    console.log(`[App Installer] Starting installation for: ${appId}`);
+    
+    let preContent;
+    if (installBtn) preContent = installBtn.textContent;
     
     try {
-        installBtn.disabled = true;
-        installBtn.textContent = `Installing...`;
-        studio.log.new("log", `[App Installer] Button disabled and label updated`);
+        if (installBtn) {
+            installBtn.disabled = true;
+            installBtn.textContent = `Installing...`;
+        }
         
         const listExists = await window.ndutil.fileExists(['temp', 'list.json']);
         if (!listExists) await window.ndutil.cacheFile('https://www.nivixtech.com/studio/list.json');
-        studio.log.new("log", `[App Installer] Reading list file at: ${['temp', 'list.json']}`);
+        console.log(`[App Installer] Reading list file at: ${['temp', 'list.json']}`);
         const list = await window.ndutil.readJSON(['temp', 'list.json']);
         
-        studio.log.new("log", `[App Installer] Reading studio pkg.json`);
+        console.log(`[App Installer] Reading studio pkg.json`);
         const studioPkg = await window.ndutil.readJSON('pkg.json');
         
         const updates = list.updates || {};
         const appMeta = updates[appId];
         if (!appMeta) {
-            studio.log.new("warn", `[App Installer] No update info found for app: ${appId}`);
+            console.warn(`[App Installer] No update info found for app: ${appId}`);
             throw new Error("No update info for app");
         }
-
+        
         // Process version
         let computedVersion = null;
         if (version == "latest") {
@@ -36,52 +39,60 @@ async function installApp(appId, installBtn, version = "latest") {
         } else {
             computedVersion = version;
         }
-
-        studio.log.new("log", `[App Installer] Version to install: ${computedVersion}`);
+        
+        console.log(`[App Installer] Version to install: ${computedVersion}`);
         
         const historyMetaCache = await window.ndutil.cacheFile(`https://www.nivixtech.com/studio/${appId}/${appId}-history.json`);
         const historyMeta = await window.ndutil.readJSON(historyMetaCache.path);
-
-        studio.log.new("log", `[App Installer] Installed version for app ${pretty(appId)} is ${appMeta.version}`);
         
-        studio.log.new("log", `[App Installer] Version ${historyMeta.history[computedVersion]} requires one of these studio versions: ${historyMeta.history[computedVersion].requires} - Running studio version is ${studio.sessionVersion}`);
+        console.log(`[App Installer] Installed version for app ${pretty(appId)} is ${appMeta.version}`);
         
-        if (!historyMeta.history[computedVersion].requires.includes(studioPkg.version)) {
-            studio.log.new("warn", `[App Installer] App requires one of these studio versions: ${historyMeta.history[computedVersion].requires.join(', ')}, have ${studioPkg.version}`);
-            noti(`This app version is not supported by your studio version.`);
-            installBtn.disabled = false;
-            installBtn.textContent = preContent;
-            return;
+        console.log(`[App Installer] Version ${historyMeta.history[computedVersion]} requires one of these studio versions: ${historyMeta.history[computedVersion].requires} - Running studio version is ${studio.sessionVersion}`);
+        
+        if (!force) {
+            if (!historyMeta.history[computedVersion].requires.includes(studioPkg.version)) {
+                console.warn(`[App Installer] App requires one of these studio versions: ${historyMeta.history[computedVersion].requires.join(', ')}, have ${studioPkg.version}`);
+                noti(`This app version is not supported by your studio version.`);
+                if (installBtn) {
+                    installBtn.disabled = false;
+                    installBtn.textContent = preContent;
+                }
+                return;
+            }
+        } else {
+            console.log(`[App Installer] Force flag used, force installing ${appId}`);
         }
         
         const zipUrl = `https://www.nivixtech.com/studio/${appId}/${appId}-${computedVersion}.zip`;
-        studio.log.new("log", `[App Installer] Downloading app zip from: ${zipUrl}`);
+        console.log(`[App Installer] Downloading app zip from: ${zipUrl}`);
         const cacheRes = await window.ndutil.cacheFile(zipUrl);
         
         if (!cacheRes.success) {
-            studio.log.new("error", `[App Installer] Failed to download app zip: ${zipUrl}`);
+            console.error(`[App Installer] Failed to download app zip: ${zipUrl}`);
             throw new Error("Failed to download app zip");
         }
         
-        studio.log.new("log", `[App Installer] Downloaded zip successfully. Extracting to apps/${appId}`);
-        studio.log.new("log", ['apps', appId]);
-        studio.log.new("log", cacheRes.path);
+        console.log(`[App Installer] Downloaded zip successfully. Extracting to apps/${appId}`);
+        console.log(['apps', appId]);
+        console.log(cacheRes.path);
         await window.ndutil.unzip(cacheRes.path, ['apps', appId]);
         
-        studio.log.new("log", `[App Installer] Extraction complete. Refreshing section content...`);
+        console.log(`[App Installer] Extraction complete. Refreshing section content...`);
         
-        installBtn.textContent = `Installed!`;
+        if (installBtn) installBtn.textContent = `Installed!`;
         if (prefs?.loaded.appInstNoti) noti(`${pretty(appId)} installed successfully`);
-        studio.log.new("log", `[App Installer] ${appId} installed successfully!`);
-
-        await refreshDashboard();
+        console.log(`[App Installer] ${appId} installed successfully!`);
+        
+        deskpad.refresh();
     } catch (err) {
-        studio.log.new("error", `[App Installer] Install failed for ${appId}:`, err);
-        installBtn.textContent = "Failed";
+        console.error(`[App Installer] Install failed for ${appId}:`, err);
+        if (installBtn) installBtn.textContent = "Failed";
         noti("Installation failed!");
         setTimeout(() => {
-            installBtn.textContent = "Installed!";
-            installBtn.disabled = false;
+            if (installBtn) {
+                installBtn.textContent = preContent;
+                installBtn.disabled = false;
+            }
         }, 2000);
     }
 }
@@ -92,10 +103,10 @@ async function uninstallApp(app, data) {
     // Remove app folder
     try {
         await window.ndutil.deleteFile(['apps', app]);
-        studio.log.new("log", `Uninstalled ${app}`);
+        console.log(`Uninstalled ${app}`);
     } catch (err) {
-        if (prefs?.loaded.appUnstNoti) noti(`Failed to uninstall ${prettyName}!`);
-        studio.log.new("error", `[unApp Installer] App error for "${app}":`, err);
+        noti(`Failed to uninstall ${prettyName}!`);
+        console.error(`[App Uninstaller] App error for "${app}":`, err);
         return;
     }
     
@@ -103,15 +114,15 @@ async function uninstallApp(app, data) {
     if (data) {
         try {
             await window.ndutil.deleteFile(['appdata', app]);
-            studio.log.new("log", `Deleted ${app} data`);
+            console.log(`Deleted ${app} data`);
         } catch (err) {
             noti(`Failed to delete appdata for ${prettyName}.`);
-            studio.log.new("error", `[unApp Installer] Appdata error for "${app}":`, err);
+            console.error(`[App Uninstaller] Appdata error for "${app}":`, err);
         }
     }
     
     // Success
     noti(`Uninstalled ${prettyName}`);
-    studio.log.new("log", `Uninstalled ${app}`);
-    await refreshDashboard();
+    console.log(`Uninstalled ${app}`);
+    await deskpad.refresh();
 }

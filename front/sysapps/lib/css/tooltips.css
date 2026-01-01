@@ -1,0 +1,86 @@
+/* Tooltip trigger base */
+.tooltip-button,
+.tooltip-support-button {
+    position: relative;
+    display: inline-block;
+}
+
+/* Styled tooltip button */
+.tooltip-button {
+    border: none;
+    font-family: monospace;
+    aspect-ratio: 1;
+    background: var(--col1);
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* Tooltip body */
+.tooltip {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    width: fit-content;
+    max-width: 130px;
+    background: var(--col1, #333);
+    font-weight: lighter;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 8px;
+    z-index: 1000;
+    position: absolute;
+    --tooltip-margin: 10px;
+    top: var(--tooltip-top, auto);
+    right: var(--tooltip-right, auto);
+    bottom: var(--tooltip-bottom, auto);
+    left: var(--tooltip-left, auto);
+    transform: var(--tooltip-transform, none);
+}
+
+/* Show tooltip on hover */
+.tooltip-button:hover .tooltip,
+.tooltip-support-button:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: var(--tooltip-transform-hover, var(--tooltip-transform, none));
+}
+
+/* Tooltip positions */
+
+/* Top */
+.tip-top.tooltip-button .tooltip,
+.tip-top.tooltip-support-button .tooltip {
+    --tooltip-top: auto;
+    --tooltip-bottom: calc(100% + var(--tooltip-margin));
+    --tooltip-left: 50%;
+    --tooltip-transform: translateX(-50%);
+}
+
+/* Bottom (default) */
+.tooltip-button .tooltip,
+.tooltip-support-button .tooltip {
+    --tooltip-top: calc(100% + var(--tooltip-margin));
+    --tooltip-left: 50%;
+    --tooltip-transform: translateX(-50%);
+}
+
+/* Left */
+.tip-left.tooltip-button .tooltip,
+.tip-left.tooltip-support-button .tooltip {
+    --tooltip-top: 50%;
+    --tooltip-right: calc(100% + var(--tooltip-margin));
+    --tooltip-left: auto;
+    --tooltip-transform: translateY(-50%);
+}
+
+/* Right */
+.tip-right.tooltip-button .tooltip,
+.tip-right.tooltip-support-button .tooltip {
+    --tooltip-top: 50%;
+    --tooltip-left: calc(100% + var(--tooltip-margin));
+    --tooltip-right: auto;
+    --tooltip-transform: translateY(-50%);
+}
