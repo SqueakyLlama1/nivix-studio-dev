@@ -1,0 +1,1 @@
+As of version 1.0.0, compatibility layers apply only to app-facing APIs. Their purpose is to prevent user-visible breakage during updates, not to delay developer changes. Studio-internal features are not covered by compatibility layers and must be updated immediately when behavior changes.

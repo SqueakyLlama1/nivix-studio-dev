@@ -1,0 +1,34 @@
+Nivix Studio License (Custom, 2025)
+-----------------------------------
+
+Copyright © 2025 Nivix Technology // Christian Bone
+
+Scope of Ownership:
+All files in this project directory, except the following third-party libraries:
+
+    front/libraries/*
+
+are the copyrighted property of Nivix Technology // Christian Bone.  
+This also includes the directory $homedir/nvxstdo/ and all of its contents.
+
+Permissions:
+You are granted the following rights regarding Nivix Studio:
+
+1. You may download, install, and modify your own copy of the software.
+2. You may distribute modified or unmodified copies **only within your private network or workplace**, provided that:
+
+   - Nivix Technology is credited, and  
+   - A link to the official website is included: https://www.nivixtech.com/
+
+3. **Public distribution is strictly prohibited** without prior written permission from Nivix Technology.
+
+Restrictions:
+- You may **not sell, publish, or post** the software (original or modified) publicly.  
+- Third-party libraries remain under their respective licenses and are not covered by this LICENSE.
+
+Disclaimer of Warranty:
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.  
+
+The copyright holders are not liable for any damages arising from the use or inability to use this software.
+
+---

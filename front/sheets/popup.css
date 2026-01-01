@@ -1,0 +1,358 @@
+/* Clean this code */
+
+#installPopupContainer,
+#appPopupContainer,
+.askPopupContainer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9997;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.askPopupContent {
+    width: 25em;
+    height: 15em;
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.askPopupContent .messageContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(75% - 10px);
+}
+
+.askPopupContent .optionContainer {
+    height: calc(25% - 10px);
+}
+
+.askPopupContent .noPreferBtn {
+    width: calc(50% - 20px);
+    padding: 0.5em 1.5em;
+    background: #cdcdcd;
+    border: 1px solid #cdcdcd;
+    border-radius: 8px;
+}
+
+.askPopupContent .preferBtn {
+    width: calc(50% - 20px);
+    padding: 0.5em 1.5em;
+    background: #43a4eb;
+    border: 1px solid #43a4eb;
+    border-radius: 8px;
+}
+
+.appPopupContent {
+    width: 35em;
+    height: 20em;
+    background: #f0f0f0;
+    border-radius: 12px;
+}
+
+.appPopupContent .bar {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: calc(100% - 5px);
+    height: 1.7em;
+    padding-left: 5px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--col1), var(--col2));
+    font-weight: bold;
+}
+
+.appPopupContent .bar button:not(.close) {
+    height: 100%;
+    background: transparent;
+    border: none;
+    font-weight: bold;
+    padding: 0px;
+    color: var(--tc);
+}
+
+.appPopupContent .bar .close {
+    float: right;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border: none;
+    border-radius: 3px;
+    background: rgba(205, 205, 205, 0.5);
+    font-weight: bold;
+    cursor: pointer;
+    color: black;
+    transition: 0.15s background linear;
+}
+
+.appPopupContent .bar .close:hover {
+    background: rgba(205, 205, 205, 0.7);
+}
+
+.appPopupContent .left {
+    float: left;
+    width: 50%;
+    height: calc(100% - 1.7em);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.appPopupContent .left img {
+    height: 75%;
+    max-height: 250px;
+    aspect-ratio: 1 / 1;
+	border-radius: 40px;
+	background: linear-gradient(135deg, var(--col1), var(--col2));
+}
+
+.appPopupContent .right {
+    float: right;
+    width: 50%;
+    height: calc(100% - 1.7em);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.appPopupContent .right span {
+    font-size: 1em;
+    font-weight: bold;
+    color: gray;
+}
+
+.appPopupContent .right button {
+    margin-top: 5px;
+    width: 10em;
+    padding: 5px 0;
+    border: none;
+    border-radius: 3px;
+    background: #cecece;
+    transition: 0.15s background linear;
+}
+
+.appPopupContent .right button:hover {
+    background: #e6e6e6;
+}
+
+/* Task Manager */
+
+#taskMgrContainer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3000;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.taskMgr {
+    display: flex;
+    flex-direction: column;
+    height: 60%;
+    width: 50%;
+    background: white;
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.taskMgrOptions {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 4px;
+}
+
+.taskMgrOptions button {
+    border-radius: 4px;
+    background: #cecece;
+    border: none;
+    margin: 2px;
+    flex: 1;
+    padding: 6px;
+    font-weight: bold;
+}
+
+.taskMgrOptions button.cls {
+    font-weight: bolder;
+    flex: 0.05;
+    color: black;
+    cursor: pointer;
+}
+
+#taskMgrContent {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.taskMgrItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 5em;
+    border-radius: 12px;
+    background: #cecece;
+    border: none;
+    padding: 4px;
+    margin-bottom: 4px;
+}
+
+.taskMgrItem > img {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+	border-radius: 15px;
+	background: linear-gradient(135deg, var(--col1), var(--col2));
+    object-fit: contain;
+}
+
+.taskMgrItemText {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.taskMgrItem button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    background: #c2c2c2;
+    border: none;
+    cursor: pointer;
+    transition: 0.15s background linear;
+}
+
+.taskMgrItem button img {
+    height: 75%;
+    aspect-ratio: 1 / 1;
+}
+
+/* Settings */
+
+#prefsContainer {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3000;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.prefsMain {
+    display: flex;
+    flex-direction: column;
+    height: 60%;
+    width: 50%;
+    background: white;
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.prefsOptions {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 4px;
+}
+
+.prefsOptions button {
+    border-radius: 4px;
+    background: #cecece;
+    border: none;
+    margin: 2px;
+    flex: 1;
+    padding: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 75ms linear;
+}
+
+.prefsOptions button.selected {
+    cursor: default;
+    background: #e6e6e6;
+    transition: background 75ms linear;
+}
+
+.prefsOptions button.cls {
+    font-weight: bolder;
+    flex: 0.05;
+    color: black;
+    cursor: pointer;
+}
+
+.prefsTab {
+    display: none;
+    flex: 1;
+    background: #cecece;
+    border-radius: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#termsPopup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.termsPopupContent {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    height: 35%;
+    background: white;
+    border-radius: 12px;
+}
+
+.termsContent {
+    margin: 7px;
+    color: #636363;
+    background: #cecece;
+    border-radius: 12px;
+    flex: 3;
+}
+
+.termsButtonContainer {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+.termsButtonContainer button {
+    border-radius: 12px;
+    border: none;
+    background: #cdcdcd;
+    flex: 1;
+}
+
+.termsButtonContainer button:hover {
+    cursor: pointer;
+    background: #e6e6e6;
+}
+
+.termsButtonContainer button:nth-child(1) {
+    margin: 0px 2px 7px 7px;
+}
+
+.termsButtonContainer button:nth-child(2) {
+    margin: 0px 7px 7px 2px;
+}

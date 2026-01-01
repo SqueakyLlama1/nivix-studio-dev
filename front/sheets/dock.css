@@ -1,0 +1,109 @@
+/* ======================== Dock ======================== */
+
+#dock {
+	display: none;
+	position: absolute;
+	bottom: -2.1em;
+	left: 0;
+	width: 100%;
+	height: 2.1em;
+	background: linear-gradient(135deg, var(--col1), var(--col2));
+	overflow-x: auto;
+	overflow-y: hidden;
+	transition: 0.5s bottom ease-in-out;
+	z-index: 2000;
+}
+
+#dock #timeDisplay, #dock #dateDisplay {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(205, 205, 205, 0.5);
+	border: none;
+	border-radius: 8px;
+	font-weight: bold;
+	height: 80%;
+	padding: 0 10px;
+	margin-right: 6px;
+	color: black;
+}
+
+#dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(205, 205, 205, 0.5);
+	border: none;
+	border-radius: 8px;
+	font-weight: bold;
+	height: 80%;
+	padding: 0 10px;
+	margin-right: 6px;
+	cursor: pointer;
+	transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+}
+
+#dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay):nth-child(1) {
+	margin-left: 6px;
+}
+
+#dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay) img {
+	height: 75%;
+	margin-left: 5px;
+}
+
+#dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay):hover {
+	transform: translateY(-2px) scale(1);
+	box-shadow: 0 6px 14px rgba(31, 111, 235, 0.3);
+	background: rgba(205, 205, 205, 0.75);
+}
+
+#dock .right, #dock .left {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: fit-content;
+}
+
+#dock #dockContent {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex: 1;
+	overflow-x: auto;
+}
+
+#dock #dockContent button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	background: transparent;
+	aspect-ratio: 1;
+	border: none;
+	padding: 3px;
+	transition: background 0.1s linear;
+}
+
+#dock #dockContent button:hover {
+	background: rgba(205, 205, 205, 0.5);
+}
+
+#dock #dockContent button.active {
+	background: rgba(205, 205, 205, 0.8);
+}
+
+#dock #dockContent button img {
+	height: 100%;
+	border-radius: 6px;
+}
+
+#dock .right {
+	justify-content: flex-end;
+	margin-left: 8px;
+}
+
+#dock .left {
+	justify-content: flex-start;
+	margin-right: 8px;
+}
