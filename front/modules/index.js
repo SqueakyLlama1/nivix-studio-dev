@@ -103,13 +103,13 @@ window.onload = async () => {
         const loadTime = prefs?.loaded?.loadTime ?? 100;
         try { await wait(loadTime); } catch {}
         
+        tabs.change("deskpad", "flex");
+        
+        try { if (await studio.checkUpdate() && window.prefs?.loaded["stdoUpdNoti"]) { noti("Studio Update Available"); }} catch {}
         try { deskpad.init(); } catch {}
         try { dock.init(); } catch {}
-        tabs.change("deskpad", "flex");
-        try { dock.open(); }
-        catch (e) { console.warn(`[Init] Failed to show dock: ${e}`); }
+        try { dock.open(); } catch {}
         
-        studio.checkUpdate().catch(() => {});
         console.log("[Init] Initialization complete");
         
     } catch (e) {

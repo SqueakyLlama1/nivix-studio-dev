@@ -9,47 +9,29 @@ function bringToFront(id) {
     if (el) el.style.zIndex = topZIndex;
 }
 
-async function newTask(id, type = "userapps") {
+async function newTask(id) {
     if (processes[id]) return resTask(id);
 
     document.body.style.cursor = "progress";
 
-    function loadCSS(doc, href) {
-        return new Promise((resolve, reject) => {
-            const link = doc.createElement('link');
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
-            link.href = href;
-            link.onload = resolve;
-            link.onerror = reject;
-            doc.head.appendChild(link);
-        });
-    }
+    const sysIndexPath = [id, 'index.html'];
+    const userIndexPath = ['apps', id, 'index.html'];
 
-    function loadScript(doc, src) {
-        return new Promise((resolve, reject) => {
-            const script = doc.createElement('script');
-            script.type = 'application/javascript';
-            script.src = src;
-            script.onload = resolve;
-            script.onerror = reject;
-            doc.body.appendChild(script);
-        });
-    }
+    const sysExists = await window.ndutil.fileExists(sysIndexPath, 'sysapps');
+    const userExists = await window.ndutil.fileExists(userIndexPath);
 
-    const isSys = type === "sysapps";
-    const basePath = isSys ? [id] : ["apps", id];
-    const indexPath = [...basePath, 'index.html'];
-
-    const exists = await window.ndutil.fileExists(indexPath, isSys ? "sysapps" : undefined);
-    if (!exists) {
+    if (!sysExists && !userExists) {
         noti(`Requested app "${id}" could not be found`);
+        document.body.style.cursor = "auto";
         return;
     }
 
+    const isSys = sysExists;
+    const basePath = isSys ? [id] : ['apps', id];
+
     let pkg = {};
     try {
-        pkg = await window.ndutil.readJSON([...basePath, 'pkg.json'], isSys ? "sysapps" : undefined) || {};
+        pkg = await window.ndutil.readJSON([...basePath, 'pkg.json'], isSys ? 'sysapps' : undefined) || {};
     } catch {}
 
     const dockHeight = 2.1 * parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -65,8 +47,8 @@ async function newTask(id, type = "userapps") {
     const cssLibs = pkg.lib?.css || [];
     const jsLibs = pkg.lib?.js || [];
     const exePath = pkg.executable
-        ? (isSys ? `sysapps/${id}/${pkg.executable}` : `userdata/apps/${id}/${pkg.executable}`)
-        : null;
+    ? (isSys ? `sysapps/${id}/${pkg.executable}` : `userdata/apps/${id}/${pkg.executable}`)
+    : null;
 
     processAppMeta[id] = pkg;
 
@@ -81,9 +63,9 @@ async function newTask(id, type = "userapps") {
 
     const exitBtn = $('<button>').text('X').on('click', () => endTask(id));
     const fullscreenBtn = $('<button>')
-        .text('❐')
-        .prop('disabled', !resizable || titlebarBlocks.includes('fullscreen'))
-        .on('click', () => toggleFullscreen(id));
+    .text('❐')
+    .prop('disabled', !resizable || titlebarBlocks.includes('fullscreen'))
+    .on('click', () => toggleFullscreen(id));
     const minBtn = $('<button>').text('－').on('click', () => minTask(id));
     const refreshBtn = $('<button>').text('⭮').on('click', () => refTask(id));
 
@@ -91,8 +73,8 @@ async function newTask(id, type = "userapps") {
     taskEl.append(barEl);
 
     const iframeSrc = isSys
-        ? `sysapps/${id}/index.html`
-        : `userdata/apps/${id}/index.html`;
+    ? `sysapps/${id}/index.html`
+    : `userdata/apps/${id}/index.html`;
 
     const iframeEl = $('<iframe>', {
         src: iframeSrc,
@@ -105,11 +87,23 @@ async function newTask(id, type = "userapps") {
     processes[id] = { active: true };
     bringToFront(id);
 
-    const appImg = isSys
-        ? `sysapps/${id}/${id}.png`
-        : `userdata/apps/${id}/${id}.png`;
+    let appImg = null;
 
+    if (await window.ndutil.fileExists(
+        isSys ? [id, `${id}.png`] : ['apps', id, `${id}.png`],
+        isSys ? 'sysapps' : undefined
+    )) {
+        appImg = isSys ? `sysapps/${id}/${id}.png` : `userdata/apps/${id}/${id}.png`;
+    } else if (await window.ndutil.fileExists(
+        isSys ? [id, 'favicon.png'] : ['apps', id, 'favicon.png'],
+        isSys ? 'sysapps' : undefined
+    )) {
+        appImg = isSys ? `sysapps/${id}/favicon.png` : `userdata/apps/${id}/favicon.png`;
+    } else {
+        appImg = 'img/app.png';
+    }
     dock.icon.new(appImg, id);
+
     const dockEl = getEBD(`${id}-dock`);
     if (dockEl) dockEl.classList.add("active");
 
@@ -239,8 +233,8 @@ async function newTask(id, type = "userapps") {
     document.addEventListener('mouseup', () => {
         if (taskDiv.style.transition === 'none') {
             taskDiv.style.transition =
-                savedTransition ||
-                'background 0.2s ease, transform 0.2s ease, width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.2s ease';
+            savedTransition ||
+            'background 0.2s ease, transform 0.2s ease, width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.2s ease';
         }
     });
 
@@ -251,27 +245,18 @@ async function newTask(id, type = "userapps") {
             const ok = await window.ndutil.fileExists(['lib', 'css', cssFile + '.css'], 'sysapps');
             if (!ok) continue;
 
-            await loadCSS(
-                doc,
-                `http://127.0.0.1:58000/sysapps/lib/css/${cssFile}.css`
-            );
+            await assetLoader.load('css', `${studio.bind}/sysapps/lib/css/${cssFile}.css`, doc);
         }
 
         for (const jsFile of jsLibs) {
             const ok = await window.ndutil.fileExists(['lib', 'js', jsFile + '.js'], 'sysapps');
             if (!ok) continue;
 
-            await loadScript(
-                doc,
-                `http://127.0.0.1:58000/sysapps/lib/js/${jsFile}.js`
-            );
+            await assetLoader.load('js', `${studio.bind}/sysapps/lib/js/${jsFile}.js`, doc);
         }
 
         if (exePath) {
-            await loadScript(
-                doc,
-                `http://127.0.0.1:58000/${exePath}`
-            );
+            await assetLoader.load('js', `${studio.bind}/${exePath}`, doc);
         }
     });
 

@@ -30,8 +30,18 @@ window.deskpad = {
             try {
                 packageFile = await window.ndutil.readJSON(['apps', app, 'pkg.json']);
             } catch(e) {
-                console.error('Failed to append app to deskpad, package unresolved: ' + id);
-                return;
+                console.error('Failed to append app to deskpad, package unresolved: ' + app);
+                continue;
+            }
+            
+            // Determine image
+            let imgPath;
+            if (await window.ndutil.fileExists(['apps', app, `${app}.png`])) {
+                imgPath = `userdata/apps/${app}/${app}.png`;
+            } else if (await window.ndutil.fileExists(['apps', app, 'favicon.png'])) {
+                imgPath = `userdata/apps/${app}/favicon.png`;
+            } else {
+                imgPath = `img/app.png`; // fallback
             }
             
             // Append to deskpad
@@ -39,14 +49,11 @@ window.deskpad = {
             appContainer.classList.add('app');
             appContainer.addEventListener('click', () => newTask(app));
             
-            let imgName = "favicon";
-            if (await window.ndutil.fileExists(['apps', app, `${app}.png`])) imgName = app;
-            
             let appName = packageFile.displayName ?? app;
             appContainer.innerHTML = `
-            <img alt="${app} icon" src="userdata/apps/${app}/${imgName}.png">
-            ${pretty(appName)}
-        `;
+                <img alt="${app} icon" src="${imgPath}">
+                ${pretty(appName)}
+            `;
             
             deskpad.appendChild(appContainer);
             installedApps[app] = appContainer;

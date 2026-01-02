@@ -10,25 +10,38 @@ async function init() {
 
     async function resolveAppIcon(appId, pkg) {
         const ndutil = window.parent?.ndutil;
-        if (!ndutil) return `img/na.png`;
+        if (!ndutil) return `img/app.png`;
 
         const isSys = pkg?.type === "sysapp";
 
-        const iconUrl = isSys
-            ? `${ROOT}/sysapps/${appId}/${appId}.png`
-            : `${ROOT}/userdata/apps/${appId}/${appId}.png`;
-
+        // 1. Check main app icon
         try {
-            const exists = await ndutil.fileExists(
+            const mainIconExists = await ndutil.fileExists(
                 isSys ? [appId, `${appId}.png`] : ["apps", appId, `${appId}.png`],
                 isSys ? "sysapps" : undefined
             );
-            if (exists) return iconUrl;
+            if (mainIconExists) {
+                return isSys
+                ? `http://127.0.0.1:58000/sysapps/${appId}/${appId}.png`
+                : `http://127.0.0.1:58000/userdata/apps/${appId}/${appId}.png`;
+            }
+
+            // 2. Fallback to favicon.png
+            const faviconExists = await ndutil.fileExists(
+                isSys ? [appId, 'favicon.png'] : ["apps", appId, 'favicon.png'],
+                isSys ? "sysapps" : undefined
+            );
+            if (faviconExists) {
+                return isSys
+                ? `http://127.0.0.1:58000/sysapps/${appId}/favicon.png`
+                : `http://127.0.0.1:58000/userdata/apps/${appId}/favicon.png`;
+            }
         } catch (e) {
             console.warn(`[TASKMGR] Icon check failed for ${appId}`, e);
         }
 
-        return `img/na.png`;
+        // 3. Final fallback
+        return `img/app.png`;
     }
 
     async function loadContent() {

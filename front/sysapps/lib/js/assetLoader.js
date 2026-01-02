@@ -1,5 +1,5 @@
 const assetLoader = {
-    async load(type, path) {
+    async load(type, path, doc = document) {
         if (typeof(type) !== "string") throw new Error("Invalid type, type must be string");
         const sanType = type.trim().toLowerCase();
 
@@ -23,15 +23,15 @@ const assetLoader = {
         function js(doc, src) {
             return new Promise((resolve, reject) => {
                 const script = doc.createElement('script');
-                link.src = src;
-                link.onload = resolve;
-                link.onerror = reject;
-                doc.head.appendChild(link);
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                doc.head.appendChild(script);
             });
         }
 
-        const doc = document;
-        if (type == "css") await css(doc, path);
-        if (type == "js") await js(doc, path);
+        const target = doc;
+        if (type == "css") await css(target, path);
+        if (type == "js") await js(target, path);
     }
 };
