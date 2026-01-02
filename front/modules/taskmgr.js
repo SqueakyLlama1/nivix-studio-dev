@@ -56,10 +56,28 @@ async function newTask(id) {
         width: width + 'px',
         height: height + 'px'
     });
+
+    let appImg = null;
+
+    if (await window.ndutil.fileExists(
+        isSys ? [id, `${id}.png`] : ['apps', id, `${id}.png`],
+        isSys ? 'sysapps' : undefined
+    )) {
+        appImg = isSys ? `sysapps/${id}/${id}.png` : `userdata/apps/${id}/${id}.png`;
+    } else if (await window.ndutil.fileExists(
+        isSys ? [id, 'favicon.png'] : ['apps', id, 'favicon.png'],
+        isSys ? 'sysapps' : undefined
+    )) {
+        appImg = isSys ? `sysapps/${id}/favicon.png` : `userdata/apps/${id}/favicon.png`;
+    } else {
+        appImg = 'img/app.png';
+    }
+
     if (resizable) taskEl.addClass('resizable');
 
     const barEl = $('<div>', { class: 'bar' });
     const labelEl = $('<span>').text(pkg.displayName || pretty(id));
+    const imgEl = $('<img>', { src: appImg});
 
     const exitBtn = $('<button>').text('X').on('click', () => endTask(id));
     const fullscreenBtn = $('<button>')
@@ -69,7 +87,7 @@ async function newTask(id) {
     const minBtn = $('<button>').text('－').on('click', () => minTask(id));
     const refreshBtn = $('<button>').text('⭮').on('click', () => refTask(id));
 
-    barEl.append(exitBtn, fullscreenBtn, minBtn, refreshBtn, labelEl);
+    barEl.append(exitBtn, fullscreenBtn, minBtn, refreshBtn, imgEl, labelEl);
     taskEl.append(barEl);
 
     const iframeSrc = isSys
@@ -87,21 +105,6 @@ async function newTask(id) {
     processes[id] = { active: true };
     bringToFront(id);
 
-    let appImg = null;
-
-    if (await window.ndutil.fileExists(
-        isSys ? [id, `${id}.png`] : ['apps', id, `${id}.png`],
-        isSys ? 'sysapps' : undefined
-    )) {
-        appImg = isSys ? `sysapps/${id}/${id}.png` : `userdata/apps/${id}/${id}.png`;
-    } else if (await window.ndutil.fileExists(
-        isSys ? [id, 'favicon.png'] : ['apps', id, 'favicon.png'],
-        isSys ? 'sysapps' : undefined
-    )) {
-        appImg = isSys ? `sysapps/${id}/favicon.png` : `userdata/apps/${id}/favicon.png`;
-    } else {
-        appImg = 'img/app.png';
-    }
     dock.icon.new(appImg, id);
 
     const dockEl = getEBD(`${id}-dock`);

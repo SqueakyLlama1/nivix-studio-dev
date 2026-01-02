@@ -61,9 +61,7 @@
 	float: right;
 
 	height: 100%;
-	aspect-ratio: 1;
-
-	margin-right: 2px;
+	aspect-ratio: 2/1;
 
 	background: #d8dbe0;
 	border: none;
@@ -86,6 +84,15 @@
 
 .task .bar button:hover:not(button:disabled) {
 	background: #c8cdd3;
+}
+
+.task .bar img {
+	float: left;
+	
+	height: calc(100% - 2px);
+	aspect-ratio: 1;
+
+	margin: 1px;
 }
 
 .task iframe {
