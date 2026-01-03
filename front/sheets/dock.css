@@ -2,19 +2,19 @@
 
 #dock {
 	display: none;
-
+	
 	position: absolute;
 	bottom: -2.1em;
 	left: 0;
-
+	
 	width: 100%;
 	height: 2.1em;
-
+	
 	background: linear-gradient(135deg, var(--col1), var(--col2));
-
+	
 	overflow-x: auto;
 	overflow-y: hidden;
-
+	
 	z-index: 8000;
 	transition: 0.5s bottom ease-in-out;
 }
@@ -23,17 +23,17 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
+	
 	height: 80%;
-
+	
 	padding: 0 10px;
 	margin-right: 6px;
-
+	
 	background: rgba(205, 205, 205, 0.5);
-
+	
 	border: none;
 	border-radius: 4px;
-
+	
 	font-weight: bold;
 }
 
@@ -65,7 +65,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
+	
 	width: fit-content;
 }
 
@@ -74,28 +74,34 @@
 	flex-direction: row;
 	align-items: center;
 	flex: 1;
-
+	
 	overflow-x: auto;
 }
 
 #dock #dockContent button {
 	height: 85%;
 	aspect-ratio: 1;
-
+	
 	background: transparent;
 	border: none;
-
-	padding: 0.1px;
+	border-radius: 0px;
 	
-	transition: background 0.1s linear;
+	padding: 1.5px;
+	
+	transition: background 0.1s linear, border 0.2s linear;
 }
 
-#dock #dockContent button:hover {
+#dock #dockContent button:hover img {
 	background: rgba(205, 205, 205, 0.5);
 }
 
-#dock #dockContent button.active {
+#dock #dockContent button.active img {
 	background: rgba(205, 205, 205, 0.8);
+	
+}
+
+#dock #dockContent button.active {
+	border-bottom: 2px solid white;
 }
 
 #dock #dockContent button img {

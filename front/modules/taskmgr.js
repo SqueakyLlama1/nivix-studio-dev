@@ -51,6 +51,9 @@ async function newTask(id) {
     : null;
 
     processAppMeta[id] = pkg;
+    if (typeof pkg.window.resizable == "undefined") {
+        processAppMeta[id].window.resizable = true;
+    }
 
     const taskEl = $('<div>', { class: 'task', id: `task-${id}` }).css({
         width: width + 'px',
@@ -164,7 +167,7 @@ async function newTask(id) {
         isDragging = true;
         taskDiv.style.transition = 'none';
 
-        if (taskDiv.dataset.fullscreen === 'true') toggleFullscreen(id);
+        if (taskDiv.dataset.fullscreen === 'true') return;
 
         bringToFront(id);
         dragShield.style.display = 'block';
@@ -348,9 +351,11 @@ function endTask(id) {
 
 function toggleFullscreen(id) {
     const taskDiv = getEBD(`task-${id}`);
+    const pkg = processAppMeta[id];
     if (!taskDiv) return;
 
     const isFull = taskDiv.dataset.fullscreen === 'true';
+    const canResize = pkg.window?.resizable || false;
 
     if (!isFull) {
         taskDiv.dataset.prevLeft = taskDiv.style.left || '0px';
@@ -358,12 +363,15 @@ function toggleFullscreen(id) {
         taskDiv.dataset.prevWidth = taskDiv.style.width || taskDiv.offsetWidth + 'px';
         taskDiv.dataset.prevHeight = taskDiv.style.height || taskDiv.offsetHeight + 'px';
 
+        taskDiv.classList.remove('resizable');
+
         taskDiv.style.left = '0px';
         taskDiv.style.top = '0px';
         taskDiv.style.width = '100vw';
         taskDiv.style.height = 'calc(100vh - 2.1em)';
         taskDiv.dataset.fullscreen = 'true';
     } else {
+        if (canResize) taskDiv.classList.add('resizable');
         taskDiv.style.left = taskDiv.dataset.prevLeft;
         taskDiv.style.top = taskDiv.dataset.prevTop;
         taskDiv.style.width = taskDiv.dataset.prevWidth;
