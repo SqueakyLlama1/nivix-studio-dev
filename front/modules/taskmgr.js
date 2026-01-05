@@ -258,11 +258,11 @@ async function newTask(id) {
             const ok = await window.ndutil.fileExists(['lib', 'js', jsFile + '.js'], 'sysapps');
             if (!ok) continue;
 
-            await assetLoader.load('js', `${studio.bind}/sysapps/lib/js/${jsFile}.js`, doc);
+            await assetLoader.load('js', `/sysapps/lib/js/${jsFile}.js`, doc);
         }
 
         if (exePath) {
-            await assetLoader.load('js', `${studio.bind}/${exePath}`, doc);
+            await assetLoader.load('js', `/${exePath}`, doc);
         }
     });
 
