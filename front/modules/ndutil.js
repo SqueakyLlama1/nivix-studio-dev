@@ -17,30 +17,30 @@ async function sendCommand(action, params = {}) {
 }
 
 window.ndutil = {
-    listDirectory: async (p, source = 'userdata') => {
+    listDirectory: async (p, source) => {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         const res = await sendCommand('list', { path: cp, source });
         return res.files || [];
     },
     
-    readFile: async (p, source = 'userdata') => {
+    readFile: async (p, source) => {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         const res = await sendCommand('readFile', { path: cp, source });
         return res.content;
     },
     
-    readJSON: async (p, source = 'userdata') => {
+    readJSON: async (p, source) => {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         const res = await sendCommand('readFile', { path: cp, source });
         return JSON.parse(res.content);
     },
     
-    readNDJSON: async (p, source = 'userdata') => {
+    readNDJSON: async (p, source) => {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         return sendCommand('readNDJSON', { path: cp, source });
     },
     
-    fileExists: async (p, source = 'userdata') => {
+    fileExists: async (p, source) => {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         const res = await sendCommand('fileExists', { path: cp, source });
         return res.exists === 'true';
@@ -69,7 +69,7 @@ window.ndutil = {
         return sendCommand('createDirectory', { path: cp });
     },
     
-    copyFile: async (src, dest, source = 'userdata') => {
+    copyFile: async (src, dest, source) => {
         const cpSrc = Array.isArray(src) ? await window.ndutil.pathjoin(src) : src;
         const cpDest = Array.isArray(dest) ? await window.ndutil.pathjoin(dest) : dest;
         return sendCommand('copyFile', {
@@ -79,7 +79,7 @@ window.ndutil = {
         });
     },
     
-    unzip: async (zipPath, dest, source = 'userdata') => {
+    unzip: async (zipPath, dest, source) => {
         const cpZip = Array.isArray(zipPath) ? await window.ndutil.pathjoin(zipPath) : zipPath;
         const cpDest = Array.isArray(dest) ? await window.ndutil.pathjoin(dest) : dest;
         return sendCommand('unzip', {

@@ -22,10 +22,7 @@ const PORT = 58000;
 
 function hostFrontend() {
     // Serve the "front" folder at /front
-    app.use('/front', express.static(path.join(__dirname, 'front')));
-
-    // Redirect root requests to /front/index.html
-    app.get('/', (req, res) => res.redirect('/front/index.html'));
+    app.use('/', express.static(__dirname));
 
     // Start server, listen on all interfaces
     app.listen(PORT, '0.0.0.0', () => {

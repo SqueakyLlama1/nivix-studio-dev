@@ -126,38 +126,6 @@ void showMessage(const std::string& msg) {
 }
 
 // --------------------
-// Kill Existing Processes
-// --------------------
-#ifdef _WIN32
-void killProcessByName(const std::wstring& processName) {
-    HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if(hSnap == INVALID_HANDLE_VALUE) return;
-    
-    PROCESSENTRY32W pe{};
-    pe.dwSize = sizeof(pe);
-    
-    if(Process32FirstW(hSnap, &pe)) {
-        do {
-            if(_wcsicmp(pe.szExeFile, processName.c_str()) == 0) {
-                HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pe.th32ProcessID);
-                if(hProcess) {
-                    TerminateProcess(hProcess, 0);
-                    CloseHandle(hProcess);
-                }
-            }
-        } while(Process32NextW(hSnap, &pe));
-    }
-    CloseHandle(hSnap);
-}
-#else
-void killProcessByName(const char* name) {
-    std::string cmd = "pkill -f ";
-    cmd += name;
-    system(cmd.c_str());
-}
-#endif
-
-// --------------------
 // Process Helpers (Linux)
 // --------------------
 #ifndef _WIN32
@@ -180,6 +148,13 @@ pid_t launchProcess(const char* path, char* const argv[]) {
 // Main Launcher
 // --------------------
 int main() {
+    #ifdef _WIN32
+    AllocConsole();
+    FILE* fp;
+    freopen_s(&fp, "CONOUT$", "w", stdout);
+    freopen_s(&fp, "CONOUT$", "w", stderr);
+    #endif
+    
     // --- Node.js check ---
     if(!isNodeInstalled()) {
         showMessage("Node.js is not installed. Please install Node.js to continue.");
@@ -202,13 +177,6 @@ int main() {
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     
-    // --- Kill old processes (Node/WebView) ---
-    #ifdef _WIN32
-    killProcessByName(L"node.exe");
-    #else
-    killProcessByName("node");
-    #endif
-    
     // --- Local IP and URL ---
     std::string localIP = getLocalIP();
     std::string frontendURL = "http://" + localIP + ":58000/front/index.html";
@@ -217,15 +185,39 @@ int main() {
     // --- Windows Node Processes ---
     STARTUPINFOW siB{sizeof(siB)}, siF{sizeof(siF)};
     PROCESS_INFORMATION piB, piF;
+    siB.dwFlags |= STARTF_USESTDHANDLES;
+    siF.dwFlags |= STARTF_USESTDHANDLES;
     
     std::wstring wsBackend = L"node runtime.js";
     std::wstring wsFrontend = L"node fronthost.js";
     
-    if(!CreateProcessW(NULL, &wsBackend[0], NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &siB, &piB)) {
+    if(!CreateProcessW(
+        NULL,
+        &wsBackend[0],
+        NULL,
+        NULL,
+        TRUE,
+        0,
+        NULL,
+        NULL,
+        &siB,
+        &piB
+    )) {
         showMessage("Failed to start backend Node.js process.");
         return 1;
     }
-    if(!CreateProcessW(NULL, &wsFrontend[0], NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &siF, &piF)) {
+    if(!CreateProcessW(
+        NULL,
+        &wsFrontend[0],
+        NULL,
+        NULL,
+        TRUE,
+        0,
+        NULL,
+        NULL,
+        &siF,
+        &piF
+    )) {
         TerminateProcess(piB.hProcess, 1);
         showMessage("Failed to start frontend Node.js process.");
         return 1;
@@ -275,7 +267,7 @@ int main() {
         GdkMonitor* monitor = gdk_display_get_primary_monitor(display);
         GdkRectangle workarea;
         gdk_monitor_get_workarea(monitor, &workarea);
-
+        
         w.set_title("Nivix Studio");
         w.set_size(workarea.width, workarea.height, WEBVIEW_HINT_NONE);
         

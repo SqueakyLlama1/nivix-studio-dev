@@ -14,19 +14,24 @@ let backendServer = null;
 // Paths
 // --------------------
 
-const USERDATA_ROOT = path.join(os.homedir(), 'nvxstdo');
-const SYSAPPS_ROOT = path.join(__dirname, 'front', 'sysapps');
+const v0_2_1_ROOT = path.join(os.homedir(), 'nvxstdo');
+const SYS_ROOT = path.join(__dirname, 'front', 'sysapps');
+const NEW_ROOT = path.join(__dirname, 'front', 'dynamic');
 
 // --------------------
 // Helpers
 // --------------------
 
-function resolveReadPath(p, source = 'userdata') {
-    if (source !== 'userdata' && source !== 'sysapps') {
-        throw new Error('Invalid source');
-    }
+function resolveReadPath(p, source) {
+    let base;
     
-    const base = source === 'sysapps' ? SYSAPPS_ROOT : USERDATA_ROOT;
+    if (source == 'sysapps') {
+        base = SYS_ROOT;
+    } else if (source == '021root') {
+        base = v0_2_1_ROOT;
+    } else {
+        base = NEW_ROOT;
+    }
     
     if (!p) throw new Error('Path missing');
     
@@ -47,12 +52,12 @@ function resolveWritePath(p) {
     if (!p) throw new Error('Path missing');
     
     const resolved = Array.isArray(p)
-    ? path.join(USERDATA_ROOT, ...p)
-    : path.join(USERDATA_ROOT, p);
+    ? path.join(NEW_ROOT, ...p)
+    : path.join(NEW_ROOT, p);
     
     const normalized = path.normalize(resolved);
     
-    if (!normalized.startsWith(USERDATA_ROOT)) {
+    if (!normalized.startsWith(NEW_ROOT)) {
         throw new Error('Path traversal blocked');
     }
     
@@ -77,7 +82,7 @@ function shutdown() {
 // --------------------
 
 function startBackendServer() {
-    fs.mkdirSync(USERDATA_ROOT, { recursive: true });
+    fs.mkdirSync(NEW_ROOT, { recursive: true });
     
     backendServer = http.createServer((req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -187,12 +192,12 @@ function startBackendServer() {
                     }
                     
                     case 'getUserDir':
-                    return send({ userDirectory: USERDATA_ROOT });
+                    return send({ userDirectory: NEW_ROOT });
                     
                     case 'cache': {
                         if (!data.url) throw new Error('Missing "url" field');
                         
-                        const tempDir = path.join(USERDATA_ROOT, 'temp');
+                        const tempDir = path.join(NEW_ROOT, 'temp');
                         fs.mkdirSync(tempDir, { recursive: true });
                         
                         const urlObj = new URL(data.url);
