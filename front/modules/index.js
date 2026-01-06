@@ -10,9 +10,12 @@ async function initFs() {
         const appdata = await window.ndutil.fileExists('appdata');
         if (!appdata) await window.ndutil.createDirectory('appdata');
         
-        const pkg = await window.ndutil.fileExists('pkg.json');
-        if (pkg) await window.ndutil.deleteFile('pkg.json');
-        await window.ndutil.writeJSON('pkg.json', { version: studio.sessionVersion });
+        let pkg;
+        let pkgVer;
+        const pkgExists = await window.ndutil.fileExists('pkg.json');
+        if (pkgExists) pkg = await window.ndutil.readJSON('pkg.json');
+        if (pkg?.version) pkgVer = pkg.version;
+        if (pkgVer !== studio.sessionVersion) await window.ndutil.writeJSON('pkg.json', { version: studio.sessionVersion });
         
         console.log("[FS] Filesystem ready");
     } catch (e) {
@@ -25,9 +28,9 @@ async function initFs() {
 window.onload = async () => {
     // Required Objects
     const deps = {
-        studio,
+        studio: window.studio,
         ndutil: window.ndutil,
-        util
+        util: window.util
     };
     
     const missing = Object.entries(deps)
@@ -109,6 +112,11 @@ window.onload = async () => {
         try { deskpad.init(); } catch {}
         try { dock.init(); } catch {}
         try { dock.open(); } catch {}
+
+        try {
+            await wait(50);
+            getEBD('load').parentElement.removeChild(getEBD('load'));
+        } catch {}
         
         console.log("[Init] Initialization complete");
         

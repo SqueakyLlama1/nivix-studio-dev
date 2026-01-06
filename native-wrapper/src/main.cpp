@@ -25,7 +25,6 @@
 #include <ws2tcpip.h>
 #include <shellapi.h>
 #include <shlobj.h>
-#include <tlhelp32.h> // for process enumeration
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -36,7 +35,6 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include <cstring>
 #endif
 
 // --------------------
@@ -148,13 +146,6 @@ pid_t launchProcess(const char* path, char* const argv[]) {
 // Main Launcher
 // --------------------
 int main() {
-    #ifdef _WIN32
-    AllocConsole();
-    FILE* fp;
-    freopen_s(&fp, "CONOUT$", "w", stdout);
-    freopen_s(&fp, "CONOUT$", "w", stderr);
-    #endif
-    
     // --- Node.js check ---
     if(!isNodeInstalled()) {
         showMessage("Node.js is not installed. Please install Node.js to continue.");
@@ -162,10 +153,11 @@ int main() {
     }
     
     // --- node_modules check ---
+    // Wait until node_modules exists
     fs::path nodeModules = fs::current_path() / "node_modules";
     while(!fs::exists(nodeModules)) {
         if(!checkInternet()) {
-            showMessage("Node modules are missing. Check your WiFi connection.");
+            showMessage("Node modules are missing. Check your WiFi connection in order to use Nivix Studio.");
             return 1;
         }
         std::cout << "Installing node_modules..." << std::endl;
@@ -174,7 +166,7 @@ int main() {
             std::this_thread::sleep_for(std::chrono::seconds(2));
             continue;
         }
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1)); // brief wait after install
     }
     
     // --- Local IP and URL ---
@@ -185,39 +177,15 @@ int main() {
     // --- Windows Node Processes ---
     STARTUPINFOW siB{sizeof(siB)}, siF{sizeof(siF)};
     PROCESS_INFORMATION piB, piF;
-    siB.dwFlags |= STARTF_USESTDHANDLES;
-    siF.dwFlags |= STARTF_USESTDHANDLES;
     
     std::wstring wsBackend = L"node runtime.js";
     std::wstring wsFrontend = L"node fronthost.js";
     
-    if(!CreateProcessW(
-        NULL,
-        &wsBackend[0],
-        NULL,
-        NULL,
-        TRUE,
-        0,
-        NULL,
-        NULL,
-        &siB,
-        &piB
-    )) {
+    if(!CreateProcessW(NULL, &wsBackend[0], NULL, NULL, FALSE, 0, NULL, NULL, &siB, &piB)) {
         showMessage("Failed to start backend Node.js process.");
         return 1;
     }
-    if(!CreateProcessW(
-        NULL,
-        &wsFrontend[0],
-        NULL,
-        NULL,
-        TRUE,
-        0,
-        NULL,
-        NULL,
-        &siF,
-        &piF
-    )) {
+    if(!CreateProcessW(NULL, &wsFrontend[0], NULL, NULL, FALSE, 0, NULL, NULL, &siF, &piF)) {
         TerminateProcess(piB.hProcess, 1);
         showMessage("Failed to start frontend Node.js process.");
         return 1;
@@ -225,10 +193,11 @@ int main() {
     
     std::this_thread::sleep_for(std::chrono::seconds(2));
     
+    // --- Launch WebView directly ---
     try {
         webview::webview w(true, nullptr);
         w.set_title("Nivix Studio");
-        w.set_size(1280, 720, WEBVIEW_HINT_NONE); // Windows: leave as is
+        w.set_size(1280, 720, WEBVIEW_HINT_NONE);
         w.navigate(frontendURL);
         w.run();
     } catch(const std::exception& e) {
@@ -257,21 +226,9 @@ int main() {
     std::this_thread::sleep_for(std::chrono::seconds(2));
     
     try {
-        // Create WebView
         webview::webview w(true, nullptr);
         w.set_title("Nivix Studio");
-        
-        // --- Get usable screen area ---
-        // Get usable work area
-        GdkDisplay* display = gdk_display_get_default();
-        GdkMonitor* monitor = gdk_display_get_primary_monitor(display);
-        GdkRectangle workarea;
-        gdk_monitor_get_workarea(monitor, &workarea);
-        
-        w.set_title("Nivix Studio");
-        w.set_size(workarea.width, workarea.height, WEBVIEW_HINT_NONE);
-        
-        // Navigate and run
+        w.set_size(1280, 720, WEBVIEW_HINT_NONE);
         w.navigate(frontendURL);
         w.run();
     } catch(const std::exception& e) {

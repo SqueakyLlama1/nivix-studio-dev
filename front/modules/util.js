@@ -26,21 +26,14 @@ window.studio = {
     },
     
     async exit() {
-        console.log("[STUDIO - exit] Requested");
+        console.log("[STUDIO - Exit] Requested");
         try {
             await window.ndutil.deleteFile('temp');
         } catch(err) {
-            console.error(`[STUDIO - exit] Failed to delete temporary files: ${err}`);
+            console.error(`[STUDIO - Exit] Failed to delete temporary files: ${err}`);
         }
         await dock.close();
         await wait(50);
-        getEBD('deskpad').style.opacity = 0;
-        await wait(500);
-        getEBD('closeShade').style.display = "block";
-        await wait(50);
-        getEBD('closeShade').style.opacity = "1";
-        document.body.style.overflow = "hidden";
-        await wait(750);
         window.close();
     }
 };

@@ -160,8 +160,18 @@ function startBackendServer() {
                     case 'copyFile': {
                         const src = resolveReadPath(data.src, data.source);
                         const dest = resolveWritePath(data.dest);
+                        
+                        // Make sure the destination parent exists
                         fs.mkdirSync(path.dirname(dest), { recursive: true });
-                        fs.copyFileSync(src, dest);
+                        
+                        // Copy recursively if it's a directory, or just the file
+                        const stat = fs.statSync(src);
+                        if (stat.isDirectory()) {
+                            fs.cpSync(src, dest, { recursive: true });
+                        } else {
+                            fs.copyFileSync(src, dest);
+                        }
+                        
                         return send({ success: true });
                     }
                     

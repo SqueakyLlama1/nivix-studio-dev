@@ -37,9 +37,9 @@ window.deskpad = {
             // Determine image
             let imgPath;
             if (await window.ndutil.fileExists(['apps', app, `${app}.png`])) {
-                imgPath = `userdata/apps/${app}/${app}.png`;
+                imgPath = `dynamic/apps/${app}/${app}.png`;
             } else if (await window.ndutil.fileExists(['apps', app, 'favicon.png'])) {
-                imgPath = `userdata/apps/${app}/favicon.png`;
+                imgPath = `dynamic/apps/${app}/favicon.png`;
             } else {
                 imgPath = `img/app.png`; // fallback
             }
