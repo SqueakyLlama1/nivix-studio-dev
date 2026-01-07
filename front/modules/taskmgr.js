@@ -62,7 +62,7 @@ async function newTask(id) {
     const cssLibs = pkg.lib.css;
     const jsLibs = pkg.lib.js;
     const exePath = pkg.executable
-    ? (isSys ? `front/sysapps/${id}/${pkg.executable}` : `dynamic/apps/${id}/${pkg.executable}`)
+    ? (isSys ? `sysapps/${id}/${pkg.executable}` : `dynamic/apps/${id}/${pkg.executable}`)
     : null;
     
     processAppMeta[id] = pkg;
@@ -268,7 +268,7 @@ async function newTask(id) {
             for (const cssFile of cssLibs) {
                 try {
                     if (await window.ndutil.fileExists(['lib', 'css', cssFile + '.css'], 'sysapps')) {
-                        await assetLoader.load('css', `front/sysapps/lib/css/${cssFile}.css`, doc);
+                        await assetLoader.load('css', `${studio.bind}/front/sysapps/lib/css/${cssFile}.css`, doc);
                     }
                 } catch (err) { console.warn(`Failed to load CSS ${cssFile}`, err); }
             }
@@ -276,13 +276,13 @@ async function newTask(id) {
             for (const jsFile of jsLibs) {
                 try {
                     if (await window.ndutil.fileExists(['lib', 'js', jsFile + '.js'], 'sysapps')) {
-                        await assetLoader.load('js', `front/sysapps/lib/js/${jsFile}.js`, doc);
+                        await assetLoader.load('js', `${studio.bind}/front/sysapps/lib/js/${jsFile}.js`, doc);
                     }
                 } catch (err) { console.warn(`Failed to load JS ${jsFile}`, err); }
             }
             
             if (exePath) {
-                try { await assetLoader.load('js', `/${exePath}`, doc); }
+                try { await assetLoader.load('js', `/front/${exePath}`, doc); }
                 catch (err) { console.warn(`Failed to load executable ${exePath}`, err); }
             }
         } catch (err) { console.error('Iframe load error:', err); }

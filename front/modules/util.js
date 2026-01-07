@@ -1,5 +1,6 @@
 window.studio = {
     sessionVersion: "0.3.0",
+    bind: null,
     cdn: "https://www.nivixtech.com/studio",
     
     async checkUpdate() {

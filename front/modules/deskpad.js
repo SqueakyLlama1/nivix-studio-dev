@@ -7,8 +7,8 @@ window.deskpad = {
         
         let installedApps = [];
         
-        // Build the list of installed apps
         try {
+            // Build the list of installed apps
             const appFolderList = await window.ndutil.listDirectory('apps');
             for (const file of appFolderList) {
                 if (file.includes('.')) continue;
@@ -18,48 +18,50 @@ window.deskpad = {
                     installedApps.push(file);
                 }
             }
-        } catch (err) {
-            console.warn("[Deskpad] Error reading installed apps:", err.message);
-            return;
-        }
-        
-        // Add to deskpad
-        for (const app of installedApps) {
-            // Get app package
-            let packageFile;
-            try {
-                packageFile = await window.ndutil.readJSON(['apps', app, 'pkg.json']);
-            } catch(e) {
-                console.error('Failed to append app to deskpad, package unresolved: ' + app);
-                continue;
-            }
             
-            // Determine image
-            let imgPath;
-            if (await window.ndutil.fileExists(['apps', app, `${app}.png`])) {
-                imgPath = `dynamic/apps/${app}/${app}.png`;
-            } else if (await window.ndutil.fileExists(['apps', app, 'favicon.png'])) {
-                imgPath = `dynamic/apps/${app}/favicon.png`;
-            } else {
-                imgPath = `img/app.png`; // fallback
-            }
-            
-            // Append to deskpad
-            const appContainer = newEl('div');
-            appContainer.classList.add('app');
-            appContainer.addEventListener('click', () => newTask(app));
-            
-            let appName = packageFile.displayName ?? app;
-            appContainer.innerHTML = `
+            // Add to deskpad
+            for (const app of installedApps) {
+                // Get app package
+                let packageFile;
+                try {
+                    packageFile = await window.ndutil.readJSON(['apps', app, 'pkg.json']);
+                } catch(e) {
+                    console.error('Failed to append app to deskpad, package unresolved: ' + app);
+                    continue;
+                }
+                
+                // Determine image
+                let imgPath;
+                if (await window.ndutil.fileExists(['apps', app, `${app}.png`])) {
+                    imgPath = `dynamic/apps/${app}/${app}.png`;
+                } else if (await window.ndutil.fileExists(['apps', app, 'favicon.png'])) {
+                    imgPath = `dynamic/apps/${app}/favicon.png`;
+                } else {
+                    imgPath = `img/app.png`; // fallback
+                }
+                
+                // Append to deskpad
+                const appContainer = newEl('div');
+                appContainer.classList.add('app');
+                appContainer.addEventListener('click', () => newTask(app));
+                
+                let appName = packageFile.displayName ?? app;
+                appContainer.innerHTML = `
                 <img alt="${app} icon" src="${imgPath}">
                 ${pretty(appName)}
             `;
-            
-            deskpad.appendChild(appContainer);
-            installedApps[app] = appContainer;
-        }
+                
+                deskpad.appendChild(appContainer);
+                installedApps[app] = appContainer;
+            }
 
-        deskpad.style.cursor = "inherit";
+            deskpad.style.cursor = "inherit";
+        } catch (err) {
+            console.warn("[Deskpad] Error reading installed apps:", err?.message ?? err);
+            return;
+        } finally {
+            deskpad.style.cursor = "inherit";
+        }
         
         console.log(`[Deskpad] Done. Installed: ${installedApps.length}`);
     },

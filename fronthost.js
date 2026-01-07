@@ -1,7 +1,6 @@
 // Nivix Studio Frontend Hosting Module
 
 const express = require('express');
-const path = require('path');
 const os = require('os');
 
 function getLocalIP() {
@@ -20,20 +19,30 @@ const localIP = getLocalIP();
 const app = express();
 const PORT = 58000;
 
-function hostFrontend() {
-    // Serve the "front" folder at /front
-    app.use('/', express.static(__dirname));
+// --------------------
+// CORS middleware
+// --------------------
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+    next();
+});
 
-    // Start server, listen on all interfaces
-    app.listen(PORT, '0.0.0.0', () => {
-        console.log(`Frontend server running:`);
-        console.log(`- Local: http://localhost:${PORT}/front/index.html`);
-        console.log(`- LAN:   http://${localIP}:${PORT}/front/index.html`);
-    });
-}
+// Serve static frontend files
+app.use('/', express.static(__dirname));
 
-function main() {
-    hostFrontend();
-}
+// Ready endpoint
+app.get('/ready', (req, res) => {
+    res.status(200).send('ok');
+});
 
-main();
+// Start server
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Frontend server running:`);
+    console.log(`- Local: http://localhost:${PORT}/front/index.html`);
+    console.log(`- LAN:   http://${localIP}:${PORT}/front/index.html`);
+});

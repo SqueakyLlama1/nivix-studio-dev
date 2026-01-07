@@ -10,24 +10,16 @@ const BACKEND_PORT = 52321;
 let server = null;
 let backendServer = null;
 
-// --------------------
-// Paths
-// --------------------
-
 const v0_2_1_ROOT = path.join(os.homedir(), 'nvxstdo');
 const SYS_ROOT = path.join(__dirname, 'front', 'sysapps');
 const NEW_ROOT = path.join(__dirname, 'front', 'dynamic');
 
-// --------------------
-// Helpers
-// --------------------
-
 function resolveReadPath(p, source) {
     let base;
     
-    if (source == 'sysapps') {
+    if (source === 'sysapps') {
         base = SYS_ROOT;
-    } else if (source == '021root') {
+    } else if (source === '021root') {
         base = v0_2_1_ROOT;
     } else {
         base = NEW_ROOT;
@@ -48,25 +40,31 @@ function resolveReadPath(p, source) {
     return normalized;
 }
 
-function resolveWritePath(p) {
+function resolveWritePath(p, target) {
+    let base;
+    
+    if (target === '021root') {
+        base = v0_2_1_ROOT;
+    } else if (!target || target === 'default') {
+        base = NEW_ROOT;
+    } else {
+        throw new Error('Writes to this target are not allowed');
+    }
+    
     if (!p) throw new Error('Path missing');
     
     const resolved = Array.isArray(p)
-    ? path.join(NEW_ROOT, ...p)
-    : path.join(NEW_ROOT, p);
+    ? path.join(base, ...p)
+    : path.join(base, p);
     
     const normalized = path.normalize(resolved);
     
-    if (!normalized.startsWith(NEW_ROOT)) {
+    if (!normalized.startsWith(base)) {
         throw new Error('Path traversal blocked');
     }
     
     return normalized;
 }
-
-// --------------------
-// Shutdown
-// --------------------
 
 function shutdown() {
     console.log('Shutting down server...');
@@ -77,14 +75,16 @@ function shutdown() {
     }, 200);
 }
 
-// --------------------
-// Backend API
-// --------------------
-
 function startBackendServer() {
     fs.mkdirSync(NEW_ROOT, { recursive: true });
+    fs.mkdirSync(v0_2_1_ROOT, { recursive: true });
     
     backendServer = http.createServer((req, res) => {
+        if (req.method === 'GET' && req.url === '/ready') {
+            res.writeHead(200);
+            return res.end('ok');
+        }
+        
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -110,7 +110,6 @@ function startBackendServer() {
                 };
                 
                 switch (data.action) {
-                    // -------- READ --------
                     case 'list':
                     return send({
                         files: fs.readdirSync(resolveReadPath(data.path, data.source))
@@ -140,18 +139,21 @@ function startBackendServer() {
                         return send(lines);
                     }
                     
-                    // -------- WRITE (userdata only) --------
-                    case 'createDirectory':
-                    fs.mkdirSync(resolveWritePath(data.path), { recursive: true });
-                    return send({ success: true });
+                    case 'createDirectory': {
+                        const p = resolveWritePath(data.path, data.target);
+                        fs.mkdirSync(p, { recursive: true });
+                        return send({ success: true });
+                    }
                     
-                    case 'write':
-                    fs.mkdirSync(path.dirname(resolveWritePath(data.path)), { recursive: true });
-                    fs.writeFileSync(resolveWritePath(data.path), data.content);
-                    return send({ success: true });
+                    case 'write': {
+                        const p = resolveWritePath(data.path, data.target);
+                        fs.mkdirSync(path.dirname(p), { recursive: true });
+                        fs.writeFileSync(p, data.content);
+                        return send({ success: true });
+                    }
                     
                     case 'delete': {
-                        const target = resolveWritePath(data.path);
+                        const target = resolveWritePath(data.path, data.target);
                         if (!fs.existsSync(target)) return send({ success: false });
                         fs.rmSync(target, { recursive: true, force: true });
                         return send({ success: true });
@@ -159,12 +161,10 @@ function startBackendServer() {
                     
                     case 'copyFile': {
                         const src = resolveReadPath(data.src, data.source);
-                        const dest = resolveWritePath(data.dest);
+                        const dest = resolveWritePath(data.dest, data.target);
                         
-                        // Make sure the destination parent exists
                         fs.mkdirSync(path.dirname(dest), { recursive: true });
                         
-                        // Copy recursively if it's a directory, or just the file
                         const stat = fs.statSync(src);
                         if (stat.isDirectory()) {
                             fs.cpSync(src, dest, { recursive: true });
@@ -177,7 +177,7 @@ function startBackendServer() {
                     
                     case 'unzip': {
                         const zipFile = resolveReadPath(data.zipPath, data.source);
-                        const dest = resolveWritePath(data.dest);
+                        const dest = resolveWritePath(data.dest, data.target);
                         fs.mkdirSync(dest, { recursive: true });
                         await fs.createReadStream(zipFile)
                         .pipe(unzipper.Extract({ path: dest }))
@@ -185,7 +185,6 @@ function startBackendServer() {
                         return send({ success: true });
                     }
                     
-                    // -------- UTILS --------
                     case 'pathjoin':
                     return send({ result: path.join(...data.path) });
                     
@@ -217,12 +216,12 @@ function startBackendServer() {
                         const file = fs.createWriteStream(destPath);
                         const returnPath = path.join('temp', filename);
                         
-                        const sendError = (err) => {
+                        const sendError = err => {
                             res.writeHead(500, { 'Content-Type': 'application/json' });
                             res.end(JSON.stringify({ error: err.message || String(err) }));
                         };
                         
-                        proto.get(data.url, (response) => {
+                        proto.get(data.url, response => {
                             if (response.statusCode === 404) {
                                 fs.unlinkSync(destPath);
                                 return sendError(new Error('404 Not Found'));
@@ -232,7 +231,7 @@ function startBackendServer() {
                                 file.close();
                                 send({ success: true, path: returnPath });
                             });
-                        }).on('error', (err) => {
+                        }).on('error', err => {
                             fs.unlink(destPath, () => {});
                             sendError(err);
                         });
@@ -240,20 +239,18 @@ function startBackendServer() {
                         return;
                     }
                     
-                    case 'readImage': {
-                        const p = resolveReadPath(data.path, data.source);
-                        if (!fs.existsSync(p)) return send({ error: 'File not found' });
-                        
-                        const ext = path.extname(p).toLowerCase();
-                        let mime = 'application/octet-stream';
-                        if (ext === '.png') mime = 'image/png';
-                        else if (ext === '.jpg' || ext === '.jpeg') mime = 'image/jpeg';
-                        else if (ext === '.gif') mime = 'image/gif';
-                        else if (ext === '.svg') mime = 'image/svg+xml';
-                        
-                        const buffer = fs.readFileSync(p);
-                        const base64 = buffer.toString('base64');
-                        return send({ mime, data: base64 });
+                    case 'getIP': {
+                        const interfaces = os.networkInterfaces();
+                        for (const name of Object.keys(interfaces)) {
+                            for (const iface of interfaces[name]) {
+                                if (iface.family === 'IPv4' && !iface.internal) {
+                                    send(iface.address);
+                                    return;
+                                }
+                            }
+                        }
+                        send('127.0.0.1');
+                        return;
                     }
                     
                     default:
@@ -272,10 +269,6 @@ function startBackendServer() {
         console.log(`Backend server running at http://127.0.0.1:${BACKEND_PORT}`);
     });
 }
-
-// --------------------
-// Main
-// --------------------
 
 async function main() {
     startBackendServer();

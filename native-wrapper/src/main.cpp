@@ -1,30 +1,20 @@
-// --------------------
-// Standard C++ Headers
-// --------------------
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <filesystem>
 #include <thread>
 #include <chrono>
-#include <cstdlib>   // system(), exit()
+#include <cstdlib>
+#include <cstdio>
 
-// --------------------
-// Local Source Headers
-// --------------------
 #include "webview/webview.h"
 
-// --------------------
-// OS-specific Headers
-// --------------------
 #ifdef _WIN32
-#pragma comment(lib, "Ws2_32.lib")
 #define WIN32_LEAN_AND_MEAN
+#pragma comment(lib, "Ws2_32.lib")
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <shellapi.h>
-#include <shlobj.h>
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -32,212 +22,241 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <signal.h>
 #include <errno.h>
 #include <sys/wait.h>
-#include <signal.h>
 #endif
 
-// --------------------
-// Namespace shortcuts
-// --------------------
 namespace fs = std::filesystem;
 
+static constexpr int BACKEND_PORT = 52321;
+static constexpr int FRONTEND_PORT = 58000;
+
 // --------------------
-// Utility Functions
+// Utilities
 // --------------------
 std::string getLocalIP() {
-    #ifdef _WIN32
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2,2), &wsaData);
-    
-    char hostname[256];
-    gethostname(hostname, sizeof(hostname));
-    
-    addrinfo hints = {};
-    hints.ai_family = AF_INET;
-    addrinfo* info = nullptr;
-    getaddrinfo(hostname, nullptr, &hints, &info);
-    
-    std::string ip = "127.0.0.1";
-    if(info) {
-        sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(info->ai_addr);
-        char ipBuffer[INET_ADDRSTRLEN] = {};
-        InetNtopA(AF_INET, &addr->sin_addr, ipBuffer, INET_ADDRSTRLEN);
-        ip = ipBuffer;
-        freeaddrinfo(info);
-    }
-    
-    WSACleanup();
-    return ip;
-    #else
+#ifdef _WIN32
+    WSADATA wsa;
+    WSAStartup(MAKEWORD(2,2), &wsa);
+#endif
     char hostname[256];
     if(gethostname(hostname, sizeof(hostname)) != 0) return "127.0.0.1";
-    
-    addrinfo hints = {};
+
+    addrinfo hints{};
     hints.ai_family = AF_INET;
     addrinfo* info = nullptr;
     if(getaddrinfo(hostname, nullptr, &hints, &info) != 0) return "127.0.0.1";
-    
+
     std::string ip = "127.0.0.1";
     if(info) {
         sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(info->ai_addr);
-        ip = inet_ntoa(addr->sin_addr);
+        char buf[INET_ADDRSTRLEN]{};
+#ifdef _WIN32
+        InetNtopA(AF_INET, &addr->sin_addr, buf, sizeof(buf));
+#else
+        inet_ntop(AF_INET, &addr->sin_addr, buf, sizeof(buf));
+#endif
+        ip = buf;
         freeaddrinfo(info);
     }
+#ifdef _WIN32
+    WSACleanup();
+#endif
     return ip;
-    #endif
 }
 
 bool isNodeInstalled() {
-    #ifdef _WIN32
+#ifdef _WIN32
     STARTUPINFOW si{sizeof(si)};
-    PROCESS_INFORMATION pi;
+    PROCESS_INFORMATION pi{};
     wchar_t cmd[] = L"node -v";
-    if (!CreateProcessW(NULL, cmd, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi))
-    return false;
-    
+    if(!CreateProcessW(nullptr, cmd, nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
+        return false;
     WaitForSingleObject(pi.hProcess, INFINITE);
-    DWORD exitCode;
-    GetExitCodeProcess(pi.hProcess, &exitCode);
+    DWORD code = 1;
+    GetExitCodeProcess(pi.hProcess, &code);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
-    return exitCode == 0;
-    #else
+    return code == 0;
+#else
     return system("node -v > /dev/null 2>&1") == 0;
-    #endif
-}
-
-bool checkInternet() {
-    #ifdef _WIN32
-    return system("ping -n 1 -w 15000 google.com > nul") == 0;
-    #else
-    return system("ping -c 1 -W 15 google.com > /dev/null") == 0;
-    #endif
-}
-
-void showMessage(const std::string& msg) {
-    #ifdef _WIN32
-    MessageBoxA(NULL, msg.c_str(), "Nivix Studio", MB_OK | MB_ICONERROR);
-    #else
-    std::cerr << msg << std::endl;
-    #endif
+#endif
 }
 
 // --------------------
-// Process Helpers (Linux)
+// Backend check
 // --------------------
-#ifndef _WIN32
+bool waitForBackend(const std::string& url, int timeoutSec) {
+    auto start = std::chrono::steady_clock::now();
+
+#ifdef _WIN32
+    auto execCurl = [&](const std::string& cmd) -> std::string {
+        FILE* pipe = _popen(cmd.c_str(), "r");
+        if (!pipe) return "";
+        char buffer[128]{};
+        std::string result;
+        while (fgets(buffer, sizeof(buffer), pipe)) result += buffer;
+        _pclose(pipe);
+        return result;
+    };
+#else
+    auto execCurl = [&](const std::string& cmd) -> std::string {
+        FILE* pipe = popen(cmd.c_str(), "r");
+        if (!pipe) return "";
+        char buffer[128]{};
+        std::string result;
+        while (fgets(buffer, sizeof(buffer), pipe)) result += buffer;
+        pclose(pipe);
+        return result;
+    };
+#endif
+
+    while(true) {
+        std::string command = "curl -s --max-time 1 " + url;
+        std::string resp = execCurl(command);
+        if(resp.find("ok") != std::string::npos) return true;
+
+        if(std::chrono::steady_clock::now() - start > std::chrono::seconds(timeoutSec))
+            return false;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+}
+
+// --------------------
+// Message box / terminal output
+// --------------------
+void showMessage(const std::string& msg, bool isError = true) {
+#ifdef _WIN32
+    MessageBoxA(nullptr, msg.c_str(), "Nivix Studio", MB_OK | (isError ? MB_ICONERROR : MB_ICONINFORMATION));
+#else
+    if(isError) std::cerr << "Error: ";
+    std::cout << msg << std::endl;
+#endif
+}
+
+// --------------------
+// Attach console on Windows for debug mode
+// --------------------
+#ifdef _WIN32
+void attachDebugConsole() {
+    if(AttachConsole(ATTACH_PARENT_PROCESS)) {
+        FILE* fp = nullptr;
+        freopen_s(&fp, "CONOUT$", "w", stdout);
+        freopen_s(&fp, "CONOUT$", "w", stderr);
+        freopen_s(&fp, "CONIN$", "r", stdin);
+        std::cout.clear();
+        std::cerr.clear();
+        std::cin.clear();
+    }
+}
+#endif
+
+// --------------------
+// Process helpers
+// --------------------
+#ifdef _WIN32
+bool launchProcess(const std::wstring& cmd, PROCESS_INFORMATION& pi, bool hidden = true) {
+    STARTUPINFOW si{sizeof(si)};
+    DWORD flags = hidden ? CREATE_NO_WINDOW : 0;
+    return CreateProcessW(nullptr, (LPWSTR)cmd.c_str(), nullptr, nullptr, FALSE, flags, nullptr, nullptr, &si, &pi);
+}
+#else
 pid_t launchProcess(const char* path, char* const argv[]) {
     pid_t pid = fork();
-    if(pid < 0) {
-        perror("fork failed");
-        return -1;
-    }
-    if(pid == 0) {
-        execvp(path, argv);
-        perror("execvp failed");
-        exit(1);
-    }
+    if(pid == 0) execvp(path, argv);
     return pid;
 }
 #endif
 
 // --------------------
-// Main Launcher
+// Main
 // --------------------
-int main() {
-    // --- Node.js check ---
+int main(int argc, char* argv[]) {
+    bool debugConsole = false;
+    if(argc > 1 && std::string(argv[1]) == "--console") debugConsole = true;
+
+#ifdef _WIN32
+    if(debugConsole) attachDebugConsole();
+    else FreeConsole();
+#else
+    if(debugConsole) std::cout << "Debug mode enabled" << std::endl;
+#endif
+
     if(!isNodeInstalled()) {
-        showMessage("Node.js is not installed. Please install Node.js to continue.");
+        showMessage("Node.js is not installed.");
         return 1;
     }
-    
-    // --- node_modules check ---
-    // Wait until node_modules exists
+
     fs::path nodeModules = fs::current_path() / "node_modules";
     while(!fs::exists(nodeModules)) {
-        if(!checkInternet()) {
-            showMessage("Node modules are missing. Check your WiFi connection in order to use Nivix Studio.");
-            return 1;
-        }
-        std::cout << "Installing node_modules..." << std::endl;
         if(system("npm install") != 0) {
-            std::cerr << "npm install failed, retrying..." << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2));
             continue;
         }
-        std::this_thread::sleep_for(std::chrono::seconds(1)); // brief wait after install
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-    
-    // --- Local IP and URL ---
-    std::string localIP = getLocalIP();
-    std::string frontendURL = "http://" + localIP + ":58000/front/index.html";
-    
-    #ifdef _WIN32
-    // --- Windows Node Processes ---
-    STARTUPINFOW siB{sizeof(siB)}, siF{sizeof(siF)};
-    PROCESS_INFORMATION piB, piF;
-    
-    std::wstring wsBackend = L"node runtime.js";
-    std::wstring wsFrontend = L"node fronthost.js";
-    
-    if(!CreateProcessW(NULL, &wsBackend[0], NULL, NULL, FALSE, 0, NULL, NULL, &siB, &piB)) {
-        showMessage("Failed to start backend Node.js process.");
+
+    std::string ip = getLocalIP();
+    std::string frontendURL = "http://" + ip + ":" + std::to_string(FRONTEND_PORT) + "/front/index.html";
+    std::string preloadURL = "file://" + (fs::current_path() / "front" / "preload.html").string();
+
+#ifdef _WIN32
+    PROCESS_INFORMATION backend{}, frontend{};
+    if(!launchProcess(L"node runtime.js", backend)) {
+        showMessage("Failed to launch backend process.");
         return 1;
     }
-    if(!CreateProcessW(NULL, &wsFrontend[0], NULL, NULL, FALSE, 0, NULL, NULL, &siF, &piF)) {
-        TerminateProcess(piB.hProcess, 1);
-        showMessage("Failed to start frontend Node.js process.");
+
+    if(!waitForBackend("http://127.0.0.1:52321/ready", 15)) {
+        TerminateProcess(backend.hProcess, 1);
+        showMessage("Backend connection timed out.");
         return 1;
     }
-    
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    
-    // --- Launch WebView directly ---
-    try {
-        webview::webview w(true, nullptr);
-        w.set_title("Nivix Studio");
-        w.set_size(1280, 720, WEBVIEW_HINT_NONE);
-        w.navigate(frontendURL);
-        w.run();
-    } catch(const std::exception& e) {
-        showMessage(std::string("Failed to launch WebView: ") + e.what());
+
+    if(!launchProcess(L"node fronthost.js", frontend)) {
+        TerminateProcess(backend.hProcess, 1);
+        showMessage("Failed to launch frontend process.");
+        return 1;
     }
-    
-    TerminateProcess(piF.hProcess, 0);
-    TerminateProcess(piB.hProcess, 0);
-    CloseHandle(piF.hProcess); CloseHandle(piF.hThread);
-    CloseHandle(piB.hProcess); CloseHandle(piB.hThread);
-    
-    #else
-    // --- Linux Node Processes ---
-    char* backendArgs[] = { (char*)"node", (char*)"runtime.js", nullptr };
-    char* frontendArgs[] = { (char*)"node", (char*)"fronthost.js", nullptr };
-    
+#else
+    char* backendArgs[] = {(char*)"node", (char*)"runtime.js", nullptr};
+    char* frontendArgs[] = {(char*)"node", (char*)"fronthost.js", nullptr};
+
     pid_t pidB = launchProcess("node", backendArgs);
-    if(pidB < 0) return 1;
-    
-    pid_t pidF = launchProcess("node", frontendArgs);
-    if(pidF < 0) {
+    if(pidB <= 0) { showMessage("Failed to launch backend process."); return 1; }
+
+    if(!waitForBackend("http://127.0.0.1:52321/ready", 15)) {
         kill(pidB, SIGTERM);
+        showMessage("Backend connection timed out.");
         return 1;
     }
-    
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    
+
+    pid_t pidF = launchProcess("node", frontendArgs);
+    if(pidF <= 0) { kill(pidB, SIGTERM); showMessage("Failed to launch frontend process."); return 1; }
+#endif
+
     try {
         webview::webview w(true, nullptr);
         w.set_title("Nivix Studio");
         w.set_size(1280, 720, WEBVIEW_HINT_NONE);
-        w.navigate(frontendURL);
+        w.navigate(preloadURL);
+
         w.run();
-    } catch(const std::exception& e) {
-        showMessage(std::string("Failed to launch WebView: ") + e.what());
+    } catch(...) {
+        showMessage("WebView failed to launch.");
     }
-    
+
+#ifdef _WIN32
+    TerminateProcess(frontend.hProcess, 0);
+    TerminateProcess(backend.hProcess, 0);
+    CloseHandle(frontend.hProcess); CloseHandle(frontend.hThread);
+    CloseHandle(backend.hProcess); CloseHandle(backend.hThread);
+#else
     kill(pidF, SIGTERM);
     kill(pidB, SIGTERM);
-    #endif
-    
+#endif
+
     return 0;
 }
