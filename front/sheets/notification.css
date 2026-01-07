@@ -1,4 +1,4 @@
-#notiContainer, #notiContent {
+#noti-default, #noti-progress {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -8,38 +8,62 @@
     width: auto;
 }
 
-#notiContainer {
+#noti-container {
     position: fixed;
-    top: -6em;
-    left: 50%;
-
-    height: auto;
-    max-width: 90%;
-
+    bottom: 2.4em;
+    right: 6px;
+    
+    height: 8%;
+    width: 30%;
+    
     background: transparent;
     border: none;
-
+    
     z-index: 10000;
-
-    transform: translateX(-50%);
+    
     transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-#notiContent {
-    height: 4em;
-    min-width: 250px;
-    max-width: 500px;
-
-    padding: 0 16px;
-
+#noti-default, #noti-progress {
+    height: 100%;
+    min-width: 350px;
+    max-width: 100%;
+    
     background: linear-gradient(145deg, #ffffff, #f1f4f8);
     border: 1px solid #d8dbe0;
-    border-bottom: 3px solid #cfd3d9;
     border-radius: 10px;
-
+    
     color: #333;
     font-weight: bold;
     text-align: center;
+}
+
+#noti-default {
+    display: none;
+    
+    border-bottom: 3px solid #cfd3d9;
+}
+
+#noti-progress {
+    position: relative;
+}
+
+#noti-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    
+    height: 5px;
+    width: 0%;
+    
+    background: var(--col1);
+    
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+
+    margin-top: 2px;
+
+    transition: width 0.25s ease-out;
 }
 
 #notiContainer.show {
