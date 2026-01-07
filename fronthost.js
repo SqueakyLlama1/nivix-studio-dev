@@ -1,7 +1,12 @@
 // Nivix Studio Frontend Hosting Module
 
-const express = require('express');
-const os = require('os');
+import open, { openApp, apps } from 'open';
+import express from 'express';
+import os from 'os';
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function getLocalIP() {
     const interfaces = os.networkInterfaces();
@@ -46,3 +51,11 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`- Local: http://localhost:${PORT}/front/index.html`);
     console.log(`- LAN:   http://${localIP}:${PORT}/front/index.html`);
 });
+
+if (process.platform === 'linux' && !process.env.NO_OPEN) {
+    await open(`http://${localIP}:${PORT}/front/index.html`).catch(err => {
+        console.error('Failed to open browser:', err);
+    });
+}
+
+export default app;

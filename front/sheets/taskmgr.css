@@ -39,7 +39,6 @@
 	background: #edf1f6;
 	border-bottom: 1px solid #cfd3d9;
 
-	user-select: none;
 	cursor: grab;
 
 	transition: transform 0.15s linear, box-shadow 0.15s linear;
