@@ -1,9 +1,13 @@
-const http = require('http');
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const unzipper = require('unzipper');
+import http from 'http';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import unzipper from 'unzipper';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const BACKEND_PORT = 52321;
 
