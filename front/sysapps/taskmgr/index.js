@@ -6,7 +6,7 @@ async function init() {
     const notifyFn = typeof window.parent?.noti === "function" ? window.parent.noti : null;
     const prefs = window.parent?.prefs?.loaded || {};
 
-    const ROOT = "http://127.0.0.1:58000";
+    const ROOT = window.parent.studio.bind || 'http://127.0.0.1:58000';
 
     async function resolveAppIcon(appId, pkg) {
         const ndutil = window.parent?.ndutil;
@@ -22,8 +22,8 @@ async function init() {
             );
             if (mainIconExists) {
                 return isSys
-                ? `http://127.0.0.1:58000/sysapps/${appId}/${appId}.png`
-                : `http://127.0.0.1:58000/userdata/apps/${appId}/${appId}.png`;
+                ? `${ROOT}/front/sysapps/${appId}/${appId}.png`
+                : `${ROOT}/front/dynamic/apps/${appId}/${appId}.png`;
             }
 
             // 2. Fallback to favicon.png
@@ -33,8 +33,8 @@ async function init() {
             );
             if (faviconExists) {
                 return isSys
-                ? `http://127.0.0.1:58000/sysapps/${appId}/favicon.png`
-                : `http://127.0.0.1:58000/userdata/apps/${appId}/favicon.png`;
+                ? `${ROOT}/front/sysapps/${appId}/favicon.png`
+                : `${ROOT}/front/dynamic/apps/${appId}/favicon.png`;
             }
         } catch (e) {
             console.warn(`[TASKMGR] Icon check failed for ${appId}`, e);
