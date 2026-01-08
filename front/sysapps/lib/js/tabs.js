@@ -1,10 +1,10 @@
 const tabs = {
     async change(id, display = "block") {
-        console.log(`[Tab] Opening tab: ${id}`);
+        console.log(`[TABS LIB] Opening tab: ${id}`);
 
         const tabs = document.querySelectorAll(".tab");
         if (!tabs.length) {
-            console.warn("[Tab] No tabs found");
+            console.warn("[TABS LIB] No tabs found");
             return;
         }
 

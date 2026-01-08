@@ -1,3 +1,5 @@
+/* Base */
+
 #noti-container {
     position: absolute;
     bottom: 4px;
@@ -9,17 +11,16 @@
     background: transparent;
     border: none;
     
-    z-index: 10000;
+    z-index: 9000;
     
     transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-#noti-default, #noti-progress {
+#noti-default, #noti-progress, #noti-progress-collapsed {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    pointer-events: none;
     
     height: 100%;
     width: auto;
@@ -32,11 +33,58 @@
     color: var(--on-surface);
     font-weight: bold;
     text-align: center;
+
+    transition: 0.15s background ease-out;
 }
 
-#noti-default {
-    display: none;
+#noti-default:hover,
+#noti-progress:hover,
+#noti-progress-collapsed:hover {
+    background: var(--surface-hover);
 }
+
+/* Type: Default */
+
+#noti-default-icon-error,
+#noti-default-icon-warning,
+#noti-default-icon-info {
+    visibility: hidden;
+    container-type: size;
+
+    font-family: monospace;
+    position: absolute;
+
+    left: 3%;
+
+    height: 75%;
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+}
+
+#noti-default-icon-error span,
+#noti-default-icon-warning span,
+#noti-default-icon-info span {
+    font-size: 85cqh;
+    font-weight: bold;
+    color: white;
+}
+
+#noti-default-icon-error {
+    background: red;
+}
+
+#noti-default-icon-warning {
+    background: yellow;
+}
+
+#noti-default-icon-info {
+    visibility: visible;
+
+    background: #43a4eb;
+}
+
+/* Type: Progress */
 
 #noti-progress {
     position: relative;
@@ -62,4 +110,20 @@
 
 #notiContainer.show {
     top: 20px;
+}
+
+/* Type: Progress Collapsed */
+
+#noti-progress-collapsed {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+
+    height: 30%;
+}
+
+/* TEMPORARY */
+
+#noti-progress, #noti-progress-collapsed {
+    display: none;
 }

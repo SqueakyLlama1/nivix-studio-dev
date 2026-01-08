@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <link rel="icon" type="image/ico" href="favicon.ico">
-
+    
     <link rel="stylesheet" type="text/css" href="sheets/index.css">
     <link rel="stylesheet" type="text/css" href="sysapps/lib/css/tabs.css">
     <link rel="stylesheet" type="text/css" href="sysapps/lib/css/tooltips.css">
@@ -18,13 +18,31 @@
 <body>
     <!-- Above document elements -->
     <div id="noti-container">
-        <div id="noti-default">
-            <span id="noti-default-message"></span>
+        <div id="noti-default" class="tip-top tooltip-delayed-support-button">
+            <span class="tooltip">
+                Click or tap this notification to dismiss it
+            </span>
+            <span id="noti-default-icon-error"><span>!</span></span>
+            <span id="noti-default-icon-warning"><span>⚠</span></span>
+            <span id="noti-default-icon-info"><span>i</span></span>
+            <span id="noti-default-message">Test</span>
         </div>
-        <div id="noti-progress">
+        <div id="noti-progress" class="tip-top tooltip-delayed-support-button">
+            <span class="tooltip">
+                Click or tap this notification to collapse it
+            </span>
             <span id="noti-progress-message">Moving app data for Store</span>
             <span id="noti-progress-percentile">0%</span>
             <div id="noti-progress-bar"></div>
+        </div>
+        <div id="noti-progress-collapsed" class="tip-top tooltip-delayed-support-button">
+            <span class="tooltip">
+                Click or tap this notification to expand it
+            </span>
+            <div id="noti-progress-collapsed-bar-container">
+                <span id="noti-progress-collapsed-percentile">0%</span>
+                <div id="noti-progress-collapsed-bar"></div>
+            </div>
         </div>
     </div>
     
@@ -34,7 +52,7 @@
             <h3 class="title">Nivix Studio</h3>
             <div class="loader"></div>
             <div class="footer">
-                <span id="load-footer-version">---</span>
+                <span id="load-footer-version">vX.X.X</span>
                 <br>
             </div>
         </div>
@@ -92,11 +110,7 @@
                             </span>
                             <br><br>
                             <h3>About & License</h3>
-                            <p><strong>License covers:</strong></p>
-                            <ul>
-                                <li>Project root (<code>LICENSE</code> file) — all files except <code>front/libraries/*</code></li>
-                                <li>Project storage directory (<code>os.homedir()/nvxstdo/*</code>)</li>
-                            </ul>
+                            <p>License: Apache 2.0</p>
                             
                             <p><strong>Nivix Studio:</strong></p>
                             <p>&copy; 2026 Nivix Technology | Christian Bone</p>
@@ -133,6 +147,8 @@
     <script defer src="sysapps/lib/js/easejs.js"></script>
     <script defer src="sysapps/lib/js/tabs.js"></script>
     <script defer src="sysapps/lib/js/assetLoader.js"></script>
+    <script defer src="sysapps/lib/js/tooltips.js"></script>
+    <script defer src="sysapps/lib/js/colorlib.js"></script>
     
     <script defer src="modules/ndutil.js"></script>
     <script defer src="modules/util.js"></script>

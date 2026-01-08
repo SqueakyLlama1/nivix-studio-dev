@@ -66,6 +66,8 @@ window.onload = async () => {
         try { dock.open(); } catch {}
         
         console.log("[Init] Initialization complete");
+
+        try { tooltips.init_delayed(); } catch {}
         
         await wait(50);
         getEBD('load').parentElement.removeChild(getEBD('load'));

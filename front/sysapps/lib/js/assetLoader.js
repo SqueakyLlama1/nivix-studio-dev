@@ -4,7 +4,7 @@ const assetLoader = {
         const sanType = type.trim().toLowerCase();
 
         if (sanType !== "css" && sanType !== "js") {
-            console.error("[ASSET LOADER] Invalid type. Valid types are: 'css', 'js'");
+            console.error("[ASSET LOADER LIB] Invalid type. Valid types are: 'css', 'js'");
             return;
         }
 
