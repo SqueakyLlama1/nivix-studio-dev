@@ -5,7 +5,7 @@
 	flex-wrap: wrap;
 	flex-direction: column;
 
-	background: url('http://127.0.0.1:58000/userdata/background/1.png'); /* Make dynamic soon */
+	background: url('../dynamic/appdata/settings/background/1.png'); /* Make dynamic before release */
 	background-size: cover;
 	background-position: center;
 
@@ -62,9 +62,6 @@
 .app img {
 	width: 85%;
 	aspect-ratio: 1/1;
-
-	background: linear-gradient(135deg, var(--col1), var(--col2));
-	border-radius: 4px;
 
 	z-index: 1;
 }

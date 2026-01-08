@@ -86,7 +86,6 @@
     border: none;
 
     font-weight: bold;
-    color: var(--tc);
 }
 
 .appPopupContent .bar .close {

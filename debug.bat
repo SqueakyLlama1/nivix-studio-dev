@@ -1,2 +1,3 @@
-node runtime.js && node fronthost.js
-pause
+@echo off
+start "" node runtime.js
+start "" node fronthost.js

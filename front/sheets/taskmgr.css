@@ -36,8 +36,10 @@
 .task .bar {
 	height: 1.3em;
 
-	background: #edf1f6;
-	border-bottom: 1px solid #cfd3d9;
+	background: var(--surface-light);
+	border-bottom: 1px solid var(--surface-hover);
+
+	color: var(--on-surface);
 
 	cursor: grab;
 
@@ -62,11 +64,11 @@
 	height: 100%;
 	aspect-ratio: 2/1;
 
-	background: #d8dbe0;
+	background: var(--surface);
 	border: none;
 
 	font-weight: bolder;
-	color: #111;
+	color: var(--on-surface);
 
 	cursor: pointer;
 
@@ -74,15 +76,15 @@
 }
 
 .task .bar button:disabled {
-	background: #c8cdd3;
+	background: var(--surface-hover);
 
-    color: #9b9b9b;
+    color: var(--on-surface-disabled);
 
     cursor: not-allowed;
 }
 
-.task .bar button:hover:not(button:disabled) {
-	background: #c8cdd3;
+.task .bar button:hover {
+	background: var(--surface-hover);
 }
 
 .task .bar img {

@@ -3,20 +3,18 @@
 #dock {
 	display: none;
 	
-	position: absolute;
-	bottom: -2.1em;
+	position: fixed;
+	bottom: -5.5vh;
 	left: 0;
 	
 	width: 100%;
-	height: 2.1em;
-	
-	background: linear-gradient(135deg, var(--col1), var(--col2));
+	height: 5.5vh;
 	
 	overflow-x: auto;
 	overflow-y: hidden;
 	
 	z-index: 8000;
-	transition: 0.5s bottom ease-in-out;
+	transition: 0.5s bottom ease-out;
 }
 
 #dock button {
@@ -29,36 +27,33 @@
 	padding: 0 10px;
 	margin-right: 6px;
 	
-	background: rgba(205, 205, 205, 0.5);
+	background: var(--surface2);
 	
 	border: none;
 	border-radius: 4px;
 	
+	color: var(--on-surface);
 	font-weight: bold;
-}
-
-#dock #timeDisplay, #dock #dateDisplay {
-	color: black;
 }
 
 #dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay) {
 	cursor: pointer;
-	transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+	transition: transform 0.15s ease, background 0.2s ease;
 }
 
 #dock button:nth-child(1) {
 	margin-left: 6px;
 }
 
-#dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay) img {
+#dock button:not(#dockContent button) img {
+	filter: var(--icon);
 	height: 75%;
 	margin-left: 5px;
 }
 
 #dock button:not(#dockContent button):not(#timeDisplay):not(#dateDisplay):hover {
-	transform: translateY(-2px) scale(1);
-	box-shadow: 0 6px 14px rgba(31, 111, 235, 0.3);
-	background: rgba(205, 205, 205, 0.75);
+	transform: translateY(-1.5px) scale(1);
+	background: var(--surface-hover);
 }
 
 #dock .right, #dock .left {
@@ -79,16 +74,19 @@
 }
 
 #dock #dockContent button {
-	height: 85%;
+	height: 100%;
 	aspect-ratio: 1;
 	
 	background: transparent;
 	border: none;
-	border-radius: 0px;
 	
-	padding: 1.5px;
-	
-	transition: background 0.1s linear, border 0.2s linear;
+	padding: 0.01px;
+}
+
+#dock #dockContent button img {
+	height: 100%;
+
+	transition: background 0.1s ease-out;
 }
 
 #dock #dockContent button:hover img {
@@ -97,16 +95,6 @@
 
 #dock #dockContent button.active img {
 	background: rgba(205, 205, 205, 0.8);
-	
-}
-
-#dock #dockContent button.active {
-	border-bottom: 2px solid white;
-}
-
-#dock #dockContent button img {
-	height: 100%;
-	border-radius: 4px;
 }
 
 #dock .right {

@@ -1,7 +1,13 @@
 :root {
-    --col1: #43a4eb;
-    --col2: #0079cf;
-    --tSpeed: 125ms;
+    --accent: #43a4eb;
+    --accent-dark: #0076ca;
+    --surface-light: #6e6e6e;
+    --surface: #353535;
+    --surface2: #272727;
+    --surface-hover: #111111;
+    --on-surface: #ffffff;
+    --on-surface-disabled: #b9b9b9;
+    --icon: invert(1);
 }
 
 ::-webkit-scrollbar {
@@ -54,7 +60,7 @@ center {
 
 .footer {
     height: 3em;
-    position: fixed;
+    position: absolute;
     left: 0;
     bottom: 0;
     background: transparent;

@@ -1,10 +1,8 @@
 /* Base Layout */
 html, head, body {
     font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
-
-    height: 100%;
     
-    background: white;
+    background: var(--surface);
 
     user-select: none;
 
@@ -13,33 +11,45 @@ html, head, body {
 }
 
 body {
+    position: relative;
+
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-	background: #f2eded;
+    height: 94.5vh;
 
-	color: #333;
+	background: var(--surface);
 
-    margin-bottom: 3em;
+	color: var(--on-surface);
 
     overflow: hidden;
 	transition: background 0.3s ease;
 }
 
 :root {
-    --col1: #43a4eb;
-    --col2: #0079cf;
-    --tc: #ffffff;
+    --accent: #43a4eb;
+    --accent-dark: #0076ca;
+    --surface-light: #6e6e6e;
+    --surface: #353535;
+    --surface2: #272727;
+    --surface-hover: #111111;
+    --on-surface: #ffffff;
+    --on-surface-disabled: #b9b9b9;
+    --icon: invert(1);
+}
+
+.tab {
+    height: 94.5vh;
 }
 
 .title {
-    background: linear-gradient(135deg, var(--col1), var(--col2));
+    background: var(--accent);
     -webkit-background-clip: text;
     background-clip: text;
 
     font-size: 48px;
     font-weight: bold;
     -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 1px var(--col2);
+    -webkit-text-stroke: 1px var(--accent-dark);
 }
 
 #load {
@@ -53,15 +63,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--surface-light);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: var(--surface);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: var(--surface-hover);
 }
 
 /* Loader Styles */
@@ -71,9 +81,9 @@ body {
 
     border-radius: 50%;
 
-    border-top: 4px solid var(--col1);
-    border-left: 4px solid var(--col1);
-    border-right: 4px solid var(--col1);
+    border-top: 4px solid var(--accent);
+    border-left: 4px solid var(--accent);
+    border-right: 4px solid var(--accent);
     border-bottom: 4px solid transparent;
 
     animation: rotate 0.5s linear infinite;
@@ -100,7 +110,7 @@ center {
 }
 
 .footer {
-    position: fixed;
+    position: absolute;
     left: 0;
     bottom: 0;
 
