@@ -1,12 +1,12 @@
 window.deskpad = {
     async init() {
         console.log("[Deskpad] Loading...");
-        
+
         const deskpad = getEBD('deskpad');
         deskpad.style.cursor = "wait";
-        
+
         let installedApps = [];
-        
+
         try {
             // Build the list of installed apps
             const appFolderList = await window.ndutil.listDirectory('apps');
@@ -18,18 +18,18 @@ window.deskpad = {
                     installedApps.push(file);
                 }
             }
-            
+
             // Add to deskpad
             for (const app of installedApps) {
                 // Get app package
                 let packageFile;
                 try {
                     packageFile = await window.ndutil.readJSON(['apps', app, 'pkg.json']);
-                } catch(e) {
+                } catch (e) {
                     console.error('Failed to append app to deskpad, package unresolved: ' + app);
                     continue;
                 }
-                
+
                 // Determine image
                 let imgPath;
                 if (await window.ndutil.fileExists(['apps', app, `${app}.png`])) {
@@ -39,18 +39,18 @@ window.deskpad = {
                 } else {
                     imgPath = `img/app.png`; // fallback
                 }
-                
+
                 // Append to deskpad
                 const appContainer = newEl('div');
                 appContainer.classList.add('app');
                 appContainer.addEventListener('click', () => newTask(app));
-                
+
                 let appName = packageFile.displayName ?? app;
                 appContainer.innerHTML = `
                 <img alt="${app} icon" src="${imgPath}">
                 ${pretty(appName)}
             `;
-                
+
                 deskpad.appendChild(appContainer);
                 installedApps[app] = appContainer;
             }
@@ -62,10 +62,10 @@ window.deskpad = {
         } finally {
             deskpad.style.cursor = "inherit";
         }
-        
+
         console.log(`[Deskpad] Done. Installed: ${installedApps.length}`);
     },
-    
+
     async refresh() {
         // Re-initialize
         await wait(50); // To assure the user it reloaded

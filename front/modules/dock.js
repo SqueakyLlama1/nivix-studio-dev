@@ -3,29 +3,29 @@ window.dock = {
         new(icon, app) {
             const dockContent = getEBD('dockContent');
             if (!dockContent) return;
-            
+
             // Avoid duplicates
             if (getEBD(`${app}-dock`)) return;
-            
+
             const iconContainer = document.createElement('button');
             iconContainer.id = `${app}-dock`;
             iconContainer.classList.add('dock-icon');
-            
+
             const iconImg = document.createElement('img');
             iconImg.src = icon;
             iconContainer.appendChild(iconImg);
-            
+
             // Click toggles minimize/restore for this app
             iconContainer.onclick = () => dock.icon.minRes(app);
-            
+
             dockContent.appendChild(iconContainer);
         },
-        
+
         remove(app) {
             const iconElement = getEBD(`${app}-dock`);
             if (iconElement) iconElement.remove();
         },
-        
+
         minRes(app) {
             const taskEntry = processes[app];
             if (!taskEntry) {
@@ -34,16 +34,16 @@ window.dock = {
                 console.error(`${app} Crashed`);
                 return;
             }
-            
+
             const taskDiv = getEBD(`task-${app}`);
             if (!taskDiv) return;
-            
+
             // Fullscreen handling
             if (taskDiv.dataset.fullscreen === 'true') {
                 toggleFullscreen(app);
                 return;
             }
-            
+
             // Toggle between minimized/restored
             if (taskEntry.active === true) {
                 minTask(app);
@@ -51,7 +51,7 @@ window.dock = {
                 resTask(app);
             }
         },
-        
+
         highlight(app, state) {
             const iconEl = getEBD(`${app}-dock`);
             if (!iconEl) return;
@@ -59,7 +59,7 @@ window.dock = {
             else iconEl.classList.remove('active');
         }
     },
-    
+
     element: getEBD('dock'),
 
     init() {
@@ -69,11 +69,11 @@ window.dock = {
 
         taskMgrBtn.addEventListener('click', () => newTask('taskmgr', 'sysapps'));
         refreshBtn.addEventListener('click', () => window.location.reload());
-        exitBtn.addEventListener('click', function() {
+        exitBtn.addEventListener('click', function () {
             try { studio.exit(); } catch { window.location.close(); }
         });
     },
-    
+
     async open() {
         const el = dock.element;
         if (!el) return;
@@ -82,7 +82,7 @@ window.dock = {
         el.style.bottom = '0';
         await wait(525);
     },
-    
+
     async close() {
         const el = dock.element;
         if (!el) return;
@@ -100,19 +100,19 @@ function updateDockIcon(app) {
 
 // Hook into task functions to update dock
 const origMinTask = minTask;
-minTask = function(id) {
+minTask = function (id) {
     origMinTask(id);
     updateDockIcon(id);
 };
 
 const origResTask = resTask;
-resTask = function(id) {
+resTask = function (id) {
     origResTask(id);
     updateDockIcon(id);
 };
 
 const origEndTask = endTask;
-endTask = function(id) {
+endTask = function (id) {
     origEndTask(id);
     dock.icon.remove(id);
 };

@@ -19,24 +19,24 @@ window.prefs = {
         tc: "#ffffff",
         loadTime: 100
     },
-    
+
     loaded: {},
     prefsContainerJQ: $(prefsPopupContainer),
-    
+
     open() {
         this.prefsContainerJQ.fadeIn(75);
         this.tab.open('prefsTabNoti');
     },
-    
+
     close() {
         this.tab.clearSelected();
         this.prefsContainerJQ.fadeOut(75);
     },
-    
+
     tab: {
         prefsTabs: document.querySelectorAll('.prefsTab'),
         prefsBtns: document.querySelectorAll('.prefsBtn'),
-        
+
         async open(id) {
             await this.clear();
             this.clearSelected();
@@ -47,7 +47,7 @@ window.prefs = {
             const buttonEl = getEBD(buttonId);
             if (buttonEl) buttonEl.classList.add('selected');
         },
-        
+
         async clear() {
             const fadeOuts = Array.from(this.prefsTabs).map(tab => {
                 return new Promise(resolve => {
@@ -56,18 +56,18 @@ window.prefs = {
             });
             await Promise.all(fadeOuts);
         },
-        
+
         clearSelected() {
             this.prefsBtns.forEach(btn => btn.classList.remove('selected'));
         }
     },
-    
+
     async set(pref, value) {
         this.loaded[pref] = value;
         await this.save();
         await this.apply();
     },
-    
+
     async save() {
         await window.ndutil.writeJSON('prefs.json', this.loaded);
     },
@@ -79,11 +79,11 @@ window.prefs = {
         root.style.setProperty('--col2', this.loaded.th2);
         root.style.setProperty('--tc', this.loaded.tc);
     },
-    
+
     async load() {
         const saved = await window.ndutil.readJSON('prefs.json');
         this.loaded = saved || {};
-        
+
         let changed = false;
         for (let k in this.defaults) {
             if (!(k in this.loaded)) {
@@ -93,7 +93,7 @@ window.prefs = {
         }
         if (changed) await this.save();
     },
-    
+
     async pop() {
         const inputs = {
             "appUpdNoti": getEBD('prefNotiAppUpd'),
@@ -107,17 +107,17 @@ window.prefs = {
             "tc": getEBD('prefTxtCol'),
             "loadTime": getEBD('prefLoadTime')
         };
-        
+
         for (let key in inputs) {
             const input = inputs[key];
             if (!input) continue;
-            
+
             if (input.type === 'checkbox') {
                 input.checked = this.loaded[key] ?? this.defaults[key];
             } else {
                 input.value = this.loaded[key] ?? this.defaults[key];
             }
-            
+
             input.addEventListener('change', async () => {
                 if (input.type === 'checkbox') {
                     await this.set(key, input.checked);
@@ -135,18 +135,18 @@ window.prefs = {
         await this.apply();
         noti("Reset preferences");
     },
-    
+
     stg: {
         async exists() {
             return (await window.ndutil.fileExists('prefs.json'));
         },
-        
+
         async init() {
             prefs.loaded = { ...prefs.defaults };
             await prefs.save();
         }
     },
-    
+
     async init() {
         if (!(await this.stg.exists())) {
             await this.stg.init();
@@ -156,13 +156,13 @@ window.prefs = {
 
         await this.pop();
         await this.apply();
-        
+
         [
-            {btn: prefsNotiBtn, tab: 'prefsTabNoti'},
-            {btn: prefsPersonBtn, tab: 'prefsTabPerson'},
-            {btn: prefsAboutBtn, tab: 'prefsTabAbout'}
-        ].forEach(({btn, tab}) => btn.addEventListener('click', () => prefs.tab.open(tab)));
-        
+            { btn: prefsNotiBtn, tab: 'prefsTabNoti' },
+            { btn: prefsPersonBtn, tab: 'prefsTabPerson' },
+            { btn: prefsAboutBtn, tab: 'prefsTabAbout' }
+        ].forEach(({ btn, tab }) => btn.addEventListener('click', () => prefs.tab.open(tab)));
+
         prefsBtn.addEventListener('click', () => this.open());
         prefsCls.addEventListener('click', () => this.close());
         prefsReset.addEventListener('click', () => this.reset());

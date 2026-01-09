@@ -32,24 +32,22 @@
     text-align: center;
     border-radius: 6px;
     padding: 5px 8px;
-    z-index: 1000;
+    z-index: 5000;
     position: absolute;
     --tooltip-margin: 10px;
-    
+
     /* NEW: Nudge variables initialized to 0 */
     --tooltip-nudge-x: 0px;
     --tooltip-nudge-y: 0px;
-    
+
     top: var(--tooltip-top, auto);
     right: var(--tooltip-right, auto);
     bottom: var(--tooltip-bottom, auto);
     left: var(--tooltip-left, auto);
-    
+
     /* UPDATED: Dynamic transform using base offsets + JS nudges */
-    transform: translate(
-    calc(var(--tooltip-x-offset, 0%) + var(--tooltip-nudge-x)),
-    calc(var(--tooltip-y-offset, 0%) + var(--tooltip-nudge-y))
-    );
+    transform: translate(calc(var(--tooltip-x-offset, 0%) + var(--tooltip-nudge-x)),
+            calc(var(--tooltip-y-offset, 0%) + var(--tooltip-nudge-y)));
 }
 
 /* Show tooltip on hover */

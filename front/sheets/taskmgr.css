@@ -9,17 +9,17 @@
 	background: linear-gradient(145deg, #fafbfc, #f0f3f7);
 	border: none;
 
-	z-index: 1999;
+	z-index: 4000;
 
-	box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+	box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
 	transition: background 0.2s linear, transform 0.2s linear,
-				width 0.2s linear, height 0.2s linear,
-				top 0.2s linear, left 0.2s linear;
+		width 0.2s linear, height 0.2s linear,
+		top 0.2s linear, left 0.2s linear;
 }
 
 .task.resizable {
-    min-width: 400px;
-    min-height: 400px;
+	min-width: 400px;
+	min-height: 400px;
 
 	resize: both;
 
@@ -71,9 +71,9 @@
 .task .bar button:disabled {
 	background: var(--surface-hover);
 
-    color: var(--on-surface-disabled);
+	color: var(--on-surface-disabled);
 
-    cursor: not-allowed;
+	cursor: not-allowed;
 }
 
 .task .bar button:hover {
@@ -82,7 +82,7 @@
 
 .task .bar img {
 	float: left;
-	
+
 	height: calc(100% - 2px);
 	aspect-ratio: 1;
 

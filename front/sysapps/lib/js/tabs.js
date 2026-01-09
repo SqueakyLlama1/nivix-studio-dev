@@ -9,7 +9,7 @@ const tabs = {
         }
 
         if (window.jQuery) {
-            $(tabs).fadeOut(25, function() {
+            $(tabs).fadeOut(25, function () {
                 const $target = $(`#${id}`);
                 if (!$target.length) return;
 

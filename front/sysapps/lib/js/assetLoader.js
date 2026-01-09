@@ -1,6 +1,6 @@
 const assetLoader = {
     async load(type, path, doc = document) {
-        if (typeof(type) !== "string") throw new Error("Invalid type, type must be string");
+        if (typeof (type) !== "string") throw new Error("Invalid type, type must be string");
         const sanType = type.trim().toLowerCase();
 
         if (sanType !== "css" && sanType !== "js") {

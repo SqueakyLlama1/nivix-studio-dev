@@ -27,7 +27,7 @@ window.convert = {
                         return;
                     }
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(`[STUDIO - Convert] Failed to run: ${e}`);
                 return;
             }

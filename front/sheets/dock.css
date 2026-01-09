@@ -13,7 +13,7 @@
 	overflow-x: auto;
 	overflow-y: hidden;
 	
-	z-index: 8000;
+	z-index: 3000;
 	transition: 0.5s bottom ease-out;
 }
 
