@@ -19,18 +19,11 @@
 
 .task.resizable {
     min-width: 400px;
-    min-height: calc(400px + 2.1em);
-    max-width: 100vw;
-    max-height: calc(100vh - 2.1em);
+    min-height: 400px;
 
 	resize: both;
 
 	overflow: auto;
-}
-
-.task:not(.resizable) {
-    max-width: 100vw;
-    max-height: calc(100vh - 2.1em);
 }
 
 .task .bar {

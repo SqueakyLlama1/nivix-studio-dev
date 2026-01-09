@@ -1,0 +1,1 @@
+const c = "#43a4eb", s = document.documentElement.style; s.setProperty('--surface', ColorLib.load(c).toHex()); s.setProperty('--surface-light', ColorLib.load(c).brightness(50).toHex()); s.setProperty('--surface2', ColorLib.load(c).brightness(-50).toHex()); s.setProperty('--surface-hover', ColorLib.load(c).brightness(-75).toHex()); s.setProperty('--icon', 'invert(0)');

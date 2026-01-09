@@ -14,16 +14,22 @@ async function newTask(id) {
     
     document.body.style.cursor = "progress";
     
+    const deskpad = getEBD('deskpad');
+    if (!deskpad) {
+        document.body.style.cursor = "auto";
+        return;
+    }
+    
     const sysIndexPath = [id, 'index.html'];
     const userIndexPath = ['apps', id, 'index.html'];
     
-    let sysExists = false, userExists = false;
+    let sysExists = false;
+    let userExists = false;
+    
     try {
         sysExists = await window.ndutil.fileExists(sysIndexPath, 'sysapps');
         userExists = await window.ndutil.fileExists(userIndexPath);
-    } catch (err) {
-        console.error('Error checking file existence:', err);
-    }
+    } catch {}
     
     if (!sysExists && !userExists) {
         sendCriticalFailure(`Requested app "${id}" could not be found (index.html missing)`);
@@ -36,8 +42,8 @@ async function newTask(id) {
     let pkg = {};
     try {
         pkg = await window.ndutil.readJSON([...basePath, 'pkg.json'], isSys ? 'sysapps' : undefined);
-        if (!pkg || !pkg.version) throw new Error('Missing version field');
-        // fill optional defaults
+        if (!pkg || !pkg.version) throw null;
+        
         pkg.window = pkg.window || {};
         pkg.lib = pkg.lib || {};
         pkg.displayName = pkg.displayName || pretty(id);
@@ -45,35 +51,40 @@ async function newTask(id) {
         pkg.window["titlebar-blocks"] = pkg.window["titlebar-blocks"] || [];
         pkg.lib.css = pkg.lib.css || [];
         pkg.lib.js = pkg.lib.js || [];
-    } catch (err) {
-        sendCriticalFailure(`App package file not found or invalid for "${id}"`, err);
+        pkg.darkIcon = pkg.darkIcon || "none";
+    } catch {
+        sendCriticalFailure(`App package file not found or invalid for "${id}"`);
         return;
     }
-    
-    const dockHeight = 2.1 * parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const minAppHeight = 400 + dockHeight;
-    const maxAppHeight = window.innerHeight - dockHeight;
-    const titleBarHeight = 1.3 * parseFloat(getComputedStyle(document.documentElement).fontSize);
-    
-    let width = pkg.window.width ? Math.min(Math.max(pkg.window.width, 400), window.innerWidth) : 400;
-    let height = pkg.window.height ? Math.min(Math.max(pkg.window.height, minAppHeight), maxAppHeight) : minAppHeight;
-    const resizable = pkg.window.resizable;
-    const titlebarBlocks = pkg.window["titlebar-blocks"];
-    const cssLibs = pkg.lib.css;
-    const jsLibs = pkg.lib.js;
-    const exePath = pkg.executable
-    ? (isSys ? `sysapps/${id}/${pkg.executable}` : `dynamic/apps/${id}/${pkg.executable}`)
-    : null;
     
     processAppMeta[id] = pkg;
     
+    const minWidth = Math.max(400, pkg.window.minWidth || 400);
+    const minHeight = Math.max(400, pkg.window.minHeight || 400);
+    
+    const width = pkg.window.width || minWidth;
+    const height = pkg.window.height || minHeight;
+    
     let taskEl;
     try {
-        taskEl = $('<div>', { class: 'task', id: `task-${id}` }).css({ width: width + 'px', height: height + 'px' });
-    } catch (err) {
-        sendCriticalFailure(`Failed to create task element for "${id}"`, err);
+        taskEl = $('<div>', {
+            class: 'task',
+            id: `task-${id}`
+        }).css({
+            width: width + 'px',
+            height: height + 'px',
+            minWidth: minWidth + 'px',
+            minHeight: minHeight + 'px',
+            left: '0px',
+            top: '0px',
+            position: 'absolute'
+        });
+    } catch {
+        sendCriticalFailure(`Failed to create task element for "${id}"`);
         return;
     }
+    
+    if (pkg.window.resizable) taskEl.addClass('resizable');
     
     let appImg = 'img/app.png';
     try {
@@ -82,11 +93,7 @@ async function newTask(id) {
         } else if (await window.ndutil.fileExists(isSys ? [id, 'favicon.png'] : ['apps', id, 'favicon.png'], isSys ? 'sysapps' : undefined)) {
             appImg = isSys ? `sysapps/${id}/favicon.png` : `dynamic/apps/${id}/favicon.png`;
         }
-    } catch (err) {
-        console.warn('Failed to find app image. Using default.', err);
-    }
-    
-    if (resizable) taskEl.addClass('resizable');
+    } catch {}
     
     const barEl = $('<div>', { class: 'bar' });
     const labelEl = $('<span>').text(pkg.displayName);
@@ -95,7 +102,7 @@ async function newTask(id) {
     const exitBtn = $('<button>').text('X').on('click', () => endTask(id));
     const fullscreenBtn = $('<button>')
     .text('❐')
-    .prop('disabled', !resizable || titlebarBlocks.includes('fullscreen'))
+    .prop('disabled', !pkg.window.resizable || pkg.window["titlebar-blocks"].includes('fullscreen'))
     .on('click', () => toggleFullscreen(id));
     const minBtn = $('<button>').text('－').on('click', () => minTask(id));
     const refreshBtn = $('<button>').text('⭮').on('click', () => refTask(id));
@@ -104,16 +111,10 @@ async function newTask(id) {
     taskEl.append(barEl);
     
     const iframeSrc = isSys ? `sysapps/${id}/index.html` : `dynamic/apps/${id}/index.html`;
+    const iframeEl = $('<iframe>', { src: iframeSrc, id: `task-${id}-iframe` });
     
-    let iframeEl;
-    try {
-        iframeEl = $('<iframe>', { src: iframeSrc, id: `task-${id}-iframe` });
-        taskEl.append(iframeEl);
-        $('body').append(taskEl);
-    } catch (err) {
-        sendCriticalFailure(`Failed to append main iframe for "${id}"`, err);
-        return;
-    }
+    taskEl.append(iframeEl);
+    $(deskpad).append(taskEl);
     
     processes[id] = { active: true };
     bringToFront(id);
@@ -124,10 +125,7 @@ async function newTask(id) {
     
     taskEl.css({ opacity: 0, transform: 'scale(0.9)' }).show().animate(
         { opacity: 1 },
-        {
-            duration: 75,
-            step(now) { $(this).css('transform', `scale(${0.9 + 0.1 * now})`); }
-        }
+        { duration: 75, step(now) { taskEl.css('transform', `scale(${0.9 + 0.1 * now})`); } }
     );
     
     const taskDiv = taskEl[0];
@@ -135,192 +133,191 @@ async function newTask(id) {
     const iframe = iframeEl[0];
     
     Object.assign(taskDiv.dataset, {
-        prevLeft: taskDiv.style.left || '0px',
-        prevTop: taskDiv.style.top || '0px',
-        prevWidth: taskDiv.style.width || width + 'px',
-        prevHeight: taskDiv.style.height || height + 'px',
+        prevLeft: '0px',
+        prevTop: '0px',
+        prevWidth: width + 'px',
+        prevHeight: height + 'px',
         fullscreen: 'false'
     });
     
     let savedTransition = taskDiv.style.transition;
     
-    taskDiv.addEventListener('mousedown', () => bringToFront(id));
-    iframe.addEventListener('mousedown', () => bringToFront(id));
-    
-    // Dragging setup
-    let offsetX = 0, offsetY = 0, isDragging = false, dragInterval = null;
-    window.mouseX = 0;
-    window.mouseY = 0;
-    
-    document.addEventListener('pointermove', e => {
-        window.mouseX = e.clientX;
-        window.mouseY = e.clientY;
-    });
-    
     const dragShield = document.createElement('div');
     Object.assign(dragShield.style, {
-        position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
-        cursor: 'move', zIndex: '999999', pointerEvents: 'auto', background: 'transparent', display: 'none'
+        position: 'fixed',
+        inset: '0',
+        zIndex: '999999',
+        cursor: 'move',
+        pointerEvents: 'auto',
+        background: 'transparent',
+        display: 'none'
     });
     document.body.appendChild(dragShield);
     
-    function startDrag(e) {
-        try {
-            const rect = taskDiv.getBoundingClientRect();
-            offsetX = e.clientX - rect.left;
-            offsetY = e.clientY - rect.top;
-            isDragging = true;
-            taskDiv.style.transition = 'none';
-            
-            if (taskDiv.dataset.fullscreen === 'true') return;
-            
-            bringToFront(id);
-            dragShield.style.display = 'block';
-            
-            dragInterval = setInterval(() => {
-                if (!isDragging) return;
-                
-                let newLeft = window.mouseX - offsetX;
-                let newTop = window.mouseY - offsetY;
-                
-                newLeft = Math.min(Math.max(newLeft, -taskDiv.offsetWidth + 50), window.innerWidth - 50);
-                newTop = Math.min(Math.max(newTop, 0), window.innerHeight - parseFloat(titleBarHeight) - parseFloat(dockHeight));
-                
-                taskDiv.style.left = `${newLeft}px`;
-                taskDiv.style.top = `${newTop}px`;
-            }, 16);
-        } catch (err) { console.error('Drag error:', err); }
-    }
     
-    function stopDrag() {
-        try {
+    taskDiv.addEventListener('mousedown', () => bringToFront(id));
+    iframe.addEventListener('mousedown', () => bringToFront(id));
+    
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDragging = false;
+    
+    function startDrag(e) {
+        if (taskDiv.dataset.fullscreen === 'true') return;
+        
+        const taskRect = taskDiv.getBoundingClientRect();
+        const padRect = deskpad.getBoundingClientRect();
+        const barRect = barDiv.getBoundingClientRect();
+        
+        offsetX = e.clientX - taskRect.left;
+        offsetY = e.clientY - taskRect.top;
+        
+        isDragging = true;
+        taskDiv.style.transition = 'none';
+        dragShield.style.display = 'block';
+        bringToFront(id);
+        
+        function move(ev) {
             if (!isDragging) return;
+            
+            let newLeft = ev.clientX - padRect.left - offsetX;
+            let newTop = ev.clientY - padRect.top - offsetY;
+            
+            const barHeight = barRect.height;
+            
+            const minLeft = -taskRect.width + 40;
+            const maxLeft = padRect.width - 40;
+            
+            const minTop = 0;
+            const maxTop = padRect.height - barHeight;
+            
+            if (newLeft < minLeft) newLeft = minLeft;
+            if (newLeft > maxLeft) newLeft = maxLeft;
+            if (newTop < minTop) newTop = minTop;
+            if (newTop > maxTop) newTop = maxTop;
+            
+            taskDiv.style.left = newLeft + 'px';
+            taskDiv.style.top = newTop + 'px';
+        }
+        
+        function up() {
             isDragging = false;
             taskDiv.style.transition = savedTransition || '';
             dragShield.style.display = 'none';
-            clearInterval(dragInterval);
-            dragInterval = null;
-        } catch (err) { console.error('Stop drag error:', err); }
+            document.removeEventListener('pointermove', move);
+            document.removeEventListener('pointerup', up);
+        }
+        
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerup', up);
     }
     
-    // Pointer down for drag initiation
+    
     barDiv.addEventListener('pointerdown', e => {
         if (e.target.closest('button')) return;
-        
-        const startX = e.clientX;
-        const startY = e.clientY;
-        let moved = false;
-        
-        function onMove(ev) {
-            try {
-                const dx = ev.clientX - startX;
-                const dy = ev.clientY - startY;
-                if (!moved && Math.sqrt(dx * dx + dy * dy) > 5) {
-                    moved = true;
-                    startDrag(e);
-                }
-            } catch (err) { console.error('Drag move error:', err); }
-        }
-        
-        function onUp() {
-            document.removeEventListener('pointermove', onMove);
-            document.removeEventListener('pointerup', onUp);
-            if (moved) stopDrag();
-        }
-        
-        document.addEventListener('pointermove', onMove);
-        document.addEventListener('pointerup', onUp);
+        startDrag(e);
     });
     
-    dragShield.addEventListener('pointerup', stopDrag);
-    
-    // Resizing logic
     taskDiv.addEventListener('mousedown', e => {
-        try {
-            if (!resizable) return;
-            
-            const rect = taskDiv.getBoundingClientRect();
-            const margin = 10;
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            // Start resizing only if cursor near bottom-right corner
-            if (x > rect.width - margin || y > rect.height - margin) {
-                taskDiv.style.transition = 'none';
-            }
-        } catch (err) { console.error('Resize start error:', err); }
+        if (!pkg.window.resizable) return;
+        const rect = taskDiv.getBoundingClientRect();
+        if (e.clientX > rect.right - 10 || e.clientY > rect.bottom - 10) {
+            taskDiv.style.transition = 'none';
+        }
     });
     
-    // Restore transition after mouseup
     document.addEventListener('mouseup', () => {
-        try {
-            if (taskDiv.style.transition === 'none') {
-                taskDiv.style.transition =
-                savedTransition || 'background 0.2s ease, transform 0.2s ease, width 0.2s ease, height 0.2s ease, top 0.2s ease, left 0.2s ease';
-            }
-        } catch (err) { console.error('Mouseup transition restore error:', err); }
+        if (taskDiv.style.transition === 'none') {
+            taskDiv.style.transition = savedTransition || '';
+        }
     });
     
     iframe.addEventListener('load', async () => {
-        try {
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-            
-            for (const cssFile of cssLibs) {
-                try {
-                    if (await window.ndutil.fileExists(['lib', 'css', cssFile + '.css'], 'sysapps')) {
-                        await assetLoader.load('css', `${studio.bind}/front/sysapps/lib/css/${cssFile}.css`, doc);
-                    }
-                } catch (err) { console.warn(`Failed to load CSS ${cssFile}`, err); }
-            }
-            
-            for (const jsFile of jsLibs) {
-                try {
-                    if (await window.ndutil.fileExists(['lib', 'js', jsFile + '.js'], 'sysapps')) {
-                        await assetLoader.load('js', `${studio.bind}/front/sysapps/lib/js/${jsFile}.js`, doc);
-                    }
-                } catch (err) { console.warn(`Failed to load JS ${jsFile}`, err); }
-            }
-            
-            if (exePath) {
-                try { await assetLoader.load('js', `/front/${exePath}`, doc); }
-                catch (err) { console.warn(`Failed to load executable ${exePath}`, err); }
-            }
-        } catch (err) { console.error('Iframe load error:', err); }
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        
+        for (const cssFile of pkg.lib.css) {
+            try {
+                if (await window.ndutil.fileExists(['lib', 'css', cssFile + '.css'], 'sysapps')) {
+                    await assetLoader.load('css', `${studio.bind}/front/sysapps/lib/css/${cssFile}.css`, doc);
+                }
+            } catch {}
+        }
+        
+        for (const jsFile of pkg.lib.js) {
+            try {
+                if (await window.ndutil.fileExists(['lib', 'js', jsFile + '.js'], 'sysapps')) {
+                    await assetLoader.load('js', `${studio.bind}/front/sysapps/lib/js/${jsFile}.js`, doc);
+                }
+            } catch {}
+        }
+        
+        if (pkg.executable) {
+            const exePath = isSys
+            ? `sysapps/${id}/${pkg.executable}`
+            : `dynamic/apps/${id}/${pkg.executable}`;
+            try { await assetLoader.load('js', `/front/${exePath}`, doc); } catch {}
+        }
     });
     
     document.body.style.cursor = "auto";
     
-    function sendCriticalFailure(message, err) {
-        console.error(`Critical failure in app "${id}": ${message}`, err);
+    function sendCriticalFailure(message) {
+        console.error(message);
         noti(`App "${id}" crashed: ${message}`);
         endTask(id);
     }
 }
 
-window.addEventListener('resize', () => {
-    const dockHeight = 2.1 * parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const minHeight = 400 + dockHeight;
-    const maxHeight = window.innerHeight - dockHeight;
-    const titleBarHeight = 1.3 * parseFloat(getComputedStyle(document.documentElement).fontSize);
-    
+function emergencyWindowReset(e) {
+    if (
+        !e.ctrlKey ||
+        !e.altKey ||
+        !e.shiftKey ||
+        e.key.toLowerCase() !== 'w'
+    ) return;
+
+    e.preventDefault();
+
+    const deskpad = getEBD('deskpad');
+    if (!deskpad) return;
+
     for (const id in processes) {
         const taskDiv = getEBD(`task-${id}`);
+        const pkg = processAppMeta[id];
+
         if (!taskDiv) continue;
-        
-        const width = Math.min(parseInt(taskDiv.style.width) || 400, window.innerWidth);
-        const height = Math.min(Math.max(parseInt(taskDiv.style.height) || minHeight, minHeight), maxHeight);
-        
+        if (taskDiv.style.display === 'none') continue;
+
+        if (pkg?.window?.resizable === false) {
+            taskDiv.style.left = '0px';
+            taskDiv.style.top = '0px';
+            continue;
+        }
+
+        if (taskDiv.dataset.fullscreen === 'true') {
+            taskDiv.dataset.fullscreen = 'false';
+            taskDiv.classList.add('resizable');
+        }
+
+        taskDiv.style.transition = 'none';
+
         taskDiv.style.left = '0px';
         taskDiv.style.top = '0px';
-        taskDiv.style.width = width + 'px';
-        taskDiv.style.height = height + 'px';
-        
+        taskDiv.style.width = '400px';
+        taskDiv.style.height = '400px';
+
         taskDiv.dataset.prevLeft = '0px';
         taskDiv.dataset.prevTop = '0px';
-        taskDiv.dataset.prevWidth = width + 'px';
-        taskDiv.dataset.prevHeight = height + 'px';
+        taskDiv.dataset.prevWidth = '400px';
+        taskDiv.dataset.prevHeight = '400px';
+
+        requestAnimationFrame(() => {
+            taskDiv.style.transition = '';
+        });
     }
-});
+}
+
+window.addEventListener('keydown', emergencyWindowReset, true);
 
 function minTask(id) {
     if (!processes[id]) return;
@@ -330,10 +327,7 @@ function minTask(id) {
     if (dockEl) dockEl.classList.remove("active");
     
     const el = $(`#task-${id}`);
-    el.animate(
-        { opacity: 0 },
-        { duration: 75, complete: () => el.hide() }
-    );
+    el.animate({ opacity: 0 }, { duration: 75, complete: () => el.hide() });
 }
 
 function resTask(id) {
@@ -345,17 +339,12 @@ function resTask(id) {
     if (dockEl) dockEl.classList.add("active");
     
     const el = $(`#task-${id}`);
-    el.show().css({ opacity: 0 }).animate(
-        { opacity: 1 },
-        { duration: 75 }
-    );
+    el.show().css({ opacity: 0 }).animate({ opacity: 1 }, { duration: 75 });
 }
-
 
 function refTask(id) {
     const el = getEBD(`task-${id}-iframe`);
     if (el) el.contentWindow.location.reload();
-    else noti(`Failed to refresh ${pretty(id)}`);
 }
 
 function endTask(id) {
@@ -364,17 +353,13 @@ function endTask(id) {
     delete processAppMeta[id];
     dock.icon.remove(id);
     
-    
-    el.animate(
-        { opacity: 0, top: '-=-200px' },
-        {
-            duration: 75,
-            complete() {
-                const element = getEBD(`task-${id}`);
-                if (element) element.remove();
-            }
+    el.animate({ opacity: 0 }, {
+        duration: 75,
+        complete() {
+            const element = getEBD(`task-${id}`);
+            if (element) element.remove();
         }
-    );
+    });
 }
 
 function toggleFullscreen(id) {
@@ -383,23 +368,21 @@ function toggleFullscreen(id) {
     if (!taskDiv) return;
     
     const isFull = taskDiv.dataset.fullscreen === 'true';
-    const canResize = pkg.window?.resizable || false;
     
     if (!isFull) {
-        taskDiv.dataset.prevLeft = taskDiv.style.left || '0px';
-        taskDiv.dataset.prevTop = taskDiv.style.top || '0px';
-        taskDiv.dataset.prevWidth = taskDiv.style.width || taskDiv.offsetWidth + 'px';
-        taskDiv.dataset.prevHeight = taskDiv.style.height || taskDiv.offsetHeight + 'px';
+        taskDiv.dataset.prevLeft = taskDiv.style.left;
+        taskDiv.dataset.prevTop = taskDiv.style.top;
+        taskDiv.dataset.prevWidth = taskDiv.style.width;
+        taskDiv.dataset.prevHeight = taskDiv.style.height;
         
         taskDiv.classList.remove('resizable');
-        
         taskDiv.style.left = '0px';
         taskDiv.style.top = '0px';
-        taskDiv.style.width = '100vw';
-        taskDiv.style.height = 'calc(100vh - 2.1em)';
+        taskDiv.style.width = '100%';
+        taskDiv.style.height = '100%';
         taskDiv.dataset.fullscreen = 'true';
     } else {
-        if (canResize) taskDiv.classList.add('resizable');
+        if (pkg.window.resizable) taskDiv.classList.add('resizable');
         taskDiv.style.left = taskDiv.dataset.prevLeft;
         taskDiv.style.top = taskDiv.dataset.prevTop;
         taskDiv.style.width = taskDiv.dataset.prevWidth;
@@ -407,3 +390,22 @@ function toggleFullscreen(id) {
         taskDiv.dataset.fullscreen = 'false';
     }
 }
+
+document.addEventListener('keydown', e => {
+    if (!(e.ctrlKey && e.shiftKey && e.altKey && e.code === 'KeyW')) return;
+    
+    for (const id in processes) {
+        const taskDiv = getEBD(`task-${id}`);
+        const meta = processAppMeta[id];
+        if (!taskDiv) continue;
+        
+        taskDiv.dataset.fullscreen = 'false';
+        taskDiv.style.left = '0px';
+        taskDiv.style.top = '0px';
+        
+        if (meta.window.resizable !== false) {
+            taskDiv.style.width = '400px';
+            taskDiv.style.height = '400px';
+        }
+    }
+});
