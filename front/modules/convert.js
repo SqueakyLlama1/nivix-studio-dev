@@ -17,10 +17,6 @@ window.convert = {
                             await window.ndutil.copyFile("appdata", "appdata", "021root");
                             console.log("[STUDIO - Convert] 0.3.0 Copied Appdata to new sandbox");
                         }
-                        if (await window.ndutil.fileExists("prefs.json")) {
-                            await window.ndutil.copyFile("prefs.json", "prefs.old.json", "021root");
-                            console.log("[STUDIO - Convert] 0.3.0 Copied Preferences to new sandbox");
-                        }
                         await window.ndutil.writeFile("converted", "Converted sandbox from 0.2.1 to 0.3.0, now in ${INSTDIR}/front/dynamic", "021root");
                     } catch {
                         console.error("[STUDIO - Convert] Failed to move 0.2.1 sandbox to 0.3.0");

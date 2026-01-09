@@ -5,6 +5,9 @@
 	flex-wrap: wrap;
 	flex-direction: column;
 
+	width: 100%;
+	height: calc(100vh - 2.4em);
+
 	background: url('../dynamic/appdata/settings/background/1.png'); /* Make dynamic before release */
 	background-size: cover;
 	background-position: center;

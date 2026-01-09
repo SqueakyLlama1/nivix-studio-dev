@@ -1,0 +1,6 @@
+App Img: 1
+App Badge: 2
+Dock: 3000
+Task: 4000
+Load: 5000
+Notification: 6000

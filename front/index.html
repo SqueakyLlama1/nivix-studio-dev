@@ -8,13 +8,11 @@
     <link rel="icon" type="image/ico" href="favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="sheets/index.css">
-    <link rel="stylesheet" type="text/css" href="sysapps/lib/css/tabs.css">
     <link rel="stylesheet" type="text/css" href="sysapps/lib/css/tooltips.css">
     <link rel="stylesheet" type="text/css" href="sheets/notification.css">
     <link rel="stylesheet" type="text/css" href="sheets/dock.css">
     <link rel="stylesheet" type="text/css" href="sheets/taskmgr.css">
     <link rel="stylesheet" type="text/css" href="sheets/deskpad.css">
-    <link rel="stylesheet" type="text/css" href="sheets/popup.css">
 </head>
 
 <body>
@@ -25,7 +23,7 @@
                 Click or tap this notification to dismiss it
             </span>
             <span id="noti-default-icon-error"><span>!</span></span>
-            <span id="noti-default-icon-warning"><span>⚠</span></span>
+            <span id="noti-default-icon-warning"><span>!</span></span>
             <span id="noti-default-icon-info"><span>i</span></span>
             <span id="noti-default-message">Test</span>
         </div>
@@ -49,106 +47,38 @@
     </div>
 
     <!-- Loading Screen -->
-    <div class="tab" id="load">
+    <div id="load">
         <div class="middle">
             <h3 class="title">Nivix Studio</h3>
             <div class="loader"></div>
             <div class="footer">
                 <span id="load-footer-version">vX.X.X</span>
-                <br>
             </div>
         </div>
     </div>
 
     <!-- Dashboard -->
-    <div class="tab" id="deskpad">
-
-        <div id="prefsContainer">
-            <div class="middle">
-                <div class="prefsMain">
-                    <div class="prefsOptions">
-                        <button class="prefsBtn" id="prefsNoti">Notifications</button>
-                        <button class="prefsBtn" id="prefsPerson">Personalization</button>
-                        <button class="prefsBtn" id="prefsAbout">About</button>
-                        <button id="prefsCls" class="cls">X</button>
-                    </div>
-                    <div class="prefsTab" id="prefsTabNoti">
-                        <center>
-                            <h3>Notifications</h3>
-                            <p>Choose what you get notified about</p>
-                            <label for="prefNotiAppUpd">App Updates Available: </label>
-                            <input type="checkbox" id="prefNotiAppUpd"><br>
-                            <label for="prefNotiStdoUpd">Studio Update Available: </label>
-                            <input type="checkbox" id="prefNotiStdoUpd"><br>
-                            <label for="prefNotiTskEnd">Task Ended: </label>
-                            <input type="checkbox" id="prefNotiTskEnd"><br>
-                            <label for="prefNotiAppInst">App Installed: </label>
-                            <input type="checkbox" id="prefNotiAppInst"><br>
-                            <label for="prefNotiAppUnst">App Uninstalled: </label>
-                            <input type="checkbox" id="prefNotiAppUnst">
-                        </center>
-                    </div>
-                    <div class="prefsTab" id="prefsTabPerson">
-                        <center>
-                            <h3>Personalization</h3>
-                            <label for="prefCol1">Theme Color 1: </label>
-                            <input type="color" id="prefCol1"><br>
-                            <label for="prefCol2">Theme Color 2: </label>
-                            <input type="color" id="prefCol2"><br>
-                            <label for="prefTxtCol">Text Color: </label>
-                            <input type="color" id="prefTxtCol"><br>
-                            <label for="prefLoadTime">Studio Load Delay (in milleseconds): </label><br>
-                            <input type="number" id="prefLoadTime" min="0">
-                        </center>
-                    </div>
-                    <div class="prefsTab" id="prefsTabAbout">
-                        <center>
-                            <br>
-                            <button id="prefsReset">Reset Studio Preferences</button><br><br>
-                            <span>Found a bug?
-                                <a href="mailto:owner@nivixtech.com">Contact Us</a><br>
-                                (If this link didn't work, our email is <code>owner@nivixtech.com</code>)<br>
-                                If you hear nothing back, please contact <code>bone.christian.c@outlook.com</code>
-                                instead.
-                            </span>
-                            <br><br>
-                            <h3>About & License</h3>
-                            <p>License: Apache 2.0</p>
-
-                            <p><strong>Nivix Studio:</strong></p>
-                            <p>&copy; 2026 Nivix Technology | Christian Bone</p>
-
-                            <p><strong>Libraries used in Studio:</strong></p>
-                            <ul>
-                                <li>Utility library: jQuery v3.7.1</li>
-                            </ul>
-                        </center>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="deskpad"></div>
 
     <!-- Dock -->
 
     <div id="dock">
         <div class="left">
-            <button id="dock-taskMgrBtn"><span>Task Manager</span><img src="sysapps/taskmgr/taskmgr.png"></button>
-            <button id="prefsButton"><span>Settings</span><img src="img/prefs.png"></button>
+            <button id="dock-taskMgrBtn"><span>Task Manager</span></button>
+            <button id="prefsButton"><span>Settings</span></button>
         </div>
         <div id="dockContent"></div>
         <div class="right">
-            <button id="dock-restartBtn"><span>Reload</span><img src="img/rst.png"></button>
-            <button id="dock-exitBtn"><span>Exit</span><img src="img/ext.png"></button>
-            <button id="timeDisplay">TI:ME AM</button>
-            <button id="dateDisplay">MMM DD, YYYY</button>
+            <button id="dock-fullscreenBtn"><span>Fullscreen</span></button>
+            <button id="dock-notificationBtn"><span>Notifications</span></button>
+            <button id="dock-restartBtn"><span>Reload</span></button>
+            <button id="dock-exitBtn"><span>Exit</span></button>
         </div>
     </div>
 
     <!-- Scripts -->
     <script defer src="sysapps/lib/js/jQuery.js"></script>
     <script defer src="sysapps/lib/js/easejs.js"></script>
-    <script defer src="sysapps/lib/js/tabs.js"></script>
     <script defer src="sysapps/lib/js/assetLoader.js"></script>
     <script defer src="sysapps/lib/js/tooltips.js"></script>
     <script defer src="sysapps/lib/js/colorlib.js"></script>
@@ -156,7 +86,6 @@
     <script defer src="modules/ndutil.js"></script>
     <script defer src="modules/util.js"></script>
     <script defer src="modules/noti.js"></script>
-    <script defer src="modules/ticks.js"></script>
 
     <script defer src="modules/prefs.js"></script>
 

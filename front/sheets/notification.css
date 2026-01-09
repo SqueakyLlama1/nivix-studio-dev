@@ -11,7 +11,7 @@
     background: transparent;
     border: none;
     
-    z-index: 9000;
+    z-index: 6000;
     
     transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
@@ -75,12 +75,11 @@
 }
 
 #noti-default-icon-warning {
-    background: yellow;
+    background: orange;
 }
 
 #noti-default-icon-info {
     visibility: visible;
-
     background: #43a4eb;
 }
 
@@ -119,11 +118,12 @@
     bottom: 0;
     right: 0;
 
+    background: var(--surface);
+
     height: 30%;
 }
 
 /* TEMPORARY */
-
-#noti-progress, #noti-progress-collapsed {
+#noti-progress, #noti-default {
     display: none;
 }
