@@ -30,7 +30,7 @@
 	height: 1.3em;
 
 	background: var(--surface-light);
-	border-bottom: 1px solid var(--surface-hover);
+	border: none;
 
 	color: var(--on-surface);
 

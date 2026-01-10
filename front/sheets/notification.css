@@ -13,7 +13,11 @@
     
     z-index: 6000;
     
-    transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+#notiContainer.show {
+    bottom: 4px;
 }
 
 #noti-default, #noti-progress, #noti-progress-collapsed {
@@ -107,10 +111,6 @@
     transition: width 0.25s ease-out;
 }
 
-#notiContainer.show {
-    top: 20px;
-}
-
 /* Type: Progress Collapsed */
 
 #noti-progress-collapsed {
@@ -119,8 +119,33 @@
     right: 0;
 
     background: var(--surface);
+    opacity: 0.3;
 
-    height: 30%;
+    height: 20%;
+
+    transition: opacity 0.15s linear;
+
+    z-index: 6001;
+}
+
+#noti-progress-collapsed:hover {
+    opacity: 0.7;
+}
+
+#noti-progress-collapsed-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 50%;
+    height: 100%;
+
+    border: none;
+    border-radius: 3px;
+    
+    background: var(--accent);
+
+    transition: width 0.25s ease-out;
 }
 
 /* TEMPORARY */
