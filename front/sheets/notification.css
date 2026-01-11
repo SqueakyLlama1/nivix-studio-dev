@@ -149,6 +149,6 @@
 }
 
 /* TEMPORARY */
-#noti-progress, #noti-default {
+#noti-progress, #noti-default, #noti-progress-collapsed {
     display: none;
 }

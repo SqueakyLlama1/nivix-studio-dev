@@ -267,6 +267,59 @@ async function newTask(id) {
     }
 }
 
+window.addEventListener('resize', () => {
+    const dockHeight = 2.1 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const titleBarHeight = 1.3 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+    const maxWidth = window.innerWidth;
+    const maxHeight = window.innerHeight - dockHeight;
+
+    for (const id in processes) {
+        const taskDiv = getEBD(`task-${id}`);
+        if (!taskDiv) continue;
+
+        // Skip fullscreen windows — they are handled elsewhere
+        if (taskDiv.dataset.fullscreen === 'true') continue;
+
+        const rect = taskDiv.getBoundingClientRect();
+
+        const minWidth = parseInt(taskDiv.style.minWidth) || 400;
+        const minHeight = parseInt(taskDiv.style.minHeight) || 400;
+
+        let newWidth = rect.width;
+        let newHeight = rect.height;
+        let newLeft = rect.left;
+        let newTop = rect.top;
+
+        // Clamp size
+        if (newWidth > maxWidth) newWidth = maxWidth;
+        if (newHeight > maxHeight) newHeight = maxHeight;
+        if (newWidth < minWidth) newWidth = minWidth;
+        if (newHeight < minHeight) newHeight = minHeight;
+
+        // Clamp position
+        if (newLeft + newWidth > maxWidth) newLeft = maxWidth - newWidth;
+        if (newLeft < -newWidth + 40) newLeft = -newWidth + 40;
+
+        if (newTop + titleBarHeight > maxHeight) {
+            newTop = maxHeight - titleBarHeight;
+        }
+        if (newTop < 0) newTop = 0;
+
+        // Apply only if needed
+        taskDiv.style.width = newWidth + 'px';
+        taskDiv.style.height = newHeight + 'px';
+        taskDiv.style.left = newLeft + 'px';
+        taskDiv.style.top = newTop + 'px';
+
+        // Persist last known non-fullscreen geometry
+        taskDiv.dataset.prevLeft = newLeft + 'px';
+        taskDiv.dataset.prevTop = newTop + 'px';
+        taskDiv.dataset.prevWidth = newWidth + 'px';
+        taskDiv.dataset.prevHeight = newHeight + 'px';
+    }
+});
+
 function emergencyWindowReset(e) {
     if (
         !e.ctrlKey ||
