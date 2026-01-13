@@ -1,12 +1,12 @@
 async function waitForFrontend() {
     const start = Date.now();
     const timeout = 15000;
-    const ip = await window.ndutil.getIP();
+    const ip = "127.0.0.1";
     while (Date.now() - start < timeout) {
         try {
             const res = await fetch(`http://${ip}:58000/ready`);
             if (res.ok) {
-                window.location.href = `http://${ip}:58000/front/index.html`;
+                window.location.href = `http://${ip}:58000/front/index.html?ts=${Date.now()}`;
                 return;
             }
         } catch { }

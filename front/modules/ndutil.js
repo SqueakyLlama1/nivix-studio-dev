@@ -132,9 +132,5 @@ window.ndutil = {
         }
         const res = await sendCommand('pathjoin', { path: arr });
         return res.result;
-    },
-
-    getIP: async () => {
-        return sendCommand('getIP');
     }
 };

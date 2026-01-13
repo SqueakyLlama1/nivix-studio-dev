@@ -243,20 +243,6 @@ function startBackendServer() {
                         return;
                     }
 
-                    case 'getIP': {
-                        const interfaces = os.networkInterfaces();
-                        for (const name of Object.keys(interfaces)) {
-                            for (const iface of interfaces[name]) {
-                                if (iface.family === 'IPv4' && !iface.internal) {
-                                    send(iface.address);
-                                    return;
-                                }
-                            }
-                        }
-                        send('127.0.0.1');
-                        return;
-                    }
-
                     default:
                         res.writeHead(400);
                         res.end('Invalid action');

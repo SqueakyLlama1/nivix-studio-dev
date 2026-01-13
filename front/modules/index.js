@@ -50,9 +50,6 @@ window.onload = async () => {
         await initFs();
         await convert.run();
         
-        const IP = await window.ndutil.getIP();
-        studio.bind = `http://${IP}:58000`;
-        
         const loadTime = prefs?.loaded?.loadTime ?? 100;
         try { await wait(loadTime); } catch { }
         

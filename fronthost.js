@@ -2,25 +2,12 @@
 
 import open, { openApp, apps } from 'open';
 import express from 'express';
-import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function getLocalIP() {
-    const interfaces = os.networkInterfaces();
-    for (const name of Object.keys(interfaces)) {
-        for (const iface of interfaces[name]) {
-            if (iface.family === 'IPv4' && !iface.internal) {
-                return iface.address;
-            }
-        }
-    }
-    return '127.0.0.1';
-}
-
-const localIP = getLocalIP();
+const localIP = "127.0.0.1";
 const app = express();
 const PORT = 58000;
 
