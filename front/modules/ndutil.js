@@ -23,42 +23,42 @@ window.ndutil = {
         }
     },
     
-    listDirectory: async (p, source) => {
+    listDirectory: async function (p, source) {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         const res = await this.sendCommand('list', { path: cp, source });
         return res.files || [];
     },
     
-    readFile: async (p, source) => {
+    readFile: async function(p, source) {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         const res = await this.sendCommand('readFile', { path: cp, source });
         return res.content;
     },
     
-    readJSON: async (p, source) => {
+    readJSON: async function(p, source) {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         const res = await this.sendCommand('readFile', { path: cp, source });
         return JSON.parse(res.content);
     },
     
-    readNDJSON: async (p, source) => {
+    readNDJSON: async function(p, source) {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         return this.sendCommand('readNDJSON', { path: cp, source });
     },
     
-    fileExists: async (p, source) => {
+    fileExists: async function(p, source) {
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         const res = await this.sendCommand('fileExists', { path: cp, source });
         return res.exists === 'true';
     },
     
-    writeFile: async (p, content, target = 'default') => {
+    writeFile: async function(p, content, target = 'default') {
         this.warnLegacy(target);
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         return this.sendCommand('write', { path: cp, content, target });
     },
     
-    writeJSON: async (p, content, target = 'default') => {
+    writeJSON: async function(p, content, target = 'default') {
         this.warnLegacy(target);
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         return this.sendCommand('write', {
@@ -68,19 +68,19 @@ window.ndutil = {
         });
     },
     
-    deleteFile: async (p, target = 'default') => {
+    deleteFile: async function(p, target = 'default') {
         this.warnLegacy(target);
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         return this.sendCommand('delete', { path: cp, target });
     },
     
-    createDirectory: async (p, target = 'default') => {
+    createDirectory: async function(p, target = 'default') {
         this.warnLegacy(target);
         const cp = Array.isArray(p) ? await window.ndutil.pathjoin(p) : p;
         return this.sendCommand('createDirectory', { path: cp, target });
     },
     
-    copyFile: async (src, dest, source, target = 'default') => {
+    copyFile: async function(src, dest, source, target = 'default') {
         this.warnLegacy(target);
         const cpSrc = Array.isArray(src) ? await window.ndutil.pathjoin(src) : src;
         const cpDest = Array.isArray(dest) ? await window.ndutil.pathjoin(dest) : dest;
@@ -92,7 +92,7 @@ window.ndutil = {
         });
     },
     
-    unzip: async (zipPath, dest, source, target = 'default') => {
+    unzip: async function(zipPath, dest, source, target = 'default') {
         this.warnLegacy(target);
         const cpZip = Array.isArray(zipPath) ? await window.ndutil.pathjoin(zipPath) : zipPath;
         const cpDest = Array.isArray(dest) ? await window.ndutil.pathjoin(dest) : dest;
@@ -104,7 +104,7 @@ window.ndutil = {
         });
     },
     
-    cacheFile: async (url) => {
+    cacheFile: async function(url) {
         if (typeof url !== 'string') {
             throw new Error('cacheFile expects a URL string');
         }
@@ -118,15 +118,15 @@ window.ndutil = {
         return { path: res.path, success: true };
     },
     
-    getUserDir: async () => {
+    getUserDir: async function() {
         return this.sendCommand('getUserDir');
     },
     
-    ping: async (url) => {
+    ping: async function(url) {
         return this.sendCommand('ping', { url });
     },
     
-    pathjoin: async (arr) => {
+    pathjoin: async function(arr) {
         if (!Array.isArray(arr)) {
             throw new Error('pathjoin expects an array');
         }
