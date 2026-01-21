@@ -1,0 +1,61 @@
+{
+  "name": "nivix-store",
+  "version": "0.1.0",
+  "description": "Basic Inventory Management App for Startup Businesses",
+  "license": "Apache-2.0",
+  "author": "Christian Bone, Nivix Technology",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --linux",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.nivix.store",
+    "productName": "Nivix Store",
+    "copyright": "Copyright © 2026 Christian Bone",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "favicon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "rpm",
+        "AppImage"
+      ],
+      "category": "Office",
+      "icon": "build/icons"
+    },
+    "deb": {
+      "priority": "optional"
+    },
+    "rpm": {
+      "fpm": [
+        "--rpm-os",
+        "linux"
+      ]
+    },
+    "files": [
+      "**/*",
+      "!dist/*"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "jquery": "^3.7.1"
+  }
+}
