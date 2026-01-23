@@ -1,0 +1,11 @@
+# Dependency directories
+node_modules/
+
+# Build outputs
+dist/
+
+# Executables and binary packages
+*.exe
+*.deb
+*.appimage
+*.rpm

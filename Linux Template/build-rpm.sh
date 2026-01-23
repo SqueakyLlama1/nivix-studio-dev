@@ -1,1 +1,0 @@
-fpm -s dir -t rpm   -n nivix-studio   -v 0.2.1   --prefix=/   --after-install=scripts/postinst.sh   --before-remove=scripts/prerm.sh   --depends zenity   --depends nodejs   -C build-root   opt usr
