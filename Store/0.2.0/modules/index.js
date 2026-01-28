@@ -7,12 +7,12 @@ const store = {
     async init() {
         const h = store.header;
         console.log(`${h}Running Store Version: ${meta.sessionVersion}`);
+        try { storetabs.load.setVersion(); } catch {}
         await files.init();
-        tabs.load.setVersion();
-        await wait(prefs.default.loadTime);
-        tabs.init.select_space.init();
+        try { await wait(prefs.default.loadTime); } catch {}
+        storetabs.init.select_space.init();
         await tabs.change('workspace');
     }
 };
 
-document.addEventListener('DOMContentLoaded', store.init);
+store.init()

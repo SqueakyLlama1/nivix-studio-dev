@@ -10,35 +10,35 @@
 	<div id="load" class="tab">
 		<div class="middle">
 			<img src="store.png" class="load-icon">
-			
+
 			<br>
-			
+
 			<div class="loader"></div>
 		</div>
 		<div class="footer">
-			<span id="load-footer-ver"></span>
+			<span id="load-footer-ver">vX.X.X</span>
 		</div>
 	</div>
 	<div id="select-space" class="tab">
 		<div class="middle">
 			<center>
 				<img src="assets/logo.png" class="select-space-logo">
-				
+
 				<br>
-				
+
 				<h3>Select a space or make a new one</h3>
-				<button class="tool-tip-button tip-right">i
-					<span class="tool-tip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
+				<button class="tooltip-button tip-right">i
+					<span class="tooltip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
 				</button>
-				
+
 				<br><br>
-				
+
 				<select id="select-space-option" selected="makeNew">
 					<option value="makeNew">Make a new space</option>
 				</select>
-				
+
 				<br><br>
-				
+
 				<button id="select-space-quit">Quit</button>
 				<button id="select-space-continue">Continue</button>
 			</center>
@@ -48,27 +48,27 @@
 		<div class="middle">
 			<center>
 				<img src="assets/tabs/create-space.png" class="create-space-image">
-				
+
 				<br>
-				
+
 				<h3>Create a Space</h3>
-				<button class="tool-tip-button tip-right">i
-					<span class="tool-tip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
+				<button class="tooltip-button tip-right">i
+					<span class="tooltip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
 				</button>
-				
+
 				<br><br>
-				
+
 				<label for="create-space-name">Space Name: </label>
 				<input type="text" id="create-space-name" oninput="safety.filterInput(this)" placeholder="eg. Home or Office" maxlength="20">
-				<button class="tool-tip-button tip-right">i
-					<span class="tool-tip">
+				<button class="tooltip-button tip-right">i
+					<span class="tooltip">
 						The space name can only include number, letters, spaces, and hyphens.<br>
 						The space name is limited to 20 characters long
 					</span>
 				</button>
-				
+
 				<br><br>
-				
+
 				<button id="create-space-back">Back</button>
 				<button id="create-space-create">Create</button>
 			</center>
@@ -130,13 +130,10 @@
 			</div>
 		</div>
 	</div>
-	<script defer src="libraries/jQuery.min.js"></script>
-	<script defer src="modules/easejs.js"></script>
 	<script defer src="modules/util.js"></script>
 	<script defer src="modules/filemgr.js"></script>
 	<script defer src="modules/safety.js"></script>
-	<script defer src="modules/tabs.js"></script>
 	<script defer src="modules/prefs.js"></script>
-	<script defer src="modules/index.js"></script>
+	<script defer src="modules/tabs.js"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
-const tabs = {
-    header: "[TABS] ",
+const storetabs = {
+    header: "[STORE TABS] ",
     load: {
         setVersion() {
             const vs = getEBD('load-footer-ver');
@@ -63,18 +63,6 @@ const tabs = {
                     location.reload();
                 });
             }
-        }
-    },
-    async change(id) {
-        const t = document.querySelectorAll('.tab');
-        if (window.jQuery) {
-            $(t).fadeOut(prefs.default.tSpeed).promise().done(function() {
-                $(`#${id}`).fadeIn(prefs.default.tSpeed);
-            });
-        } else {
-            t.forEach(tab => {
-                tab.style.display = (tab.id === id ? 'block' : 'none');
-            });
         }
     }
 };
