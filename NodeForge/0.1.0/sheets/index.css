@@ -1,0 +1,74 @@
+:root {
+    /* Brand Core */
+    --brand-color: #43a4eb;
+    --brand-light: #71aeda;
+    --brand-dark: #258dd8;
+    --accent-gold: #fff19f;
+    
+    /* Functional UI */
+    --bg-main: #f5f7fa;
+    --bg-card: #ffffff;
+    --text-main: #202124;
+    --text-muted: #666666;
+    --border-color: #eeeeee;
+    
+    /* Global Styles */
+    --radius: 12px;
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    --speed: 0.3s ease;
+}
+
+html { scroll-behavior: smooth; }
+
+head, body {
+    height: 100vh;
+    width: 100%;
+
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: 'Roboto', Helvetica, sans-serif;
+    line-height: 1.6;
+
+    background: var(--bg-main);
+    color: var(--text-main);
+
+    animation: fadeInPage 0.8s ease-out forwards;
+}
+
+/* Global Reset & Scrollbar */
+:focus { outline: none; border: 2px solid var(--brand-dark); }
+::-webkit-scrollbar { width: 7px; height: 5px; }
+::-webkit-scrollbar-track { background: #ccc; }
+::-webkit-scrollbar-thumb { background: var(--brand-light); }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-dark); }
+
+
+/* Layout Elements*/
+.middle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.footer {
+    width: 100%;
+    background: var(--brand-color);
+    border-radius: var(--radius) var(--radius) 0 0;
+    color: white;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Animations */
+@keyframes fadeInPage {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
