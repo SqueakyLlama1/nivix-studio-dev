@@ -1,9 +1,16 @@
-const { app, BrowserWindow, dialog } = require('electron');
-const path = require('path');
-const { autoUpdater } = require('electron-updater');
+import { app, BrowserWindow, dialog } from 'electron'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { createRequire } from 'module'
 
-let mainWindow;
-let skippedVersion = null;
+const require = createRequire(import.meta.url)
+const { autoUpdater } = require('electron-updater')
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+let mainWindow
+let skippedVersion = null
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -16,58 +23,53 @@ function createWindow() {
             contextIsolation: false,
             nodeIntegration: true
         }
-    });
+    })
 
-    mainWindow.loadFile('index.html');
+    mainWindow.loadFile('index.html')
 
-    // Check for updates when the window is ready
     mainWindow.once('ready-to-show', () => {
-        checkForUpdates();
-    });
+        checkForUpdates()
+    })
 }
 
-// Close app when all windows are closed (Windows/Linux)
 app.on('window-all-closed', () => {
-    app.quit();
-});
+    app.quit()
+})
 
-app.whenReady().then(createWindow);
+app.whenReady().then(createWindow)
 
 function checkForUpdates() {
-    autoUpdater.autoDownload = false; // don't auto-download
+    autoUpdater.autoDownload = false
 
-    // Update is available
     autoUpdater.on('update-available', async (info) => {
-        if (skippedVersion === info.version) return; // user skipped this version
+        if (skippedVersion === info.version) return
 
         const { response } = await dialog.showMessageBox(mainWindow, {
             type: 'info',
             title: 'Update Available',
             message: `Version ${info.version} is available. Do you want to download and install it now?`,
             buttons: ['Yes', 'No', 'Skip this version']
-        });
+        })
 
-        if (response === 0) { // Yes
-            autoUpdater.downloadUpdate();
-        } else if (response === 2) { // Skip
-            skippedVersion = info.version;
+        if (response === 0) {
+            autoUpdater.downloadUpdate()
+        } else if (response === 2) {
+            skippedVersion = info.version
         }
-    });
+    })
 
-    // Update downloaded and ready to install
     autoUpdater.on('update-downloaded', async () => {
         const { response } = await dialog.showMessageBox(mainWindow, {
             type: 'info',
             title: 'Update Ready',
             message: 'Update downloaded. Install and restart now?',
             buttons: ['Yes', 'Later']
-        });
+        })
 
         if (response === 0) {
-            autoUpdater.quitAndInstall(); // replaces old version
+            autoUpdater.quitAndInstall()
         }
-    });
+    })
 
-    // Check for updates
-    autoUpdater.checkForUpdates();
+    autoUpdater.checkForUpdates()
 }
