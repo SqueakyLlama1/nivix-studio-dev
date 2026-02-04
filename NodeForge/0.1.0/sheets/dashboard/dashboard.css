@@ -1,0 +1,56 @@
+#dashboard {
+    width: 100%;
+    height: 100%;
+}
+
+#dashboard .halfpane .left,
+#dashboard .halfpane .right {
+    text-align: center;
+}
+
+#dashboard .halfpane .left .bookmark {
+    margin-left: auto;
+}
+
+.dashboard-getstarted-section {
+    display: flex;
+    flex-direction: column;
+
+    width: 50%;
+
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dashboard-getstarted-section button,
+.dashboard-getstarted-section a {
+    display: inline-block;
+
+    background: var(--brand-color) !important;
+    border: none !important;
+    border-radius: 8px;
+
+    color: white !important;
+    text-decoration: none;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    padding: 0.6rem 1.2rem;
+    margin: 2.5px 0px;
+
+    transition: transform 0.2s, background 0.2s;
+}
+
+.dashboard-getstarted-section button:hover,
+.dashboard-getstarted-section a:hover {
+    background: var(--brand-dark) !important;
+    transform: translateY(-2px);
+}
+
+@media screen and (max-width: 700px) {
+    .dashboard-getstarted-section {
+        width: 95%;
+    }
+}

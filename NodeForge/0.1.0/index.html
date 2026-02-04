@@ -6,16 +6,44 @@
     <title>Nivix NodeForge</title>
     <link rel="stylesheet" type="text/css" href="sheets/index.css">
     <link rel="stylesheet" type="text/css" href="sheets/tabs.css">
+    
+    <link rel="stylesheet" type="text/css" href="sheets/load/load.css">
+    <link rel="stylesheet" type="text/css" href="sheets/dashboard/dashboard.css">
 </head>
 <body>
     <div id="load">
         <div class="middle">
-            <img class="load-icon" src="img/load-icon.png">
+            <img class="load-icon" src="sheets/load/icon.png">
             <h1 class="load-title"><span class="nivixLogoAccent">NiViX </span>NodeForge<sup aria-label="trademark">&trade;</sup></h1>
             <div class="load-loader"></div>
         </div>
         <div class="footer">
             <span>NodeForge </span><span id="load-footer-version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
+        </div>
+    </div>
+    <div id="dashboard" class="tab">
+        <div class="halfpane">
+            <div class="left" data-min="0.3">
+                <h3 class="bookmark right">Get Started</h3>
+                <div class="dashboard-getstarted-section">
+                    <button id="dashboard-getstarted-new">New Project</button>
+                    <button id="dashboard-getstarted-import">Add Existing Project</button>
+                </div>
+                <div class="dashboard-getstarted-section">
+                    <a target="_blank" href="https://www.nivixtech.com/studio">Nivix Studio</a>
+                </div>
+                <div class="dashboard-getstarted-section">
+                    <button id="dashboard-getstarted-settings">Settings</button>
+                    <button id="dashboard-getstarted-quit">Quit</button>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <div class="right">
+                <h3 class="bookmark">Recents</h3>
+                <div class="middle">
+                    <div class="load-loader"></div>
+                </div>
+            </div>
         </div>
     </div>
     <script type="module" src="modules/index.js"></script>
