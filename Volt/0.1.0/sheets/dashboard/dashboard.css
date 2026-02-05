@@ -27,11 +27,11 @@
 .dashboard-getstarted-section a {
     display: inline-block;
 
-    background: var(--brand-color) !important;
-    border: none !important;
+    background: var(--brand-color);
+    border: none;
     border-radius: 8px;
 
-    color: white !important;
+    color: white;
     text-decoration: none;
     font-weight: 700;
 
@@ -45,7 +45,7 @@
 
 .dashboard-getstarted-section button:hover,
 .dashboard-getstarted-section a:hover {
-    background: var(--brand-dark) !important;
+    background: var(--brand-dark);
     transform: translateY(-2px);
 }
 
