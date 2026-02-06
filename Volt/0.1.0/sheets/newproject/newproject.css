@@ -14,7 +14,51 @@
     flex: 0.8;
 }
 
-#newProject1 .bookmark {
+#newProject1 button {
+    background: var(--brand-color);
+    border: none;
+
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    padding: 0.6rem 1.2rem;
+    margin-top: auto;
+
+    transition: background 0.2s;
+}
+
+#newProject1 .right button {
+    display: block;
+
+    width: 100%;
+}
+
+.newProject1-template {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+}
+
+.newProject1-template-options {
+    flex: 1;
+    border-bottom: 4px solid var(--brand-color);
+
+    padding: 5px;
+}
+
+.newProject1-template-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
+    padding: 5px;
+}
+
+#newProject1 .left .bookmark {
     display: block;
 
     border-radius: 0px;
@@ -35,22 +79,24 @@
 
 #newProject1 .section button {
     display: inline-block;
-
-    background: var(--brand-color);
-    border: none;
-
-    color: white;
-    text-decoration: none;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    padding: 0.6rem 1.2rem;
+    
     margin-top: 1px;
 
     transition: background 0.2s;
 }
 
-#newProject1 .section button:hover {
+#newProject1 button:disabled {
+    background: #ccc;
+
+    color: gray;
+
+    cursor: not-allowed;
+
+    padding: 0.6rem 1.2rem;
+    margin-top: 1px;
+}
+
+#newProject1 button:not(#newProject1 button:disabled):hover,
+#newProject1 button.selected {
     background: var(--brand-dark);
 }

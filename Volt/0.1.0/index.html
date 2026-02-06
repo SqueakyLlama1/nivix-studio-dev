@@ -50,18 +50,34 @@
     <div id="newProject1" class="tab">
         <div class="halfpane">
             <div class="left">
-                <h3 class="bookmark">Create a new Project</h3>
-                <div class="section" id="newProject1-projectTypes">
-                    <button>Default</button>
+                <h3 class="bookmark" id="newProject1-creationHeader">Create New Project</h3>
+                <h3 class="bookmark hidden" id="newProject1-editingHeader">Manage Templates</h3>
+                <div class="section" id="newProject1-templateList">
+                    <button class="selected">Default</button>
                 </div>
-                <div class="section bottom" id="newProject1-actions">
-                    <button id="newProject1-newtemplate">Create a Template</button>
+                <div class="section bottom" id="newProject1-creationActions">
+                    <button id="newProject1-manageTemplates">Manage Templates</button>
                     <button id="newProject1-cancel">Cancel</button>
+                </div>
+                <div class="section bottom hidden" id="newProject1-editingActions">
+                    <button id="newProject1-editingBack">Back</button>
                 </div>
             </div>
             <div class="divider"></div>
             <div class="right">
-
+                <div class="newProject1-template" id="newProject1-template-default">
+                    <div class="newProject1-template-options">
+                        <label for="newProject1-template-default-example">Example: </label>
+                        <input type="checkbox" id="newProject1-template-default-example">
+                    </div>
+                    <div id="newProject1-template-creationActions" class="newProject1-template-actions hidden">
+                        <button disabled>Create</button>
+                    </div>
+                    <div id="newProject1-template-editingActions" class="newProject1-template-actions hidden">
+                        <button id="project1-template-delete" disabled>Delete</button>
+                        <button id="project1-template-save" disabled>Save</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

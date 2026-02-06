@@ -44,12 +44,14 @@ h4 span { font-size: 0.83em; }
 h5 span { font-size: 0.67em; }
 h6 span { font-size: 0.45em; }
 
-:focus { outline: none; border: 2px solid var(--brand-dark); }
 ::-webkit-scrollbar { width: 7px; height: 5px; }
 ::-webkit-scrollbar-track { background: #ccc; }
 ::-webkit-scrollbar-thumb { background: var(--brand-light); }
 ::-webkit-scrollbar-thumb:hover { background: var(--brand-dark); }
 
+.hidden {
+    display: none !important;
+}
 
 /* Layout Elements*/
 .bookmark {
