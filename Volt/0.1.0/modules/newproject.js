@@ -31,7 +31,7 @@ export function init() {
     editingBack.addEventListener('click', toggleEditingMode);
     
     
-    templatesPath = path.join(os.homedir(), main.nodeforge.sandboxPlain, 'templates');
+    templatesPath = path.join(os.homedir(), main.volt.sandboxPlain, 'templates');
     console.log(`Template Directory: ${templatesPath}`);
 }
 

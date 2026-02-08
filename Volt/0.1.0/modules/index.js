@@ -8,7 +8,7 @@ const path = require('path');
 
 function wait(ms) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
 
-export const nodeforge = {
+export const volt = {
     sessionVersion: "0.1.0",
     sandbox: path.join(os.homedir(), 'nvxstdo', 'volt'),
     sandboxPlain: path.join('nvxstdo', 'volt')

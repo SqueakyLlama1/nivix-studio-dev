@@ -3,7 +3,7 @@ import * as main from './index.js'
 
 export async function init() {
 	try {
-		await fs.mkdir(main.nodeforge.sandbox, { recursive: true });
+		await fs.mkdir(main.volt.sandbox, { recursive: true });
 		console.log('Sandbox ready!');
 	} catch (err) {
 		console.error('Failed to create sandbox:', err);
