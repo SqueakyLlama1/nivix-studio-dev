@@ -53,29 +53,29 @@
                 <h3 class="bookmark" id="newProject1-creationHeader">Create New Project</h3>
                 <h3 class="bookmark hidden" id="newProject1-editingHeader">Manage Templates</h3>
                 <div class="section" id="newProject1-templateList">
-                    <button class="selected">Default</button>
+                    <button>Default</button>
                 </div>
                 <div class="section bottom" id="newProject1-creationActions">
-                    <button id="newProject1-manageTemplates">Manage Templates</button>
-                    <button id="newProject1-cancel">Cancel</button>
+                    <button id="newProject1-creationManage">Manage Templates</button>
+                    <button id="newProject1-creationRefresh">Refresh</button>
+                    <button id="newProject1-creationCancel">Cancel</button>
                 </div>
                 <div class="section bottom hidden" id="newProject1-editingActions">
+                    <button id="newProject1-editingCreate">Create Template</button>
+                    <button id="newProject1-editingRefresh">Refresh</button>
                     <button id="newProject1-editingBack">Back</button>
                 </div>
             </div>
             <div class="divider"></div>
-            <div class="right">
-                <div class="newProject1-template" id="newProject1-template-default">
-                    <div class="newProject1-template-options">
-                        <label for="newProject1-template-default-example">Example: </label>
-                        <input type="checkbox" id="newProject1-template-default-example">
-                    </div>
-                    <div id="newProject1-template-creationActions" class="newProject1-template-actions hidden">
+            <div class="right" id="newProject1-templateView">
+                <div class="newProject1-template hidden">
+                    <div class="newProject1-template-options hidden"></div>
+                    <div class="newProject1-template-actions hidden">
                         <button disabled>Create</button>
                     </div>
-                    <div id="newProject1-template-editingActions" class="newProject1-template-actions hidden">
-                        <button id="project1-template-delete" disabled>Delete</button>
-                        <button id="project1-template-save" disabled>Save</button>
+                    <div class="newProject1-template-actions hidden">
+                        <button disabled>Delete</button>
+                        <button disabled>Save</button>
                     </div>
                 </div>
             </div>
