@@ -8,10 +8,31 @@
     <link rel="stylesheet" type="text/css" href="sheets/tabs.css">
     
     <link rel="stylesheet" type="text/css" href="sheets/load/load.css">
-    <link rel="stylesheet" type="text/css" href="sheets/dashboard/dashboard.css">
-    <link rel="stylesheet" type="text/css" href="sheets/newproject/newproject.css">
+    <link rel="stylesheet" type="text/css" href="sheets/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="sheets/newproject.css">
+    <link rel="stylesheet" type="text/css" href="sheets/popups.css">
 </head>
 <body>
+    <div class="middle hidden" id="popup-shade">
+        <div class="popup" id="popup-box">
+            <div class="popup-content middle">
+                <span id="popup-box-message"></span>
+            </div>
+            <div class="popup-buttons">
+                <button id="popup-box-ok">OK</button>
+            </div>
+        </div>
+        <div class="popup hidden" id="popup-consent">
+            <div class="popup-content">
+                <p id="popup-consent-message"></p>
+            </div>
+            <div class="popup-buttons">
+                <button id="popup-consent-yes">Yes</button>
+                <button id="popup-consent-no">No</button>
+            </div>
+        </div>
+    </div>
+    
     <div id="load">
         <div class="middle">
             <img class="load-icon" src="sheets/load/icon.png">
@@ -22,6 +43,7 @@
             <span>Volt </span><span id="load-footer-version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
         </div>
     </div>
+    
     <div id="dashboard" class="tab">
         <div class="halfpane">
             <div class="left" data-min="0.3">
@@ -47,13 +69,16 @@
             </div>
         </div>
     </div>
+    
     <div id="newProject1" class="tab">
         <div class="halfpane">
             <div class="left">
                 <h3 class="bookmark" id="newProject1-creationHeader">Create New Project</h3>
                 <h3 class="bookmark hidden" id="newProject1-editingHeader">Manage Templates</h3>
                 <div class="section" id="newProject1-templateList">
-                    <button>Default</button>
+                    <div class="middle">
+                        <div class="load-loader"></div>
+                    </div>
                 </div>
                 <div class="section bottom" id="newProject1-creationActions">
                     <button id="newProject1-creationManage">Manage Templates</button>
@@ -67,16 +92,14 @@
                 </div>
             </div>
             <div class="divider"></div>
-            <div class="right" id="newProject1-templateView">
-                <div class="newProject1-template hidden">
-                    <div class="newProject1-template-options hidden"></div>
-                    <div class="newProject1-template-actions hidden">
-                        <button disabled>Create</button>
-                    </div>
-                    <div class="newProject1-template-actions hidden">
-                        <button disabled>Delete</button>
-                        <button disabled>Save</button>
-                    </div>
+            <div class="right">
+                <div class="hidden" id="newProject1-templateOptions"></div>
+                <div class="newProject1-templateActions hidden" id="newProject1-templateActions-create">
+                    <button id="newProject1-create">Create</button>
+                </div>
+                <div class="newProject1-templateActions hidden" id="newProject1-templateActions-edit">
+                    <button id="newProject1-delete">Delete</button>
+                    <button id="newProject1-save">Save</button>
                 </div>
             </div>
         </div>

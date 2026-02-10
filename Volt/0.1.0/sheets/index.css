@@ -71,14 +71,13 @@ h6 span { font-size: 0.45em; }
 }
 
 .middle {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     flex-grow: 1;
-    
-    padding: 20px;
+    display: grid;
     box-sizing: border-box;
+    place-items: center;
+
+    min-height: 0;
+    min-width: 0;
 }
 
 .footer {

@@ -27,7 +27,7 @@
     padding: 0.6rem 1.2rem;
     margin-top: auto;
 
-    transition: background 0.2s;
+    transition: background 0.2s linear;
 }
 
 #newProject1 .right button {
@@ -43,14 +43,19 @@
     height: 100%;
 }
 
-.newProject1-template-options {
+#newProject1 .right {
+    display: flex;
+    flex-direction: column;
+}
+
+#newProject1-templateOptions {
     flex: 1;
     border-bottom: 4px solid var(--brand-color);
 
     padding: 5px;
 }
 
-.newProject1-template-actions {
+.newProject1-templateActions {
     display: flex;
     flex-direction: row;
     gap: 5px;
@@ -82,21 +87,29 @@
     
     margin-top: 1px;
 
-    transition: background 0.2s;
+    transition: background 0.2s linear;
 }
 
-#newProject1 button:disabled {
-    background: #ccc;
+#newProject1-templateList button {
+    background: transparent !important;
+    border-top: 1px solid var(--brand-color) !important;
+    border-bottom: 1px solid var(--brand-color) !important;
 
-    color: gray;
-
-    cursor: not-allowed;
-
-    padding: 0.6rem 1.2rem;
-    margin-top: 1px;
+    color: var(--brand-color);
+    transition: border-color 0.2s linear, color 0.2s linear;
 }
 
-#newProject1 button:not(#newProject1 button:disabled):hover,
+#newProject1-templateList button:hover {
+    border-color: var(--brand-dark);
+    color: var(--brand-dark);
+}
+
+#newProject1-templateList button.selected {
+    color: white;
+    border: none;
+}
+
+#newProject1 button:not(#newProject1-templateList button):hover,
 #newProject1 button.selected {
-    background: var(--brand-dark);
+    background: var(--brand-dark) !important;
 }
