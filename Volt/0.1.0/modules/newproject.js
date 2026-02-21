@@ -1,162 +1,247 @@
-import * as tabs from './tabs.js'
-import * as main from './index.js'
-const os = require('os');
-const path = require('path');
+import * as tabs from './tabs.js';
+import * as main from './index.js';
+const { ipcRenderer } = require('electron'); // Electron IPC for save dialogs
 const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
-// Helper Functions
-const getEBD = (id) => document.getElementById(id);
+let root;
 
-// Variables
-let templatesPath;
-let templates = [];
-
-// Headers
-const creationLabel = getEBD('newProject1-creationHeader');
-const editingLabel = getEBD('newProject1-editingHeader');
-
-// Button Groups
-const creationButtons = getEBD('newProject1-creationActions');
-const editingButtons = getEBD('newProject1-editingActions');
-const templateActionsCreate = getEBD('newProject1-templateActions-create');
-const templateActionsEdit = getEBD('newProject1-templateActions-edit');
-
-// Buttons
-const newProject = getEBD('dashboard-getstarted-new');
-const creationManage = getEBD('newProject1-creationManage');
-const creationRefresh = getEBD('newProject1-creationRefresh');
-const creationCancel = getEBD('newProject1-creationCancel');
-const editingBack = getEBD('newProject1-editingBack');
-const editingRefresh = getEBD('newProject1-editingRefresh');
-const editingCreate = getEBD('newProject1-editingCreate');
-
-// Misc
-const templateList = getEBD('newProject1-templateList');
-const templateOptions = getEBD('newProject1-templateOptions');
-
-export function init() {
-    templatesPath = path.join(os.homedir(), main.volt.sandboxPlain, 'templates');
-    console.log(`Template Directory: ${templatesPath}`);
-    if (!fs.existsSync(templatesPath)) fs.mkdirSync(templatesPath, { recursive: true });
-    
-    newProject.addEventListener('click', populateTemplateList);
-    creationCancel.addEventListener('click', () => tabs.goto('dashboard'));
-    creationManage.addEventListener('click', toggleEditingMode);
-    editingBack.addEventListener('click', toggleEditingMode);
-    creationRefresh.addEventListener('click', populateTemplateList);
-    editingRefresh.addEventListener('click', populateTemplateList);
-}
-
-let editMode = false;
-
-function toggleEditingMode() {
-    if (!editMode) {
-        creationButtons.classList.add('hidden');
-        editingButtons.classList.remove('hidden');
-        creationLabel.classList.add('hidden');
-        editingLabel.classList.remove('hidden');
-    } else {
-        creationButtons.classList.remove('hidden');
-        editingButtons.classList.add('hidden');
-        creationLabel.classList.remove('hidden');
-        editingLabel.classList.add('hidden');
-    }
-    editMode = !editMode;
-    populateTemplateList();
-}
-
-function populateTemplateList() {
-    templateActionsCreate.classList.add('hidden');
-    templateActionsEdit.classList.add('hidden');
-    templateOptions.classList.add('hidden');
-    templateOptions.replaceChildren();
-    templateList.replaceChildren();
-    templates = [];
-    const allFiles = fs.readdirSync(templatesPath);
-    allFiles.forEach(function(file) {
-        if (file.endsWith('.vtpl')) {
-            let meta;
-            try {
-                meta = JSON.parse(fs.readFileSync(path.join(templatesPath, file), 'utf8'));
-            } catch(err) {
-                console.error(`Failed to parse meta data for template: ${file}. Reason: ${err}`);
-                return;
-            }
-            templates.push({src: file, meta: meta});
-        }
-    });
-    if (templates.length) {
-        const fragment = document.createDocumentFragment();
-        templates.forEach(function(template) {
-            const button = document.createElement('button');
-            button.id = `newProject1-${template.meta.id}-button`;
-            button.innerText = template.meta.name || template.src;
-            button.addEventListener('click', function() { loadTemplate(template, this) });
-            fragment.appendChild(button);
-        });
-        templateList.appendChild(fragment);
-    } else {
-        if (editMode) {
-            templateList.textContent = 'No Templates Found. Press Create Template to make one.';
-        } else {
-            templateList.textContent = 'No Templates Found. Press Manage Templates to make one.';
-        }
-    }
-}
-
-let currentStateValues = {};
-let selectedTemplate;
-
-const properties = {
-    'directoryStructure': {type: 'checkbox'}
+const ui = {};
+const state = {
+    mode: 'create',
+    templates: [],
+    selected: null,
+    options: {},
+    baseline: {}
 };
 
-function loadTemplate(template, button) {
-    templateOptions.classList.add('hidden');
-    templateOptions.replaceChildren();
-    templateActionsCreate.classList.add('hidden');
-    templateActionsEdit.classList.add('hidden');
-    selectedTemplate = template.src;
-    currentStateValues = {};
-    const values = template?.meta?.values || [];
-    if (!values.length) {
+// Template policy for protected templates
+const templatePolicy = {
+    protectedIds: new Set(['default'])
+};
+
+const optionSchema = {
+    directoryStructure: {
+        type: 'checkbox',
+        label: 'Create directory structure'
+    }
+};
+
+export function init() {
+    root = document.getElementById('newProject1');
+
+    // Header labels
+    ui.titleCreate = root.querySelector('[data-role="title-create"]');
+    ui.titleManage = root.querySelector('[data-role="title-manage"]');
+
+    // Template list and options panel
+    ui.templateList = root.querySelector('[data-role="template-list"]');
+    ui.options = root.querySelector('[data-role="options"]');
+
+    // Action panels
+    ui.actionsCreate = root.querySelector('[data-role="actions-create"]');
+    ui.actionsManage = root.querySelector('[data-role="actions-manage"]');
+    ui.createActions = root.querySelector('[data-role="create-actions"]');
+    ui.editActions = root.querySelector('[data-role="edit-actions"]');
+
+    // Action buttons
+    ui.saveButton = root.querySelector('[data-action="save-template"]');
+    ui.deleteButton = root.querySelector('[data-action="delete-template"]');
+    ui.exportButton = root.querySelector('[data-action="export-template"]');
+
+    root.addEventListener('click', handleAction);
+
+    setMode('create');
+    loadTemplates();
+}
+
+function handleAction(e) {
+    const action = e.target.dataset.action;
+    if (!action) return;
+
+    if (action === 'manage') setMode('manage');
+    if (action === 'back') setMode('create');
+    if (action === 'refresh') loadTemplates();
+    if (action === 'cancel') tabs.goto('dashboard');
+    if (action === 'export') exportTemplate();
+}
+
+function setMode(mode) {
+    state.mode = mode;
+
+    ui.titleCreate.classList.toggle('hidden', mode !== 'create');
+    ui.titleManage.classList.toggle('hidden', mode !== 'manage');
+
+    ui.actionsCreate.classList.toggle('hidden', mode !== 'create');
+    ui.actionsManage.classList.toggle('hidden', mode !== 'manage');
+
+    ui.createActions.classList.add('hidden');
+    ui.editActions.classList.add('hidden');
+    ui.options.classList.add('hidden');
+
+    clearSelection();
+}
+
+function clearSelection() {
+    state.selected = null;
+    state.options = {};
+    state.baseline = {};
+
+    ui.options.replaceChildren();
+
+    ui.templateList
+        .querySelectorAll('button.selected')
+        .forEach((b) => b.classList.remove('selected'));
+
+    updateActionStates();
+}
+
+function loadTemplates() {
+    ui.templateList.replaceChildren();
+    state.templates = [];
+
+    const templatesPath = path.join(os.homedir(), main.volt.sandboxPlain, 'templates');
+    if (!fs.existsSync(templatesPath)) fs.mkdirSync(templatesPath, { recursive: true });
+
+    fs.readdirSync(templatesPath).forEach((file) => {
+        if (!file.endsWith('.vtpl')) return;
+        try {
+            const meta = JSON.parse(fs.readFileSync(path.join(templatesPath, file), 'utf8'));
+            state.templates.push({ file, meta });
+        } catch {}
+    });
+
+    if (!state.templates.length) {
+        ui.templateList.textContent =
+            state.mode === 'manage'
+                ? 'No Templates Found. Press Create Template.'
+                : 'No Templates Found. Press Manage Templates.';
         return;
     }
 
-    const fragment = document.createDocumentFragment();
-    values.forEach(function(value) {
-        currentStateValues[value.property] = value.value;
-        const input = document.createElement('input');
-        const label = document.createElement('label');
-        const inputType = (properties[value.property] || { type: 'text' }).type;
-        const inputId = `newProject1-${template.meta.id}-${value.property}`;
+    state.templates.forEach((template) => {
+        const button = document.createElement('button');
+        button.textContent = template.meta.name || template.file;
 
-        input.type = inputType;
-        input.id = inputId;
+        button.addEventListener('click', () => selectTemplate(template, button));
+        ui.templateList.appendChild(button);
+    });
+}
 
-        if (inputType === 'checkbox') {
-            input.checked = value.value;
-        } else {
-            input.value = value.value;
-        }
+function selectTemplate(template, button) {
+    clearSelection();
 
-        input.disabled = !editMode;
+    button.classList.add('selected');
+    state.selected = template;
 
-        label.textContent = value.label;
-        label.htmlFor = inputId;
+    buildOptions(template, button.textContent);
 
-        fragment.appendChild(label);
-        fragment.appendChild(input);
+    ui.options.classList.remove('hidden');
+
+    if (state.mode === 'create') ui.createActions.classList.remove('hidden');
+    else ui.editActions.classList.remove('hidden');
+
+    updateActionStates();
+}
+
+function buildOptions(template, titleText) {
+    ui.options.replaceChildren();
+    state.options = {};
+    state.baseline = {};
+
+    // Header for the options panel
+    const header = document.createElement('h3');
+    header.textContent = titleText;
+    ui.options.appendChild(header);
+
+    const values = {};
+    (template.meta.values || []).forEach((v) => {
+        values[v.property] = v.value;
     });
 
-    templateOptions.appendChild(fragment);
-    templateOptions.classList.remove('hidden');
-    if (editMode) {
-        templateActionsEdit.classList.remove('hidden');
-    } else {
-        templateActionsCreate.classList.remove('hidden');
-    }
+    Object.keys(optionSchema).forEach((key) => {
+        const def = optionSchema[key];
 
-    templateList.querySelectorAll('button.selected').forEach((el) => el.classList.remove('selected'));
-    button.classList.add('selected');
+        // Flex wrapper for checkbox + label
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('option-wrapper');
+
+        const input = document.createElement('input');
+        const label = document.createElement('label');
+        label.textContent = def.label || key;
+
+        input.type = def.type;
+        input.disabled = state.mode !== 'manage';
+
+        if (def.type === 'checkbox') {
+            const checked = Boolean(values[key]);
+            input.checked = checked;
+            state.options[key] = checked;
+            state.baseline[key] = checked;
+
+            input.addEventListener('change', () => {
+                state.options[key] = input.checked;
+                updateActionStates();
+            });
+        } else {
+            const value = values[key] ?? '';
+            input.value = value;
+            state.options[key] = value;
+            state.baseline[key] = value;
+
+            input.addEventListener('input', () => {
+                state.options[key] = input.value;
+                updateActionStates();
+            });
+        }
+
+        // Append input first, then label into flex wrapper
+        wrapper.appendChild(input);
+        wrapper.appendChild(label);
+
+        // Append wrapper to options container
+        ui.options.appendChild(wrapper);
+    });
+}
+
+function isProtectedTemplate(template) {
+    return templatePolicy.protectedIds.has(template.meta.id);
+}
+
+function hasDirtyState() {
+    return JSON.stringify(state.options) !== JSON.stringify(state.baseline);
+}
+
+function updateActionStates() {
+    if (ui.saveButton)
+        ui.saveButton.disabled = state.mode !== 'manage' || !state.selected || !hasDirtyState();
+
+    if (ui.deleteButton)
+        ui.deleteButton.disabled = state.mode !== 'manage' || !state.selected || isProtectedTemplate(state.selected);
+
+    if (ui.exportButton) ui.exportButton.disabled = !state.selected;
+}
+
+function exportTemplate() {
+    if (!state.selected) return;
+
+    const exportMeta = {
+        ...state.selected.meta,
+        values: Object.keys(state.options).map((prop) => ({
+            property: prop,
+            value: state.options[prop],
+            label: optionSchema[prop]?.label || prop
+        }))
+    };
+
+    ipcRenderer.invoke('show-save-dialog', {
+        title: 'Export Template',
+        defaultPath: `${exportMeta.id || 'template'}_export.vtpl`,
+        filters: [{ name: 'Volt Template', extensions: ['vtpl'] }]
+    }).then((result) => {
+        if (result.canceled) return;
+        const filePath = result.filePath;
+        fs.writeFileSync(filePath, JSON.stringify(exportMeta, null, 4), 'utf8');
+    });
 }

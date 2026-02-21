@@ -29,7 +29,7 @@
 
     background: var(--brand-color);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius);
 
     color: white;
     text-decoration: none;

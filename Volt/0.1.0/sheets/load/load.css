@@ -11,6 +11,18 @@
     animation: fadeInPage 0.8s ease-out forwards;
 }
 
+.load-content {
+    position: relative;
+    flex: 1;
+}
+
+.load-content-middle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .load-icon {
     max-width: 256px;
     aspect-ratio: 1;

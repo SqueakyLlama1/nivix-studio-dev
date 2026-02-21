@@ -6,21 +6,30 @@
 #newProject1 .left {
     display: flex;
     flex-direction: column;
-
     flex: 0.2;
 }
 
 #newProject1 .right {
+    display: flex;
+    flex-direction: column;
     flex: 0.8;
+    padding: 0 10px;
+}
+
+#newProject1 .right h3 {
+    font-family: Arial, 'Roboto', Helvetica, sans-serif;
+    border-bottom: 4px solid var(--brand-color);
+    color: var(--brand-color);
 }
 
 #newProject1 button {
     background: var(--brand-color);
     border: none;
+    border-radius: var(--radius);
 
     color: white;
-    text-decoration: none;
     font-weight: 700;
+    text-decoration: none;
 
     cursor: pointer;
 
@@ -30,43 +39,20 @@
     transition: background 0.2s linear;
 }
 
+#newProject1 button:disabled {
+    background: #ccc !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+}
+
 #newProject1 .right button {
     display: block;
-
     width: 100%;
-}
-
-.newProject1-template {
-    display: flex;
-    flex-direction: column;
-
-    height: 100%;
-}
-
-#newProject1 .right {
-    display: flex;
-    flex-direction: column;
-}
-
-#newProject1-templateOptions {
-    flex: 1;
-    border-bottom: 4px solid var(--brand-color);
-
-    padding: 5px;
-}
-
-.newProject1-templateActions {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-
-    padding: 5px;
 }
 
 #newProject1 .left .bookmark {
     display: block;
-
-    border-radius: 0px;
+    border-radius: 0;
 }
 
 #newProject1 .section {
@@ -74,42 +60,119 @@
     flex-direction: column;
     flex: 1;
 
-    width: 100%;
+    width: calc(100% - 6px);
+    margin: 3px;
 }
 
 #newProject1 .section.bottom {
-    align-self: flex-end;
     flex: 0;
 }
 
 #newProject1 .section button {
     display: inline-block;
-    
-    margin-top: 1px;
-
-    transition: background 0.2s linear;
+    margin-top: 2px;
 }
 
-#newProject1-templateList button {
-    background: transparent !important;
-    border-top: 1px solid var(--brand-color) !important;
-    border-bottom: 1px solid var(--brand-color) !important;
+.newProject1-templateActions {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    padding: 5px 0px;
+}
 
-    color: var(--brand-color);
+[data-role="template-list"] button {
+    background: transparent !important;
+    border: 1px solid var(--brand-dark) !important;
+
+    color: var(--brand-color) !important;
     transition: border-color 0.2s linear, color 0.2s linear;
 }
 
-#newProject1-templateList button:hover {
-    border-color: var(--brand-dark);
-    color: var(--brand-dark);
+[data-role="template-list"] button:hover {
+    background: var(--brand-color) !important;
+    color: white !important;
 }
 
-#newProject1-templateList button.selected {
-    color: white;
-    border: none;
-}
-
-#newProject1 button:not(#newProject1-templateList button):hover,
-#newProject1 button.selected {
+[data-role="template-list"] button.selected {
     background: var(--brand-dark) !important;
+    color: white !important;
+}
+
+#newProject1
+button:not(:disabled):not([data-role="template-list"] button):hover {
+    background: var(--brand-dark);
+}
+
+[data-role="options"] {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    border-bottom: 4px solid var(--brand-color);
+    padding: 5px;
+}
+
+/* Checkbox */
+
+/* Flex wrapper for checkbox + label alignment */
+#newProject1 [data-role="options"] .option-wrapper {
+    display: flex;
+    align-items: center; /* vertically center checkbox and label */
+    gap: 8px; /* space between checkbox and label */
+    margin-bottom: 6px; /* space between option rows */
+}
+
+/* Styled checkboxes */
+#newProject1 [data-role="options"] input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 20px;
+    height: 20px;
+
+    border: 2px solid red;
+    border-radius: 4px;
+
+    background-color: transparent;
+    cursor: default;
+    transition: all 0.2s ease;
+
+    position: relative;
+    margin: 0;
+}
+
+/* Checked state: colored inner square */
+#newProject1 [data-role="options"] input[type="checkbox"]:checked {
+    border-color: green;
+    background-color: green;
+}
+
+/* Optional: small inner square for colorblind hint */
+#newProject1 [data-role="options"] input[type="checkbox"]:checked::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background-color: #fff; /* contrasting fill */
+    border-radius: 50%;
+}
+
+/* Hover state */
+#newProject1 [data-role="options"] input[type="checkbox"]:hover:not(:disabled) {
+    filter: brightness(1.2);
+}
+
+/* Disabled state */
+#newProject1 [data-role="options"] input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5; /* visually indicate disabled */
+}
+
+/* Labels */
+#newProject1 [data-role="options"] label {
+    font-size: 20px;
+    user-select: none;
+    cursor: default;
 }
