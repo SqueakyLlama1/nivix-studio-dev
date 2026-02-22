@@ -80,6 +80,11 @@
     padding: 5px 0px;
 }
 
+[data-role="template-list"] {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 [data-role="template-list"] button {
     background: transparent !important;
     border: 1px solid var(--brand-dark) !important;
