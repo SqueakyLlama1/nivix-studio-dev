@@ -3,75 +3,61 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Nivix Store</title>
-	
 	<link rel="stylesheet" type="text/css" href="sheets/index.css">
-	
-	<link rel="stylesheet" type="text/css" href="sheets/nxvid.css">
 	<link rel="stylesheet" type="text/css" href="sheets/tabs.css">
-	
-	<link rel="stylesheet" type="text/css" href="sheets/load.css">
-	<link rel="stylesheet" type="text/css" href="sheets/select-space.css">
-	<link rel="stylesheet" type="text/css" href="sheets/create-space.css">
-	<link rel="stylesheet" type="text/css" href="sheets/workspace.css">
-	
-	<link rel="stylesheet" type="text/css" href="libraries/tooltips.css">
 </head>
 <body>
-	<div id="load">
-		<div class="load-content">
-			<div class="load-content-middle">
-				<center>
-					<img class="load-icon" src="favicon.png">
-					<h1 class="load-title"><span class="nivixLogoAccent" aria-label="Nivix">NiViX </span>Store<sup aria-label="trademark">&trade;</sup></h1>
-					<div class="load-loader"></div>
-				</center>
-			</div>
+	<div id="load" class="tab">
+		<div class="middle">
+			<img src="store.png" class="load-icon">
+
+			<br>
+
+			<div class="loader"></div>
 		</div>
 		<div class="footer">
-			<span>Store </span><span id="load-footer-version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
+			<span id="load-footer-ver">vX.X.X</span>
 		</div>
 	</div>
-	
 	<div id="select-space" class="tab">
 		<div class="middle">
 			<center>
 				<img src="assets/logo.png" class="select-space-logo">
-				
+
 				<br>
-				
+
 				<h3>Select a space or make a new one</h3>
 				<button class="tooltip-button tip-right">i
 					<span class="tooltip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
 				</button>
-				
+
 				<br><br>
-				
-				<select id="select-space-option" selected="makeNew" class="select">
+
+				<select id="select-space-option" selected="makeNew">
 					<option value="makeNew">Make a new space</option>
 				</select>
-				
+
 				<br><br>
-				
-				<button class="button" id="select-space-quit">Quit</button>
-				<button class="button" id="select-space-continue">Continue</button>
+
+				<button id="select-space-quit">Quit</button>
+				<button id="select-space-continue">Continue</button>
 			</center>
 		</div>
 	</div>
 	<div id="create-space" class="tab">
 		<div class="middle">
 			<center>
-				<img src="assets/create-space/create-space.png" class="create-space-image">
-				
+				<img src="assets/tabs/create-space.png" class="create-space-image">
+
 				<br>
-				
+
 				<h3>Create a Space</h3>
 				<button class="tooltip-button tip-right">i
 					<span class="tooltip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
 				</button>
-				
+
 				<br><br>
-				
+
 				<label for="create-space-name">Space Name: </label>
 				<input type="text" id="create-space-name" oninput="safety.filterInput(this)" placeholder="eg. Home or Office" maxlength="20">
 				<button class="tooltip-button tip-right">i
@@ -80,9 +66,9 @@
 						The space name is limited to 20 characters long
 					</span>
 				</button>
-				
+
 				<br><br>
-				
+
 				<button id="create-space-back">Back</button>
 				<button id="create-space-create">Create</button>
 			</center>
@@ -144,6 +130,10 @@
 			</div>
 		</div>
 	</div>
-	<script type="module" src="modules/index.js"></script>
+	<script defer src="modules/util.js"></script>
+	<script defer src="modules/filemgr.js"></script>
+	<script defer src="modules/safety.js"></script>
+	<script defer src="modules/prefs.js"></script>
+	<script defer src="modules/tabs.js"></script>
 </body>
 </html>

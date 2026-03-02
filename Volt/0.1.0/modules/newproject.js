@@ -1,6 +1,5 @@
 import * as tabs from './tabs.js';
 import * as main from './index.js';
-const { ipcRenderer } = require('electron'); // Electron IPC for save dialogs
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -16,10 +15,8 @@ const state = {
     baseline: {}
 };
 
-// Template policy for protected templates
-const templatePolicy = {
-    protectedIds: new Set(['default'])
-};
+
+let protectedTemplates = ['default'];
 
 const optionSchema = {
     directoryStructure: {
@@ -53,7 +50,6 @@ export function init() {
     root.addEventListener('click', handleAction);
 
     setMode('create');
-    loadTemplates();
 }
 
 function handleAction(e) {
@@ -64,7 +60,7 @@ function handleAction(e) {
     if (action === 'back') setMode('create');
     if (action === 'refresh') loadTemplates();
     if (action === 'cancel') tabs.goto('dashboard');
-    if (action === 'export') exportTemplate();
+    if (action === 'export-template') exportTemplate();
 }
 
 function setMode(mode) {
@@ -206,7 +202,7 @@ function buildOptions(template, titleText) {
 }
 
 function isProtectedTemplate(template) {
-    return templatePolicy.protectedIds.has(template.meta.id);
+    return protectedTemplates.includes(template.meta.id);
 }
 
 function hasDirtyState() {
@@ -223,7 +219,7 @@ function updateActionStates() {
     if (ui.exportButton) ui.exportButton.disabled = !state.selected;
 }
 
-function exportTemplate() {
+export function exportTemplate() {
     if (!state.selected) return;
 
     const exportMeta = {
@@ -235,13 +231,19 @@ function exportTemplate() {
         }))
     };
 
-    ipcRenderer.invoke('show-save-dialog', {
-        title: 'Export Template',
-        defaultPath: `${exportMeta.id || 'template'}_export.vtpl`,
-        filters: [{ name: 'Volt Template', extensions: ['vtpl'] }]
-    }).then((result) => {
-        if (result.canceled) return;
-        const filePath = result.filePath;
-        fs.writeFileSync(filePath, JSON.stringify(exportMeta, null, 4), 'utf8');
-    });
+    const json = JSON.stringify(exportMeta, null, 4);
+
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const filename = `${exportMeta.id || 'template'}_export.vtpl`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
 }

@@ -1,0 +1,255 @@
+/* Nivix Visual Identity 2026, Copyright Christian Bone */
+
+:root {
+    /* Brand Core */
+    --brand-color: #43a4eb;
+    --brand-light: #71aeda;
+    --brand-dark: #258dd8;
+    --accent-gold: #fff19f;
+    
+    /* Functional UI */
+    --bg-main: #f5f7fa;
+    --bg-card: #eeeeee;
+    --text-main: #202124;
+    --text-muted: #666666;
+    --border-color: #eeeeee;
+    
+    /* Global Styles */
+    --radius: 8px;
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    --speed: 0.3s ease;
+}
+
+html { scroll-behavior: smooth; }
+
+head, body {
+    height: 100vh;
+    width: 100%;
+
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: 'Roboto', Helvetica, sans-serif;
+    line-height: 1.6;
+
+    background: var(--bg-main);
+    color: var(--text-main);
+}
+
+/* Global Reset & Scrollbar */
+h1 span { font-size: 1.5em; }
+h2 span { font-size: 1.17em; }
+h3 span { font-size: 1em; }
+h4 span { font-size: 0.83em; }
+h5 span { font-size: 0.67em; }
+h6 span { font-size: 0.45em; }
+
+::-webkit-scrollbar { width: 7px; height: 5px; }
+::-webkit-scrollbar-track { background: #ccc; }
+::-webkit-scrollbar-thumb { background: var(--brand-light); }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-dark); }
+
+.hidden {
+    display: none !important;
+}
+
+/* Layout Elements*/
+.bookmark {
+    display: table;
+
+    background: var(--brand-color);
+    border-radius: 0 var(--radius) var(--radius) 0;
+
+    color: white;
+    
+    padding: 4px 20px;
+    box-sizing: border-box;
+}
+
+.bookmark.right {
+    border-radius: var(--radius) 0px 0px var(--radius);
+}
+
+.footer {
+    width: 100%;
+    background: var(--brand-color);
+    border-radius: var(--radius) var(--radius) 0 0;
+    color: white;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.nivixLogoAccent {
+    font-family: "GochiHand", "Lucida Handwriting", serif;
+    color: #43a4eb;
+    text-shadow: 3px 3px 2px #8d8d8d;
+}
+
+/* Buttons */
+.button {
+    background: var(--brand-color);
+    border: none;
+    border-radius: var(--radius);
+
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+
+    cursor: pointer;
+
+    padding: 0.6rem 1.2rem;
+
+    transition: background 0.2s linear;
+}
+
+.button:not(button.selected):disabled {
+    background: #ccc !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed;
+}
+
+.button.selected:disabled {
+    cursor: not-allowed;
+}
+
+.button:not(button:disabled):hover,
+.button:not(button:disabled):focus {
+    background: var(--brand-dark) !important;
+    color: white !important;
+}
+
+.button.selected {
+    background: var(--brand-dark) !important;
+    color: white !important;
+}
+
+/* Tex Inputs */
+.input[type="text"],
+.input[type="number"] {
+    background: var(--brand-color);
+    border: none;
+    border-radius: var(--radius);
+
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+
+    padding: 0.6rem 1.2rem;
+}
+
+.input[type="text"]:focus,
+.input[type="number"]:focus {
+    background: var(--brand-dark) !important;
+}
+
+/* Checkboxes */
+.input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+
+    width: 20px;
+    height: 20px;
+
+    border: 2px solid red;
+    border-radius: 4px;
+
+    background-color: transparent;
+    cursor: default;
+    transition: all 0.2s ease;
+
+    position: relative;
+    margin: 0;
+}
+
+.input[type="checkbox"]:checked {
+    border-color: green;
+    background-color: green;
+}
+
+.input[type="checkbox"]:checked::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border-radius: 50%;
+}
+
+.input[type="checkbox"]:hover:not(:disabled) {
+    filter: brightness(1.2);
+}
+
+.input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.checkbox-wrapper label {
+    font-size: 20px;
+    user-select: none;
+    cursor: default;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+/* Select and Option */
+
+.select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-color: var(--brand-color);
+    color: white;
+    font-weight: 700;
+    font-family: inherit;
+
+    border: none;
+    border-radius: var(--radius);
+
+    padding: 0.6rem 2.5rem 0.6rem 1.2rem;
+    cursor: pointer;
+
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 1.2rem;
+
+    transition: background var(--speed), box-shadow var(--speed);
+}
+
+.select:hover:not(:disabled),
+.select:focus-visible:not(:disabled) {
+    background-color: var(--brand-dark);
+    outline: none;
+}
+
+.select:disabled {
+    background-color: #ccc;
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.select option {
+    font-weight: 600;
+    color: var(--brand-color);
+    background-color: #ffffff;
+}
+
+/* Fonts */
+@font-face {
+    font-family: "GochiHand";
+    src: url("../fonts/GochiHand-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

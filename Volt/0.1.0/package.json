@@ -32,20 +32,10 @@
 			"allowToChangeInstallationDirectory": true,
 			"createDesktopShortcut": true
 		},
-		"icon": "build/icon.ico",
-		"publish": [
-			{
-				"provider": "generic",
-				"url": "https://cdn.nivixtech.com/studio/release/volt/"
-			}
-		]
+		"icon": "build/icon.ico"
 	},
 	"devDependencies": {
-		"electron": "^33.0.0",
-		"electron-builder": "^24.13.3"
-	},
-	"dependencies": {
-		"electron-updater": "^6.7.3",
-		"jquery": "^3.7.1"
+		"electron": "^40.6.1",
+		"electron-builder": "^26.8.1"
 	}
 }

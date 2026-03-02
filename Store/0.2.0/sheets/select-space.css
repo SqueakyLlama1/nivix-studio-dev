@@ -1,0 +1,57 @@
+#select-space {
+	height: 100%;
+}
+
+#select-space *,
+#create-space * {
+	user-select: none;
+}
+
+.select-space-logo {
+	width: 35%;
+
+	transition: var(--tSpeed) width ease-in-out;
+}
+
+#select-space h3,
+#create-space h3 {
+	display: inline;
+
+	font-weight: lighter;
+}
+
+#select-space select,
+#select-space button:not(.tool-tip-button),
+#create-space select,
+#create-space button:not(.tool-tip-button) {
+	transform: scale(1.1);
+
+	transition: var(--tSpeed) transform ease-in-out;
+}
+
+#select-space button:not(.tool-tip-button),
+#create-space button:not(.tool-tip-button) {
+	cursor: pointer;
+
+	margin: 0px 4px;
+
+	transition: var(--tSpeed) margin ease-in-out;
+}
+
+@media (max-width: 800px) {
+	.select-space-logo {
+		width: 85%;
+	}
+
+	#select-space select,
+	#select-space button:not(.tool-tip-button),
+	#create-space select,
+	#create-space button:not(.tool-tip-button) {
+		transform: scale(1.3);
+	}
+
+	#select-space button:not(.tool-tip-button),
+	#create-space button:not(.tool-tip-button) {
+		margin: 0px 8px;
+	}
+}

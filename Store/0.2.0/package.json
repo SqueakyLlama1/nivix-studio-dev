@@ -1,8 +1,44 @@
 {
-  "devDependencies": {
-    "electron": "^40.0.0"
-  },
-  "dependencies": {
-    "jquery": "^4.0.0"
-  }
+	"name": "nivix-store",
+	"version": "0.2.0",
+	"description": "Generic Inventory Management App",
+	"license": "Apache-2.0",
+	"author": "Christian Bone <bone.christian.c@outlook.com>",
+	"homepage": "https://www.nivixtech.com/studio",
+	"type": "module",
+	"main": "main.js",
+	"scripts": {
+		"start": "electron .",
+		"dist": "electron-builder --win"
+	},
+	"build": {
+		"artifactName": "Store-${version}-Setup.exe",
+		"appId": "com.nivix.store",
+		"productName": "Nivix Store",
+		"copyright": "Copyright © 2026 Christian Bone",
+		"directories": {
+			"output": "dist"
+		},
+		"files": [
+			"**/*",
+			"!dist/*"
+		],
+		"win": {
+			"target": "nsis",
+			"icon": "favicon.ico"
+		},
+		"nsis": {
+			"oneClick": false,
+			"allowToChangeInstallationDirectory": true,
+			"createDesktopShortcut": true
+		},
+		"icon": "build/icon.ico"
+	},
+	"devDependencies": {
+		"electron": "^40.6.1",
+		"electron-builder": "^26.8.1"
+	},
+	"dependencies": {
+		"jquery": "^4.0.0"
+	}
 }

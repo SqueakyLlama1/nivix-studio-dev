@@ -3,10 +3,15 @@
     height: 100%;
 }
 
+#newProject1 *:not(button):not(.bookmark) {
+    color: var(--text-main);
+}
+
 #newProject1 .left {
     display: flex;
     flex-direction: column;
     flex: 0.2;
+    background: var(--bg-card);
 }
 
 #newProject1 .right {
@@ -16,10 +21,16 @@
     padding: 0 10px;
 }
 
+#newProject1 .templateOptionHeader {
+    display: flex;
+    flex-direction: column;
+}
+
 #newProject1 .right h3 {
+    display: inline-block;
     font-family: Arial, 'Roboto', Helvetica, sans-serif;
-    border-bottom: 4px solid var(--brand-color);
-    color: var(--brand-color);
+    border-bottom: 4px solid var(--brand-dark);
+    color: var(--brand-dark);
 }
 
 #newProject1 button {
@@ -78,6 +89,11 @@
     flex-direction: row;
     gap: 5px;
     padding: 5px 0px;
+}
+
+[data-role="template-list"] {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 [data-role="template-list"] button {

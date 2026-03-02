@@ -1,0 +1,11 @@
+.create-space-image {
+	width: 45%;
+
+	transition: var(--tSpeed) width ease-in-out;
+}
+
+@media (max-width: 800px) {
+	.create-space-image {
+		width: 85%;
+	}
+}

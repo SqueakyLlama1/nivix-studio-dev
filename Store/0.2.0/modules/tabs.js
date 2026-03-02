@@ -1,68 +1,51 @@
-const storetabs = {
-    header: "[STORE TABS] ",
-    load: {
-        setVersion() {
-            const vs = getEBD('load-footer-ver');
-            if (vs && meta.sessionVersion) vs.textContent = `v${meta.sessionVersion}`;
-        }
-    },
-    init: {
-        select_space: {
-            async init() {
-                const ndutil = window.parent.ndutil;
+import { visualSettings } from "./settings.js";
+function getEBD(id) {return document.getElementById(id)};
+function wait(ms) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
 
-                const quitBtn = getEBD("select-space-quit");
-                const contBtn = getEBD("select-space-continue");
-                const select = getEBD("select-space-option");
+export let programaticAnimationDuration = visualSettings.disableAnimations ? 0 : 325;
 
-                const backBtn = getEBD("create-space-back");
-                const createBtn = getEBD("create-space-create");
-                const spaceName = getEBD("create-space-name");
+const fadeInAnimation = "fadeInPage 0.3s ease-out forwards";
+const fadeOutAnimation = "fadeOutPage 0.3s ease-in-out forwards";
 
-                quitBtn.addEventListener('click', () => {window.parent.endTask('store')});
-
-                const spacesDir = await ndutil.listDirectory(['appdata', 'store', 'spaces']);
-                const spaces = [];
-
-                const NXSPACE_SUFFIX = ".nxspace";
-
-                spacesDir.forEach(function(space) {
-                    if (space.endsWith(NXSPACE_SUFFIX)) {
-                        spaces.push(space);
-                    }
-                });
-
-                if (spaces.length === 0) {
-                    const noSpacesOption = document.createElement('option');
-                    noSpacesOption.textContent = "You have no spaces yet";
-                    noSpacesOption.disabled = true;
-                    select.appendChild(noSpacesOption);
-                } else {
-                    spaces.forEach(function(spaceNameWithSuffix) {
-                        const option = document.createElement('option');
-
-                        option.value = spaceNameWithSuffix;
-
-                        option.textContent = spaceNameWithSuffix.slice(0, -NXSPACE_SUFFIX.length);
-
-                        select.appendChild(option);
-                    });
-                }
-
-                contBtn.addEventListener('click', function() {
-                    if (select.value == "makeNew") {
-                        tabs.change('create-space');
-                    } else {
-                        tabs.change('workspace');
-                    }
-                });
-
-                backBtn.addEventListener('click', () => tabs.change('select-space'));
-                createBtn.addEventListener('click', async function() {
-                    await ndutil.createDirectory(['appdata', 'store', 'spaces', `${spaceName.value}.nxspace`]);
-                    location.reload();
-                });
-            }
-        }
+export async function remove(id, instant = visualSettings.disableAnimations) {
+    const thisElement = getEBD(id);
+    if (instant) {
+        thisElement.parentElement.removeChild(thisElement);
+    } else {
+        thisElement.style.animation = fadeOutAnimation;
+        await wait(programaticAnimationDuration);
+        thisElement.parentElement.removeChild(thisElement);
     }
-};
+}
+
+export async function goto(id, instant = visualSettings.disableAnimations, display) {
+    const existingTabs = document.querySelectorAll('.tab');
+    existingTabs.forEach(function(existingTab) {
+        hide(existingTab.id, instant);
+    });
+    await wait(programaticAnimationDuration);
+    show(id, instant, display);
+}
+
+export async function hide(id, instant = visualSettings.disableAnimations) {
+    const thisElement = getEBD(id);
+    if (instant) {
+        thisElement.style.display = "none";
+    } else {
+        thisElement.style.animation = fadeOutAnimation;
+        await wait(programaticAnimationDuration);
+        thisElement.style.display = "none";
+    }
+}
+
+export async function show(id, instant = visualSettings.disableAnimations, display) {
+    const thisElement = getEBD(id);
+    const thisDisplay = display ? display : "block";
+    if (instant) {
+        thisElement.style.display = thisDisplay;
+    } else {
+        thisElement.style.display = thisDisplay;
+        thisElement.style.animation = fadeInAnimation;
+        await wait(programaticAnimationDuration);
+    }
+}
