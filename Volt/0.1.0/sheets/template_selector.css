@@ -1,61 +1,39 @@
-#newProject1 {
+#template_selector {
     width: 100%;
     height: 100%;
 }
 
-#newProject1 .left {
+#template_selector {
+    color: var(--text-primary);
+}
+
+#template_selector .left {
     display: flex;
     flex-direction: column;
     flex: 0.2;
+    background: var(--background-secondary);
 }
 
-#newProject1 .right {
+#template_selector .right {
     display: flex;
     flex-direction: column;
     flex: 0.8;
     padding: 0 10px;
 }
 
-#newProject1 .right h3 {
+#template_selector .templateOptionHeader {
+    display: flex;
+    flex-direction: column;
+}
+
+#template_selector .right h3 {
+    display: inline-block;
     font-family: Arial, 'Roboto', Helvetica, sans-serif;
-    border-bottom: 4px solid var(--brand-color);
-    color: var(--brand-color);
+    border-bottom: 4px solid var(--brand-secondary);
+    color: var(--brand-secondary);
 }
 
-#newProject1 button {
-    background: var(--brand-color);
-    border: none;
-    border-radius: var(--radius);
-
-    color: white;
-    font-weight: 700;
-    text-decoration: none;
-
-    cursor: pointer;
-
-    padding: 0.6rem 1.2rem;
-    margin-top: auto;
-
-    transition: background 0.2s linear;
-}
-
-#newProject1 button:disabled {
-    background: #ccc !important;
-    color: var(--text-muted) !important;
-    cursor: not-allowed !important;
-}
-
-#newProject1 .right button {
-    display: block;
-    width: 100%;
-}
-
-#newProject1 .left .bookmark {
-    display: block;
-    border-radius: 0;
-}
-
-#newProject1 .section {
+#template_selector .section {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -64,16 +42,11 @@
     margin: 3px;
 }
 
-#newProject1 .section.bottom {
+#template_selector .section.bottom {
     flex: 0;
 }
 
-#newProject1 .section button {
-    display: inline-block;
-    margin-top: 2px;
-}
-
-.newProject1-templateActions {
+.template_selector-templateActions {
     display: flex;
     flex-direction: row;
     gap: 5px;
@@ -87,25 +60,25 @@
 
 [data-role="template-list"] button {
     background: transparent !important;
-    border: 1px solid var(--brand-dark) !important;
+    border: 1px solid var(--brand-secondary) !important;
 
-    color: var(--brand-color) !important;
+    color: var(--brand-primary) !important;
     transition: border-color 0.2s linear, color 0.2s linear;
 }
 
 [data-role="template-list"] button:hover {
-    background: var(--brand-color) !important;
+    background: var(--brand-primary) !important;
     color: white !important;
 }
 
 [data-role="template-list"] button.selected {
-    background: var(--brand-dark) !important;
+    background: var(--brand-secondary) !important;
     color: white !important;
 }
 
-#newProject1
+#template_selector
 button:not(:disabled):not([data-role="template-list"] button):hover {
-    background: var(--brand-dark);
+    background: var(--brand-secondary);
 }
 
 [data-role="options"] {
@@ -113,14 +86,14 @@ button:not(:disabled):not([data-role="template-list"] button):hover {
     flex-direction: column;
     flex: 1;
 
-    border-bottom: 4px solid var(--brand-color);
+    border-bottom: 4px solid var(--brand-primary);
     padding: 5px;
 }
 
 /* Checkbox */
 
 /* Flex wrapper for checkbox + label alignment */
-#newProject1 [data-role="options"] .option-wrapper {
+#template_selector [data-role="options"] .option-wrapper {
     display: flex;
     align-items: center; /* vertically center checkbox and label */
     gap: 8px; /* space between checkbox and label */
@@ -128,7 +101,7 @@ button:not(:disabled):not([data-role="template-list"] button):hover {
 }
 
 /* Styled checkboxes */
-#newProject1 [data-role="options"] input[type="checkbox"] {
+#template_selector [data-role="options"] input[type="checkbox"] {
     -webkit-appearance: none;
     appearance: none;
 
@@ -147,13 +120,13 @@ button:not(:disabled):not([data-role="template-list"] button):hover {
 }
 
 /* Checked state: colored inner square */
-#newProject1 [data-role="options"] input[type="checkbox"]:checked {
+#template_selector [data-role="options"] input[type="checkbox"]:checked {
     border-color: green;
     background-color: green;
 }
 
 /* Optional: small inner square for colorblind hint */
-#newProject1 [data-role="options"] input[type="checkbox"]:checked::before {
+#template_selector [data-role="options"] input[type="checkbox"]:checked::before {
     content: '';
     position: absolute;
     top: 2px;
@@ -165,18 +138,18 @@ button:not(:disabled):not([data-role="template-list"] button):hover {
 }
 
 /* Hover state */
-#newProject1 [data-role="options"] input[type="checkbox"]:hover:not(:disabled) {
+#template_selector [data-role="options"] input[type="checkbox"]:hover:not(:disabled) {
     filter: brightness(1.2);
 }
 
 /* Disabled state */
-#newProject1 [data-role="options"] input[type="checkbox"]:disabled {
+#template_selector [data-role="options"] input[type="checkbox"]:disabled {
     cursor: not-allowed;
     opacity: 0.5; /* visually indicate disabled */
 }
 
 /* Labels */
-#newProject1 [data-role="options"] label {
+#template_selector [data-role="options"] label {
     font-size: 20px;
     user-select: none;
     cursor: default;

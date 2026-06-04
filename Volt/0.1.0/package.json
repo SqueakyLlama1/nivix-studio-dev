@@ -5,7 +5,7 @@
 	"license": "Apache-2.0",
 	"author": "Christian Bone <bone.christian.c@outlook.com>",
 	"homepage": "https://www.nivixtech.com/studio",
-	"type": "module",
+	"type": "commonjs",
 	"main": "main.js",
 	"scripts": {
 		"start": "electron .",
@@ -13,9 +13,9 @@
 	},
 	"build": {
 		"artifactName": "Volt-${version}-Setup.exe",
-		"appId": "com.nivix.volt",
+		"appId": "com.nivixtech.volt",
 		"productName": "Nivix Volt",
-		"copyright": "Copyright © 2026 Christian Bone",
+		"copyright": "Copyright (c) 2026 Christian Bone",
 		"directories": {
 			"output": "dist"
 		},
@@ -35,10 +35,7 @@
 		"icon": "build/icon.ico"
 	},
 	"devDependencies": {
-		"electron": "^33.0.0",
-		"electron-builder": "^24.13.3"
-	},
-	"dependencies": {
-		"jquery": "^3.7.1"
+		"electron": "^42.3.3",
+		"electron-builder": "^26.8.1"
 	}
 }

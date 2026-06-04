@@ -1,6 +1,6 @@
 {
 	"name": "nivix-store",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "Generic Inventory Management App",
 	"license": "Apache-2.0",
 	"author": "Christian Bone <bone.christian.c@outlook.com>",
@@ -13,7 +13,7 @@
 	},
 	"build": {
 		"artifactName": "Store-${version}-Setup.exe",
-		"appId": "com.nivix.store",
+		"appId": "com.nivixtech.store",
 		"productName": "Nivix Store",
 		"copyright": "Copyright © 2026 Christian Bone",
 		"directories": {

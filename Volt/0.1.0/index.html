@@ -4,23 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nivix Volt</title>
+    
+    <link rel="stylesheet" type="text/css" href="sheets/nxvid.css">
     <link rel="stylesheet" type="text/css" href="sheets/index.css">
     <link rel="stylesheet" type="text/css" href="sheets/tabs.css">
     
     <link rel="stylesheet" type="text/css" href="sheets/load/load.css">
-    <link rel="stylesheet" type="text/css" href="sheets/dashboard.css">
-    <link rel="stylesheet" type="text/css" href="sheets/newproject.css">
 </head>
 <body>
-    <div id="load">
-        <div class="load-content">
-            <div class="load-content-middle">
-                <center>
-                    <img class="load-icon" src="sheets/load/icon.png">
-                    <h1 class="load-title"><span class="nivixLogoAccent" aria-label="Nivix">NiViX </span>Volt<sup aria-label="trademark">&trade;</sup></h1>
-                    <div class="load-loader"></div>
-                </center>
-            </div>
+    <div id="load" class="tab previsible-flex">
+        <div class="center">
+            <img src="sheets/load/icon.png" alt="Nivix Volt Favicon">
+            <h1><span class="nivix_logo_accent" aria-label="Nivix">NiViX </span>Volt<sup aria-label="trademark">&trade;</sup></h1>
+            <div class="nivix_loader"></div>
         </div>
         <div class="footer">
             <span>Volt </span><span id="load-footer-version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
@@ -30,48 +26,48 @@
     <div id="dashboard" class="tab">
         <div class="halfpane">
             <div class="left" data-min="0.3">
-                <h3 class="bookmark right">Get Started</h3>
-                <div class="dashboard-getstarted-section">
-                    <button id="dashboard-getstarted-new">New Project</button>
-                    <button id="dashboard-getstarted-import">Add Existing Project</button>
+                <h3 class="nivix_bookmark right">Get Started</h3>
+                <div class="section">
+                    <button class="nivix_button" id="dashboard-getstarted-new">New Project</button>
+                    <button class="nivix_button" id="dashboard-getstarted-import">Add Existing Project</button>
                 </div>
-                <div class="dashboard-getstarted-section">
-                    <a target="_blank" href="https://www.nivixtech.com/studio">Nivix Studio</a>
+                <div class="section">
+                    <a target="_blank" href="https://www.nivixtech.com/studio" class="nivix_button">Nivix Studio</a>
                 </div>
-                <div class="dashboard-getstarted-section">
-                    <button id="dashboard-getstarted-settings">Settings</button>
-                    <button id="dashboard-getstarted-quit">Quit</button>
+                <div class="section">
+                    <button class="nivix_button" id="dashboard-getstarted-settings">Settings</button>
+                    <button class="nivix_button" id="dashboard-getstarted-quit">Quit</button>
                 </div>
             </div>
             <div class="divider"></div>
             <div class="right">
-                <h3 class="bookmark">Recents</h3>
-                <center>
-                    <div class="load-loader"></div>
-                </center>
+                <h3 class="nivix_bookmark">Recents</h3>
+                <div class="horizontal_center">
+                    <div class="nivix_loader"></div>
+                </div>
             </div>
         </div>
     </div>
     
-    <div id="newProject1" class="tab">
+    <div id="template_selector" class="tab">
         <div class="halfpane">
             <aside class="left">
-                <h3 class="bookmark" data-role="title-create">Create New Project</h3>
-                <h3 class="bookmark hidden" data-role="title-manage">Manage Templates</h3>
+                <h3 class="nivix_bookmark" data-role="title-create">Create New Project</h3>
+                <h3 class="nivix_bookmark hidden" data-role="title-manage">Manage Templates</h3>
                 
                 <div class="section" data-role="template-list"></div>
                 
                 <div class="section bottom" data-role="actions-create">
-                    <button data-action="manage">Manage Templates</button>
-                    <button data-action="refresh">Refresh</button>
-                    <button data-action="cancel">Cancel</button>
+                    <button data-action="manage" class="nivix_button">Manage Templates</button>
+                    <button data-action="refresh" class="nivix_button">Refresh</button>
+                    <button data-action="cancel" class="nivix_button">Cancel</button>
                 </div>
                 
                 <div class="section bottom hidden" data-role="actions-manage">
-                    <button data-action="create-template">Create Template</button>
-                    <button data-action="import-template">Import Template</button>
-                    <button data-action="refresh">Refresh</button>
-                    <button data-action="back">Back</button>
+                    <button data-action="create-template" class="nivix_button">Create Template</button>
+                    <button data-action="import-template" class="nivix_button">Import Template</button>
+                    <button data-action="refresh" class="nivix_button">Refresh</button>
+                    <button data-action="back" class="nivix_button">Back</button>
                 </div>
             </aside>
             

@@ -1,4 +1,5 @@
 // Local Modules
+import * as workspace from './workspace.js'
 import * as fs from './fs.js'
 import * as load from './load.js'
 import * as selectspace from './selectspace.js'
@@ -51,8 +52,12 @@ async function main() {
         await wait(animationDelay);
         tabs.remove('load');
         tooltipsLib.initDelayedTooltips();
-        await selectspace.init();
+        selectspace.init();
         tabs.goto('select-space');
+        /* await selectspace.init();
+        workspace.init();
+        selectspace.selectSpace('My Testing Space');
+        tabs.goto('workspace'); */
     } catch(err) {
         console.warn(`Failed to remove loadElement from parent: ${err}`);
     }

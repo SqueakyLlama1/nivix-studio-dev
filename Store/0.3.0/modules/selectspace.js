@@ -1,6 +1,7 @@
 import * as main from './index.js';
 import * as tabs from './tabs.js';
 import * as safety from './safety.js';
+import * as workspace from './workspace.js'
 const Database = require('better-sqlite3');
 
 function getEBD(id) { return document.getElementById(id); }
@@ -97,6 +98,7 @@ export async function init() {
             tabs.goto('create-space');
         } else {
             selectSpace(select.value);
+            workspace.init();
             tabs.goto('workspace');
         }
     });

@@ -1,6 +1,7 @@
-import { visualSettings } from "./settings.js";
+import { visualSettings } from './settings.js';
+
 function getEBD(id) {return document.getElementById(id)};
-function wait(ms) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
+function wait(ms) {return new Promise((resolve) => {setTimeout(resolve, ms)})};
 
 export let programaticAnimationDuration = visualSettings.disableAnimations ? 0 : 325;
 
