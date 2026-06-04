@@ -1,0 +1,266 @@
+/* Page Setup and Defaults */
+
+html { scroll-behavior: smooth; }
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: var(--background-primary);
+    
+    margin: 0;
+}
+
+:root {
+    --brand-primary: #43a4eb;
+    --brand-secondary: #258dd8;
+    --brand-tertiary: #71aeda;
+    
+    --text-primary: #1c1c1c;
+    --text-secondary: #5d5d5d;
+    --text-tertiary: #e3e3e3;
+    --text-quarternary: #a2a2a2;
+    
+    --background-primary: #f6f6f6;
+    --background-secondary: #e8e8e8;
+    --background-tertiary: #c5c5c5;
+    --background-quarternary: #d3d3d3;
+    --background-quinary: #b9b9b9;
+    
+    --radius: 6px;
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    --transition: 0.3s ease;
+}
+
+h1 span { font-size: 1.5em; }
+h2 span { font-size: 1.17em; }
+h3 span { font-size: 1em; }
+h4 span { font-size: 0.83em; }
+h5 span { font-size: 0.67em; }
+h6 span { font-size: 0.45em; }
+
+::-webkit-scrollbar { width: 7px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--background-secondary); }
+::-webkit-scrollbar-thumb { background: var(--background-tertiary); }
+::-webkit-scrollbar-thumb:hover { background: var(--background-quarternary); }
+
+.hidden {
+    display: none !important;
+}
+
+/* Layout Elements */
+
+.center {
+    display: flex;
+    position: relative;
+    
+    height: 100%;
+    
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.vertical_center {
+    display: flex;
+    position: relative;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.horizontal_center {
+    display: flex;
+    position: relative;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Nivix Visual Identity Elements */
+
+.nivix_loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: 
+    radial-gradient(farthest-side,var(--brand-primary) 94%,#0000) top/8px 8px no-repeat,
+    conic-gradient(#0000 30%,var(--brand-primary));
+    mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
+    -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);
+    animation: load_spin 1s infinite linear;
+}
+
+.nivix_button {
+    background: var(--brand-tertiary);
+    border: 1px solid var(--text-tertiary);
+    border-radius: var(--radius);
+    
+    font-weight: normal;
+    text-decoration: none;
+    
+    cursor: pointer;
+    
+    padding: 0.3rem 0.9rem;
+    
+    transition: background 0.2s linear;
+}
+
+.nivix_button:not(button.selected):disabled {
+    background: #ccc;
+    color: var(--text-quarternary);
+    cursor: not-allowed;
+}
+
+.nivix_button.selected:disabled {
+    cursor: not-allowed;
+}
+
+.nivix_button:not(button:disabled):hover,
+.nivix_button:not(button:disabled):focus {
+    background: var(--brand-tertiary);
+    border-color: var(--brand-primary);
+}
+
+.nivix_button.selected {
+    background: var(--brand-primary);
+}
+
+/* Tex Inputs */
+.nivix_input[type="text"],
+.nivix_input[type="number"] {
+    background: var(--ce-bg-main);
+    border: 1px solid var(--brand-color);
+    border-radius: var(--radius);
+    
+    font-weight: normal;
+    text-decoration: none;
+    
+    padding: 0.3rem 0.6rem;
+}
+
+.nivix_input[type="text"]:focus,
+.nivix_input[type="number"]:focus {
+    background: var(--ce-bg-light);
+    border-color: var(--brand-dark);
+}
+
+.nivix_input::placeholder {
+    color: var(--text-muted);
+    font-weight: light;
+}
+
+/* Checkboxes */
+.nivix_input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    
+    width: 20px;
+    height: 20px;
+    
+    border: 2px solid red;
+    border-radius: 4px;
+    
+    background: transparent;
+    cursor: default;
+    transition: all 0.2s ease;
+    
+    position: relative;
+    margin: 0;
+}
+
+.nivix_input[type="checkbox"]:checked {
+    border-color: green;
+    background: green;
+}
+
+.nivix_input[type="checkbox"]:checked::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.nivix_input[type="checkbox"]:hover:not(:disabled) {
+    filter: brightness(1.2);
+}
+
+.nivix_input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.nivix_checkbox-wrapper label {
+    font-size: 20px;
+    user-select: none;
+    cursor: default;
+}
+
+.nivix_checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.nivix_checkbox-wrapper.centered {
+    justify-content: center;
+}
+
+/* Select and Option */
+
+.nivix_select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    background: var(--brand-primary);
+    
+    font-weight: normal;
+    font-family: inherit;
+    
+    border: 1px solid var(--brand-tertiary);
+    border-radius: var(--radius);
+    
+    padding: 0.3rem 2.2rem 0.3rem 0.9rem;
+    cursor: pointer;
+    
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 1.2rem;
+    
+    transition: background var(--speed), box-shadow var(--speed);
+}
+
+.nivix_select:hover:not(:disabled),
+.nivix_select:focus-visible:not(:disabled) {
+    background-color: var(--brand-tertiary);
+    border-color: var(--brand-primary);
+}
+
+.nivix_select:disabled {
+    background: #ccc;
+    color: var(--text-quarternary);
+    cursor: not-allowed;
+}
+
+.nivix_select option {
+    font-weight: normal;
+    color: var(--text-tertiary);
+    background: var(--brand-tertiary);
+}
+
+
+@keyframes load_spin { 
+    100%{
+        transform: rotate(1turn);
+    }
+}

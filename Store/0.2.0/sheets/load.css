@@ -1,0 +1,23 @@
+#load_menu {
+    animation: fadeInPage 0.3s ease-out forwards;
+
+    /* Intended to select the favicon */
+    img:nth-child(1) {
+        aspect-ratio: 1 / 1;
+
+        width: 25%;
+        max-width: 432px;
+    }
+
+    /* Intended to select the banner */
+    img:nth-child(2) {
+        aspect-ratio: 1228 / 201;
+
+        width: 60%;
+        max-width: 1228px;
+    }
+
+    .center {
+        gap: 25px;
+    }
+}

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Nivix Store</title>
+	
+	<link rel="stylesheet" type="text/css" href="sheets/index.css">
+	
+	<link rel="stylesheet" type="text/css" href="sheets/nxvid.css">
+	<link rel="stylesheet" type="text/css" href="sheets/tabs.css">
+	
+	<link rel="stylesheet" type="text/css" href="sheets/load.css">
+	<link rel="stylesheet" type="text/css" href="sheets/select-create-space.css">
+	<link rel="stylesheet" type="text/css" href="sheets/workspace.css">
+	
+	<link rel="stylesheet" type="text/css" href="libraries/tooltips.css">
+	<link rel="stylesheet" type="text/css" href="sheets/spacefillers.css">
+</head>
+<body>
+	<div id="load">
+		<div class="load-content">
+			<div class="load-content-middle">
+				<center>
+					<img class="load-icon" src="favicon.png">
+					<h1 class="load-title"><span class="nivixLogoAccent" aria-label="Nivix">NiViX </span>Store<sup aria-label="trademark">&trade;</sup></h1>
+					<div class="load-loader"></div>
+				</center>
+			</div>
+		</div>
+		<div class="footer">
+			<span>Store </span><span id="load-footer-version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
+		</div>
+	</div>
+	
+	<div id="select-space" class="tab">
+		<div class="space-filler-container">
+			<div class="space-filler-shape polygon1"></div>
+			<div class="space-filler-shape polygon2"></div>
+			<div class="space-filler-shape polygon3"></div>
+			<div class="space-filler-shape circle1"></div>
+			<div class="space-filler-shape circle2"></div>
+			<div class="space-filler-shape circle3"></div>
+			<div class="space-filler-shape circle4"></div>
+			<div class="space-filler-shape triangle1"></div>
+			<div class="space-filler-shape triangle2"></div>
+		</div>
+		<div class="middle">
+			<center>
+				<img src="assets/logo.png" class="select-space-logo">
+				
+				<br>
+				
+				<h3>Select a space or make a new one</h3>
+				<button class="tooltip-button tip-right">i
+					<span class="tooltip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
+				</button>
+				
+				<br><br>
+				
+				<select id="select-space-option" selected="makeNew" class="select">
+					<option value="makeNew">Make a new space</option>
+				</select>
+				
+				<br><br>
+				
+				<button class="button" id="select-space-quit">Quit</button>
+				<button class="button" id="select-space-continue">Continue</button>
+
+				<div class="checkbox-wrapper centered" style="transform: scale(0.85)">
+					<label>Disable Shape Animation</label>
+					<input type="checkbox" class="input" id="select-space-shapeAnimToggle">
+				</div>
+			</center>
+		</div>
+	</div>
+	<div id="create-space" class="tab">
+		<div class="space-filler-container">
+			<div class="space-filler-shape polygon1"></div>
+			<div class="space-filler-shape polygon2"></div>
+			<div class="space-filler-shape polygon3"></div>
+			<div class="space-filler-shape circle1"></div>
+			<div class="space-filler-shape circle3"></div>
+			<div class="space-filler-shape circle5"></div>
+			<div class="space-filler-shape circle7"></div>
+			<div class="space-filler-shape triangle2"></div>
+			<div class="space-filler-shape triangle5"></div>
+			<div class="space-filler-shape triangle6"></div>
+		</div>
+		<div class="middle">
+			<center>
+				<img src="assets/create-space/create-space.png" class="create-space-image">
+				
+				<br>
+				
+				<h3>Create a Space</h3>
+				<button class="tooltip-button tip-left">i
+					<span class="tooltip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
+				</button>
+				
+				<br><br>
+				
+				<label for="create-space-name">Space Name: </label>
+				<input type="text" id="create-space-name" placeholder="eg. Home or Office" maxlength="20" class="input">
+				<button id="create-space-formatting-tooltip" class="tooltip-button tip-right">i
+					<span class="tooltip">
+						The space name can only include numbers, letters, spaces, and hyphens. Name cannot be empty.<br>
+						The space name is limited to 20 characters long
+					</span>
+				</button>
+				
+				<br><br>
+				
+				<button id="create-space-back" class="button">Back</button>
+				<button id="create-space-create" class="button">Create</button>
+			</center>
+		</div>
+	</div>
+	<div id="workspace" class="tab">
+		<div class="workspace-container">
+			<div class="workspace-content">
+				<div id="workspace-content-dashboard">
+					<div class="workspace-content-dashboard-panel">
+						<h3 class="bookmark">Items with low stock</h3>
+					</div>
+					<div class="workspace-content-dashboard-panel">
+						<h3 class="bookmark right">Popular Items</h3>
+					</div>
+				</div>
+				<div id="workspace-content-queryItems" class="hidden"></div>
+			</div>
+			<div class="workspace-common-controls">
+				<button id="workspace-common-add">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+					<span>Register New Item</span>
+				</button>
+				<button id="workspace-common-config">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
+					<span>Settings</span>
+				</button>
+				<button id="workspace-common-quit">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-120q-33 0-56.5-23.5T120-200v-160h80v160h560v-560H200v160h-80v-160q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm220-160-56-58 102-102H120v-80h346L364-622l56-58 200 200-200 200Z"/></svg>
+					<span>Quit</span>
+				</button>
+				<button id="workspace-common-query">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M472-120q-73-1-137.5-13.5t-112-34Q175-189 147.5-218T120-280q0 33 27.5 62t75 50.5q47.5 21.5 112 34T472-120Zm-71-204q-30-3-58-8t-53.5-12q-25.5-7-48-15.5T200-379q19 11 41.5 19.5t48 15.5q25.5 7 53.5 12t58 8Zm79-275q86 0 177.5-26T760-679q-11-29-100.5-55T480-760q-91 0-178.5 25.5T200-679q15 29 104.5 54.5T480-599Zm-61 396q10 23 23 44t30 39q-73-1-137.5-13.5t-112-34Q175-189 147.5-218T120-280v-400q0-33 28.5-62t77.5-51q49-22 114.5-34.5T480-840q74 0 139.5 12.5T734-793q49 22 77.5 51t28.5 62q0 33-28.5 62T734-567q-49 22-114.5 34.5T480-520q-85 0-157-15t-123-44v101q40 37 100 54t121 22q-8 15-13 34.5t-7 43.5q-60-7-111.5-20T200-379v99q14 25 77 47t142 30ZM864-40 756-148q-22 13-46 20.5t-50 7.5q-75 0-127.5-52.5T480-300q0-75 52.5-127.5T660-480q75 0 127.5 52.5T840-300q0 26-7.5 50T812-204L920-96l-56 56ZM731-229q29-29 29-71t-29-71q-29-29-71-29t-71 29q-29 29-29 71t29 71q29 29 71 29t71-29Z"/></svg>
+					<span>Query Items</span>
+				</button>
+				</button>
+				<button id="workspace-common-clipboard">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm221.5-198.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"/></svg>
+					<span>Clipboard</span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<script type="module" src="modules/index.js"></script>
+</body>
+</html>

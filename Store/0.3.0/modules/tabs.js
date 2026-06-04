@@ -1,6 +1,4 @@
-import { visualSettings } from './settings.js';
-import { unloadCSS } from './file_loader.js';
-
+import { visualSettings } from "./settings.js";
 function getEBD(id) {return document.getElementById(id)};
 function wait(ms) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
 

@@ -3,137 +3,155 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="sheets/index.css">
+	<title>Nivix Store</title>
+	
+	<link rel="stylesheet" type="text/css" href="sheets/nxvid.css">
+	
 	<link rel="stylesheet" type="text/css" href="sheets/tabs.css">
+	<link rel="stylesheet" type="text/css" href="sheets/index.css">
 </head>
 <body>
-	<div id="load" class="tab">
+	<div id="shade"></div>
+	<div class="panel" id="quitMenu">
 		<div class="middle">
-			<img src="store.png" class="load-icon">
-
-			<br>
-
-			<div class="loader"></div>
+			<center>
+				<div class="nivix_loader"></div><br>
+				<span>Saving Inventory...</span><br>
+				<span>Please don't close Store or turn off your device.</span>
+			</center>
+		</div>
+	</div>
+	<div class="tab.previsible-flex center" id="load_menu">
+		<div class="center">
+			<img src="assets/favicon.png" alt="Nivix Store Favicon">
+			<img src="assets/banner.png" alt="Nivix Store Banner">
+			<div class="nivix_loader"></div>
 		</div>
 		<div class="footer">
-			<span id="load-footer-ver">vX.X.X</span>
+			<button onclick="quit()">Quit</button>
+			<span>v0.1.1</span>
 		</div>
 	</div>
-	<div id="select-space" class="tab">
-		<div class="middle">
-			<center>
-				<img src="assets/logo.png" class="select-space-logo">
-
-				<br>
-
-				<h3>Select a space or make a new one</h3>
-				<button class="tooltip-button tip-right">i
-					<span class="tooltip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
-				</button>
-
-				<br><br>
-
-				<select id="select-space-option" selected="makeNew">
-					<option value="makeNew">Make a new space</option>
-				</select>
-
-				<br><br>
-
-				<button id="select-space-quit">Quit</button>
-				<button id="select-space-continue">Continue</button>
-			</center>
-		</div>
-	</div>
-	<div id="create-space" class="tab">
-		<div class="middle">
-			<center>
-				<img src="assets/tabs/create-space.png" class="create-space-image">
-
-				<br>
-
-				<h3>Create a Space</h3>
-				<button class="tooltip-button tip-right">i
-					<span class="tooltip">An example of a space would be like "Office" or "Home". Each space contains it's own items and groups separate from others.</span>
-				</button>
-
-				<br><br>
-
-				<label for="create-space-name">Space Name: </label>
-				<input type="text" id="create-space-name" oninput="safety.filterInput(this)" placeholder="eg. Home or Office" maxlength="20">
-				<button class="tooltip-button tip-right">i
-					<span class="tooltip">
-						The space name can only include number, letters, spaces, and hyphens.<br>
-						The space name is limited to 20 characters long
-					</span>
-				</button>
-
-				<br><br>
-
-				<button id="create-space-back">Back</button>
-				<button id="create-space-create">Create</button>
-			</center>
-		</div>
-	</div>
-	<div id="workspace" class="tab">
-		<div class="workspace-container">
-			<div class="workspace-content">
-				<div class="sort-bar">
-					<span>Name</span>
-					<span>Location</span>
-				</div>
-				<div class="item">
-					<span>Name</span>
-				</div>
-			</div>
-			<div class="workspace-item-controls">
-				<button id="workspace-item-add">
-					<img src="assets/icons/add.png">
-					<span>Add</span>
-				</button>
-				<button id="workspace-item-remove" disabled>
-					<img src="assets/icons/remove.png">
-					<span>Remove</span>
-				</button>
-				<button id="workspace-item-edit" disabled>
-					<img src="assets/icons/edit.png">
-					<span>Edit</span>
-				</button>
-				<button id="workspace-item-group" disabled>
-					<img src="assets/icons/group.png">
-					<span>Group</span>
-				</button>
-				<button id="workspace-item-details" disabled>
-					<img src="assets/icons/details.png">
-					<span>Details</span>
-				</button>
-				<button id="workspace-item-save" disabled>
-					<img src="assets/icons/save.png">
-					<span>Save</span>
-				</button>
-				<button id="workspace-item-config">
-					<img src="assets/icons/settings.png">
-					<span>Settings</span>
-				</button>
-				<button id="workspace-item-quit">
-					<img src="assets/icons/quit.png">
-					<span>Quit</span>
-				</button>
-				<input id="workspace-item-search" type="search" placeholder="Search">
-				<button id="workspace-item-search-filter">
-					<img src="assets/icons/filter.png">
-					<span>Filter</span>
-				</button>
-				<button id="workspace-item-clipboard">
-					<img src="assets/icons/clipboard.png">
-					<span>Clipboard</span>
-				</button>
+	<div class="tab" id="workpanel">
+		<div class="navigation">
+			<div class="nav-buttons">
+				<button id="addItem"><img src="assets/add.png" onclick="openPanel('addItemPanel')">Add</button>
+				<button id="removeItem" onclick="removeSelectedItems()" disabled><img src="assets/remove.png">Delete</button>
+				<button id="editItem" onclick="editSelectedItem()" disabled><img src="assets/edit.png">Edit</button>
+				<button id="itemDetails" onclick="detailItem()" disabled><img src="assets/details.png">Details</button>
+				<button id="settings" onclick="openPanel('settingsPanel')"><img src="assets/settings.png">Options</button>
+				<button id="save"><img src="assets/save.png">Save</button>
+				<button id="quit" onclick="quit()"><img src="assets/quit.png">Quit</button>
 			</div>
 		</div>
+		<div class="explorer">
+			<div class="sortBar">
+				<div class="nameSection"><span>Item Name</span></div>
+				<div class="dateSection"><span>Date Modified</span></div>
+				<div class="locationSection"><span>Location</span></div>
+				<div class="keywordSection"><span>Keyword(s)</span></div>
+				<div class="amountSection"><span>Quantity</span></div>
+			</div>
+			<div id="explorerItems"></div>
+			<input type="search" id="explorerSearchBar" placeholder="Search">
+		</div>
+		<div class="panel" id="addItemPanel">
+			<div class="navigation">
+				<div class="nav-buttons">
+					<button onclick="closePanel('addItemPanel')"><img src="assets/cancel.png">Cancel</button>
+					<button onclick="addItem()"><img src="assets/accept.png">Add</button>
+				</div>
+			</div>
+			<div class="content">
+				<center>
+					<input type="text" id="addItem-name" placeholder="Item Name (Required)"><br>
+					<input type="text" id="addItem-location" placeholder="Item Location (Required)"><br>
+					<input type="number" id="addItem-quantity" placeholder="Item Quantity (Required)"><br>
+					<textarea id="addItem-keywords" placeholder="Item Keyword(s) separated by commas, example: processor, ram"></textarea><br><br>
+					<span id="addItem-output"></span>
+				</center>
+			</div>
+		</div>
+		<div class="panel" id="editItemPanel">
+			<div class="navigation">
+				<div class="nav-buttons">
+					<button onclick="closePanel('editItemPanel')"><img src="assets/cancel.png">Cancel</button>
+					<button onclick="editItem()"><img src="assets/accept.png">Edit</button>
+				</div>
+			</div>
+			<div class="content">
+				<center>
+					<input type="text" id="editItem-name" placeholder="Item Name (Required)"><br>
+					<input type="text" id="editItem-location" placeholder="Item Location (Required)"><br>
+					<input type="number" id="editItem-quantity" placeholder="Item Quantity (Required)"><br>
+					<textarea id="editItem-keywords" placeholder="Item Keyword(s) separated by commas, example: processor, ram"></textarea><br><br>
+					<span id="editItem-output"></span>
+				</center>
+			</div>
+		</div>
+		<div class="panel" id="itemDetailPanel">
+			<div class="navigation">
+				<div class="nav-buttons">
+					<button onclick="closePanel('itemDetailPanel')"><img src="assets/cancel.png">Close</button>
+				</div>
+			</div>
+			<div class="content">
+				<center>
+					<div class="section">
+						<label for="detailItem-name">Decoded Name:</label><br>
+						<input type="text" id="detailItem-name" disabled>
+					</div>
+					<br>
+					<div class="section">
+						<label for="detailItem-name-encoded">Encoded Name:</label><br>
+						<input type="text" id="detailItem-name-encoded" disabled>
+					</div>
+					<br>
+					<div class="section">
+						<label for="detailItem-location">Decoded Location:</label><br>
+						<input type="text" id="detailItem-location" disabled>
+					</div>
+					<br>
+					<div class="section">
+						<label for="detailItem-location-encoded">Encoded Location:</label><br>
+						<input type="text" id="detailItem-location-encoded" disabled>
+					</div>
+					<br>
+					<div class="section">
+						<label for="detailItem-keywords">Decoded Keywords:</label><br>
+						<textarea id="detailItem-keywords" disabled></textarea>
+					</div>
+					<br>
+					<div class="section">
+						<label for="detailItem-keywords-encoded">Encoded Keywords:</label><br>
+						<textarea id="detailItem-keywords-encoded" disabled></textarea>
+					</div>
+					<br>
+					<div class="section">
+						<label for="detailItem-quantity">Quantity:</label><br>
+						<input type="number" id="detailItem-quantity" disabled>
+					</div>
+					<br>
+					<div class="section">
+						<label for="detailItem-modified">Date Modified:</label><br>
+						<input type="text" id="detailItem-modified" disabled>
+					</div>
+				</center>
+			</div>
+		</div>
+		<div class="panel" id="settingsPanel">
+			<div class="navigation">
+				<div class="nav-buttons">
+					<button onclick="closePanel('settingsPanel')"><img src="assets/cancel.png">Close</button>
+				</div>
+			</div>
+			<div class="content">
+				<h4>Theme Color</h4>
+				<input type="color" onchange="updateThemeColor(this.value)"><br>
+				<button onclick="updateThemeColor('default')">Reset to Default</button>
+			</div>
+		</div>
 	</div>
-	<script defer src="modules/util.js"></script>
-	<script defer src="modules/filemgr.js"></script>
-	<script defer src="modules/safety.js"></script>
-	<script defer src="modules/prefs.js"></script>
-	<script defer src="modules/tabs.js"></script>
+	<script src="modules/index.js" type="module"></script>
 </body>
 </html>

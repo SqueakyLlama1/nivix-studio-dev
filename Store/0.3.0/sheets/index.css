@@ -1,0 +1,10 @@
+*:focus {
+    outline: 1px solid var(--brand-dark);
+}
+
+.middle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
