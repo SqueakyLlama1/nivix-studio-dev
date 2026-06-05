@@ -1,5 +1,5 @@
 import { loadCSS, unloadCSS } from './file_loader.js';
-import { visualSettings } from './settings.js';
+import * as settings from './settings.js';
 import * as tabs from './tabs.js';
 import * as index from './index.js';
 import * as welcome_back from './welcome_back.js';
@@ -8,7 +8,7 @@ import * as select_space from './select_space.js';
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 
-const menuDelay = visualSettings.menuDelay || 750;
+let menuDelay = 750;
 const load_menu = getEBD('load_menu');
 
 const versionLabel = getEBD('load_footer_version');
@@ -28,9 +28,18 @@ export async function init() {
         await window.storeAPI.initSandbox();
         console.log('Initialized Sandbox');
     } catch (err) {
+        // Add a critical error here
         console.error(`Failed to initialize sandbox: ${err}`);
         return;
     }
+    try {
+        await settings.init();
+        menuDelay = settings.preferences.menuDelay ?? 750;
+    } catch (err) {
+        // Add a soft error here
+    }
+    await wait(menuDelay);
+    await finish_loading();
 }
 
 async function finish_loading() {
@@ -49,7 +58,10 @@ async function finish_loading() {
     select_space.init();
 }
 
-window.addEventListener('load', async () => {
-    await wait(menuDelay);
-    await finish_loading();
-});
+export function checkLoadState() {
+    if (document.readyState === 'complete') {
+        init();
+    } else {
+        window.addEventListener('load', init);
+    }
+}

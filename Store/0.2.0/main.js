@@ -64,3 +64,23 @@ ipcMain.handle('check-for-old-inventory', async () => {
         throw new Error(errorMsg);
     }
 });
+
+const preferencesPath = path.join(os.homedir(), 'nvxstdo', 'store', 'preferences.json');
+
+ipcMain.handle('get-preferences', async () => {
+    try {
+        const preferencesContents = await fs.readFile(preferencesPath, 'utf-8');
+        return JSON.parse(preferencesContents);
+    } catch {
+        return {};
+    }
+});
+
+ipcMain.handle('set-preferences', async (_event, preferences) => {
+    try {
+        const data = JSON.stringify(preferences, null, 2);
+        await fs.writeFile(preferencesPath, data);
+    } catch (err) {
+        throw new Error(err);
+    }
+});
