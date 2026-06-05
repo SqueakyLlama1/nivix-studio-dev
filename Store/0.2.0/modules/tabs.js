@@ -1,6 +1,8 @@
 import { visualSettings } from './settings.js';
 import { unloadCSS } from './file_loader.js';
 
+let previousTab;
+
 function getEBD(id) {return document.getElementById(id)};
 function wait(ms) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
 
@@ -9,7 +11,8 @@ export let programaticAnimationDuration = visualSettings.disableAnimations ? 0 :
 const fadeInAnimation = "fadeInPage 0.3s ease-out forwards";
 const fadeOutAnimation = "fadeOutPage 0.3s ease-in-out forwards";
 
-export async function remove(id, instant = visualSettings.disableAnimations) {
+export async function remove(id, options = {}) {
+    const instant = options.instant !== undefined ? options.instant : visualSettings.disableAnimations;
     const thisElement = getEBD(id);
     if (instant) {
         thisElement.parentElement.removeChild(thisElement);
@@ -20,17 +23,47 @@ export async function remove(id, instant = visualSettings.disableAnimations) {
     }
 }
 
-export async function goto(id, instant = visualSettings.disableAnimations, display) {
+export async function goto(id, options = {}) {
+    const instant = options.instant !== undefined ? options.instant : visualSettings.disableAnimations;
+    let logPrevious = options.logPrevious !== undefined ? options.logPrevious : true;
+    const display = options.display;
+
+    if (id == 'previous') {
+        if (!previousTab) {
+            // Add a soft error here
+            return;
+        }
+        id = previousTab;
+        logPrevious = false;
+    }
+
+    let tabsHidden = 0;
+    let lastHiddenTab;
     const existingTabs = document.querySelectorAll('.tab');
+
     existingTabs.forEach(function(existingTab) {
-        hide(existingTab.id, instant);
+        let existingTabElement = getEBD(existingTab.id);
+        if (!existingTabElement || existingTabElement.style.display == 'none' || existingTabElement.style.display == '') {
+            return;
+        }
+        hide(existingTab.id, { instant });
+        tabsHidden++;
+        lastHiddenTab = existingTab.id;
     });
-    await wait(programaticAnimationDuration);
-    show(id, instant, display);
+
+    if (!logPrevious) console.log(`Not logging '${lastHiddenTab}' as previous tab.`);
+    if (tabsHidden > 0 && logPrevious) {
+        previousTab = lastHiddenTab;
+    }
+
+    if (!instant) await wait(programaticAnimationDuration);
+    show(id, { instant, display });
 }
 
-export async function hide(id, instant = visualSettings.disableAnimations) {
+export async function hide(id, options = {}) {
+    const instant = options.instant !== undefined ? options.instant : visualSettings.disableAnimations;
     const thisElement = getEBD(id);
+
     if (instant) {
         thisElement.style.display = "none";
     } else {
@@ -40,9 +73,11 @@ export async function hide(id, instant = visualSettings.disableAnimations) {
     }
 }
 
-export async function show(id, instant = visualSettings.disableAnimations, display) {
+export async function show(id, options = {}) {
+    const instant = options.instant !== undefined ? options.instant : visualSettings.disableAnimations;
+    const thisDisplay = options.display ? options.display : "block";
     const thisElement = getEBD(id);
-    const thisDisplay = display ? display : "block";
+
     if (instant) {
         thisElement.style.display = thisDisplay;
     } else {

@@ -1,3 +1,12 @@
+/* Fonts */
+@font-face {
+    font-family: "GochiHand";
+    src: url("../fonts/GochiHand-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* Page Setup and Defaults */
 
 html { scroll-behavior: smooth; }
@@ -19,8 +28,8 @@ body {
     
     --text-primary: #1c1c1c;
     --text-secondary: #5d5d5d;
-    --text-tertiary: #e3e3e3;
-    --text-quarternary: #a2a2a2;
+    --text-tertiary: #f9f9f9;
+    --text-quarternary: #a1a1a1;
     
     --background-primary: #f6f6f6;
     --background-secondary: #e8e8e8;
@@ -41,9 +50,9 @@ h5 span { font-size: 0.67em; }
 h6 span { font-size: 0.45em; }
 
 ::-webkit-scrollbar { width: 7px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--background-secondary); }
-::-webkit-scrollbar-thumb { background: var(--background-tertiary); }
-::-webkit-scrollbar-thumb:hover { background: var(--background-quarternary); }
+::-webkit-scrollbar-track { background: var(--background-tertiary); }
+::-webkit-scrollbar-thumb { background: var(--brand-primary); }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-secondary); }
 
 .hidden {
     display: none !important;
@@ -80,7 +89,27 @@ h6 span { font-size: 0.45em; }
     text-align: center;
 }
 
+.footer {
+    flex-shrink: 0;
+    min-height: 0;
+    
+    background: var(--brand-primary);
+    border-radius: var(--radius);
+    
+    color: white;
+    text-align: center;
+    
+    padding: 5px;
+    margin: 5px;
+}
+
 /* Nivix Visual Identity Elements */
+
+.nivix_accent {
+    font-family: "GochiHand", "Lucida Handwriting", serif;
+    color: var(--brand-primary);
+    text-shadow: 3px 3px 2px #8d8d8d;
+}
 
 .nivix_loader {
     width: 50px;
@@ -95,41 +124,68 @@ h6 span { font-size: 0.45em; }
 }
 
 .nivix_button {
-    background: var(--brand-tertiary);
-    border: 1px solid var(--text-tertiary);
+    display: inline-block;
+    
+    background: var(--brand-primary);
+    border: none;
     border-radius: var(--radius);
     
-    font-weight: normal;
+    color: var(--text-tertiary);
     text-decoration: none;
+    font-weight: 700;
     
     cursor: pointer;
     
-    padding: 0.3rem 0.9rem;
+    padding: 0.6rem 1.2rem;
+    margin: 2.5px 0px;
     
-    transition: background 0.2s linear;
+    transition: background 0.2s;
+    
+    &:hover {
+        background: var(--brand-secondary);
+    }
+    
+    &:not(&.selected):disabled {
+        background: #ccc;
+        color: var(--text-quarternary);
+        cursor: not-allowed;
+    }
+    
+    &.selected:disabled {
+        cursor: not-allowed;
+    }
+    
+    &:not(&:disabled):hover,
+    &:not(&:disabled):focus {
+        background: var(--brand-secondary);
+        border-color: var(--brand-secondary);
+    }
+
+    &.selected {
+        background: var(--brand-secondary);
+    }
 }
 
-.nivix_button:not(button.selected):disabled {
-    background: #ccc;
-    color: var(--text-quarternary);
-    cursor: not-allowed;
-}
+/* Headers */
+.nivix_bookmark {
+    display: block;
 
-.nivix_button.selected:disabled {
-    cursor: not-allowed;
-}
-
-.nivix_button:not(button:disabled):hover,
-.nivix_button:not(button:disabled):focus {
-    background: var(--brand-tertiary);
-    border-color: var(--brand-primary);
-}
-
-.nivix_button.selected {
+    width: fit-content;
+    
     background: var(--brand-primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    
+    color: var(--text-tertiary);
+    
+    padding: 4px 20px;
+    box-sizing: border-box;
+    
+    &.right {
+        border-radius: var(--radius) 0px 0px var(--radius);
+    }
 }
 
-/* Tex Inputs */
+/* Text Inputs */
 .nivix_input[type="text"],
 .nivix_input[type="number"] {
     background: var(--ce-bg-main);
@@ -258,7 +314,7 @@ h6 span { font-size: 0.45em; }
     background: var(--brand-tertiary);
 }
 
-
+/* Animations */
 @keyframes load_spin { 
     100%{
         transform: rotate(1turn);

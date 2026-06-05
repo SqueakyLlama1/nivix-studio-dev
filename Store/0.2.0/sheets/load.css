@@ -1,23 +1,41 @@
 #load_menu {
-    animation: fadeInPage 0.3s ease-out forwards;
-
-    /* Intended to select the favicon */
-    img:nth-child(1) {
-        aspect-ratio: 1 / 1;
-
-        width: 25%;
-        max-width: 432px;
+    flex-direction: column;
+    
+    height: 100%;
+    width: 100%;
+    
+    margin: 0;
+    padding: 0;
+    
+    animation: fadeInPage 0.8s ease-out forwards;
+    
+    svg {
+        width: 10%;
+        aspect-ratio: 1;
+    }
+    
+    h1 {
+        color: var(--brand-primary);
+        transform: scale(1.5);
     }
 
-    /* Intended to select the banner */
-    img:nth-child(2) {
-        aspect-ratio: 1228 / 201;
-
-        width: 60%;
-        max-width: 1228px;
+    .footer {
+        font-weight: bold;
     }
+}
 
-    .center {
-        gap: 25px;
+/* Small Screen Support */
+
+@media screen and (max-width: 256px) {
+    .load-icon {
+        width: 95%;
+        height: auto;
+    }
+}
+
+@media screen and (max-height: 256px) {
+    .load-icon {
+        width: auto;
+        height: 95%;
     }
 }

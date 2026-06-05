@@ -6,9 +6,11 @@ html, head, body {
 }
 
 body {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: 'Roboto', Arial, Helvetica, sans-serif;
 	width: 100%;
 	height: 100vh;
+
+	color: var(--text-primary);
 }
 
 :root {
@@ -117,22 +119,6 @@ input:focus {
             }
         }
     }
-}
-
-.footer {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    
-    height: 2.5rem;
-    width: 100%;
-    
-    font-family: "Mojangles", Arial, monospace;
-    
-    background: var(--background-secondary);
-    border-radius: calc(var(--radius) - 2px);
-    
-    margin-top: auto;
 }
 
 /* ========== PANEL & TAB SYSTEM ========== */

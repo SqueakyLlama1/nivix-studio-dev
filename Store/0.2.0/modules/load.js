@@ -1,18 +1,33 @@
 import { loadCSS, unloadCSS } from './file_loader.js';
 import { visualSettings } from './settings.js';
 import * as tabs from './tabs.js';
+import * as index from './index.js';
+import * as welcome_back from './welcome_back.js';
 
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 
-const menuDelay = visualSettings.menuDelay || 50;
+const menuDelay = visualSettings.menuDelay || 750;
 const load_menu = getEBD('load_menu');
+
+const load_footer_version = getEBD('load_footer_version');
+
 let load_stylesheet;
 
 let isFinishing = false;
 
-export function init() {
+export async function init() {
+    load_footer_version.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
+    
     load_stylesheet = loadCSS('sheets/load.css');
+
+    try {
+        await window.storeAPI.initSandbox();
+        console.log('Initialized Sandbox');
+    } catch (err) {
+        console.error(`Failed to initialize sandbox: ${err}`);
+        return;
+    }
 }
 
 async function finish_loading() {
@@ -21,9 +36,11 @@ async function finish_loading() {
     
     await tabs.remove('load_menu');
     unloadCSS(load_stylesheet);
+
+    welcome_back.init();
 }
 
 window.addEventListener('load', async () => {
     await wait(menuDelay);
-    // await finish_loading();
+    await finish_loading();
 });

@@ -2,7 +2,7 @@ function getEBD(id) {return document.getElementById(id)};
 
 export const visualSettings = {
     disableAnimations: false,
-    menuDelay: 50
+    menuDelay: 750
 };
 
 export function disableAnimations() {
