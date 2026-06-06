@@ -8,7 +8,6 @@ import * as select_space from './select_space.js';
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 
-let menuDelay = 750;
 const load_menu = getEBD('load_menu');
 
 const versionLabel = getEBD('load_footer_version');
@@ -23,6 +22,8 @@ export async function init() {
     
     load_stylesheet = loadCSS('sheets/load.css');
     tooltip_stylesheet = loadCSS('sheets/tooltips.css');
+    
+    let menuDelay;
 
     try {
         await window.storeAPI.initSandbox();
