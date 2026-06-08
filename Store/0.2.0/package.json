@@ -45,7 +45,6 @@
 		"electron-builder": "^26.8.1"
 	},
 	"dependencies": {
-		"better-sqlite3": "^12.10.0",
 		"electron-updater": "^6.8.3"
 	}
 }
