@@ -23,17 +23,7 @@
 		</div>
 	</div>
 	<div class="tab previsible-flex" id="load_menu">
-		<div class="space-filler-container">
-			<div class="space-filler-shape polygon1"></div>
-			<div class="space-filler-shape polygon2"></div>
-			<div class="space-filler-shape polygon3"></div>
-			<div class="space-filler-shape circle1"></div>
-			<div class="space-filler-shape circle2"></div>
-			<div class="space-filler-shape circle3"></div>
-			<div class="space-filler-shape circle4"></div>
-			<div class="space-filler-shape triangle1"></div>
-			<div class="space-filler-shape triangle2"></div>
-		</div>
+		<div class="space_filler_container autofill"></div>
 		<div class="center">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="50" fill="#43a4eb"/><path d="M 118 208.5 L 394 208.5 L 361 158.5 Q 357 151.5, 348 151.5 L 164 151.5 Q 155 151.5, 151 158.5 Z" fill="#ffffff"/><path d="M 125 216.5 L 225 216.5 L 225 238.5 Q 225 254.5, 241 254.5 L 271 254.5 Q 287 254.5, 287 238.5 L 287 216.5 L 387 216.5 Q 399 216.5, 399 228.5 L 399 344.5 Q 399 356.5, 387 356.5 L 125 356.5 Q 113 356.5, 113 344.5 L 113 228.5 Q 113 216.5, 125 216.5 Z" fill="#ffffff"/></svg>
 			<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
@@ -47,26 +37,45 @@
 	<div class="tab" id="welcome_back">
 		<div class="center">
 			<h1><span class="nivix_accent">Welcome Back</span> to Nivix Store!</h1>
-			<p>There have been a few changes since you were last here. Store has detected that you last used Store 0.1.0. Release 0.2.0 changed the inventory storage system from using NDJSON to using SQLite3. In order to use Store 0.2.0 or newer, you need to convert to SQLite. Until then, you are free to keep using 0.1.0. Click "Convert" below to get started using the new Store!</p>
+			<p>There have been a few changes since you last used Store. Your old inventory needs to be copied to our new format. To do so we are going to walk you through how to copy your inventory to the new system and begin using the new Store. Click "Explore the New Changes" below to get started.</p>
 			<div class="button_container">
 				<button id="welcome_back_quit" class="nivix_button">Close Store</button>
-				<button id="welcome_back_changelog" class="nivix_button">Explore the New Changes</button>
-				<button id="welcome_back_convert" class="nivix_button">Convert to SQLite</button>
+				<button id="welcome_back_skip" class="nivix_button">Skip the Tutorial</button>
+				<button id="welcome_back_continue" class="nivix_button">Explore the New Changes</button>
+				<button class="nivix_button tooltip-support-button tip-right">Disclaimer
+					<span class="tooltip">Your old inventory still exists even after conversion. It should be in either <code>/home/nvxstdo/store/</code> (if you're on Linux), or <code>C:\Users\&lt;your username&gt;\nxstdo\store\</code> (if you're on Windows) as the file "inventory.ndjson"</span>
+				</button>
 			</div>
 		</div>
 	</div>
 	
 	<div class="tab" id="changelog">
 		<div class="heading">
-			<div class="logo_container">
-				<img class="logo" src="assets/banner.png" alt="Nivi Store Banner">
-			</div>
 			<span>Changelog for version <span id="changelog_version">X.X.X</span></span>
-			<div class="nav">
-
-			</div>
 		</div>
 		<button id="changelog_back" class="nivix_button">Back</button>
+	</div>
+	
+	<div id="select_space" class="tab">
+		<div class="space_filler_container autofill"></div>
+		<div class="center">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="50" fill="#43a4eb"/><path d="M 118 208.5 L 394 208.5 L 361 158.5 Q 357 151.5, 348 151.5 L 164 151.5 Q 155 151.5, 151 158.5 Z" fill="#ffffff"/><path d="M 125 216.5 L 225 216.5 L 225 238.5 Q 225 254.5, 241 254.5 L 271 254.5 Q 287 254.5, 287 238.5 L 287 216.5 L 387 216.5 Q 399 216.5, 399 228.5 L 399 344.5 Q 399 356.5, 387 356.5 L 125 356.5 Q 113 356.5, 113 344.5 L 113 228.5 Q 113 216.5, 125 216.5 Z" fill="#ffffff"/></svg>
+			<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
+			<select id="select_space_option" class="nivix_select" selected="create-new-space">
+				<option value="create-new-space">Create a New Space</option>
+			</select>
+			<div class="button_container">
+				<button id="select_space_quit" class="nivix_button">Close Store</button>
+				<button id="select_space_continue" class="nivix_button">Continue</button>
+			</div>
+			<div class="nivix_checkbox_wrapper centered">
+				<label>Disable Shape Animation</label>
+				<input type="checkbox" class="nivix_input" id="select_space_shapeAnimToggle">
+			</div>
+		</div>
+		<div class="footer">
+			<span>Store </span><span id="select_space_footer_version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
+		</div>
 	</div>
 	
 	<div class="tab" id="workpanel">

@@ -1,4 +1,4 @@
-import { visualSettings } from './settings.js';
+import { preferences } from './settings.js';
 import { unloadCSS } from './file_loader.js';
 
 let previousTab;
@@ -6,13 +6,13 @@ let previousTab;
 function getEBD(id) {return document.getElementById(id)};
 function wait(ms) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
 
-export let programaticAnimationDuration = visualSettings.disableAnimations ? 0 : 325;
+export let programaticAnimationDuration = preferences.disableAnimations ? 0 : 325;
 
 const fadeInAnimation = "fadeInPage 0.3s ease-out forwards";
 const fadeOutAnimation = "fadeOutPage 0.3s ease-in-out forwards";
 
 export async function remove(id, options = {}) {
-    const instant = options.instant !== undefined ? options.instant : visualSettings.disableAnimations;
+    const instant = options.instant !== undefined ? options.instant : preferences.disableAnimations;
     const thisElement = getEBD(id);
     if (instant) {
         thisElement.parentElement.removeChild(thisElement);
@@ -24,7 +24,7 @@ export async function remove(id, options = {}) {
 }
 
 export async function goto(id, options = {}) {
-    const instant = options.instant !== undefined ? options.instant : visualSettings.disableAnimations;
+    const instant = options.instant !== undefined ? options.instant : preferences.disableAnimations;
     let logPrevious = options.logPrevious !== undefined ? options.logPrevious : true;
     const display = options.display;
 
@@ -61,7 +61,7 @@ export async function goto(id, options = {}) {
 }
 
 export async function hide(id, options = {}) {
-    const instant = options.instant !== undefined ? options.instant : visualSettings.disableAnimations;
+    const instant = options.instant !== undefined ? options.instant : preferences.disableAnimations;
     const thisElement = getEBD(id);
 
     if (instant) {
@@ -74,7 +74,7 @@ export async function hide(id, options = {}) {
 }
 
 export async function show(id, options = {}) {
-    const instant = options.instant !== undefined ? options.instant : visualSettings.disableAnimations;
+    const instant = options.instant !== undefined ? options.instant : preferences.disableAnimations;
     const thisDisplay = options.display ? options.display : "block";
     const thisElement = getEBD(id);
 

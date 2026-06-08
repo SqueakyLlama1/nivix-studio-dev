@@ -4,7 +4,7 @@ export const store = {
     "sessionVersion": "0.2.0"
 }
 
-load.init();
+load.checkLoadState();
 
 export function quit() {
     window.close();
