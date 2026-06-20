@@ -11,7 +11,7 @@
 :root {
     --brand-primary: #43a4eb;
     --brand-secondary: #258dd8;
-    --brand-tertiary: #71aeda;
+    --brand-tertiary: #40afff;
     
     --text-primary: #1c1c1c;
     --text-secondary: #5d5d5d;
@@ -126,10 +126,8 @@ h6 span { font-size: 0.45em; }
     border-radius: var(--radius);
     color: var(--text-tertiary);
     text-decoration: none;
-    font-weight: 700;
     cursor: pointer;
-    padding: 0.6rem 1.2rem;
-    margin: 2.5px 0;
+    padding: 0.5rem 1.1rem;
     transition: background 0.2s;
     
     &:hover, &:focus {
@@ -160,7 +158,7 @@ h6 span { font-size: 0.45em; }
     background: var(--brand-primary);
     border-radius: 0 var(--radius) var(--radius) 0;
     color: var(--text-tertiary);
-    padding: 4px 20px;
+    padding: 0.5rem 1.1rem;
     box-sizing: border-box;
     
     &.right {
@@ -174,9 +172,8 @@ h6 span { font-size: 0.45em; }
         background: var(--background-secondary);
         border: 1px solid var(--brand-primary);
         border-radius: var(--radius);
-        font-weight: normal;
         text-decoration: none;
-        padding: 0.3rem 0.6rem;
+        padding: 0.5rem 1.1rem;
         
         &:focus {
             background: var(--background-primary);
@@ -186,7 +183,7 @@ h6 span { font-size: 0.45em; }
     
     &::placeholder {
         color: var(--text-secondary);
-        font-weight: 300;
+        font-weight: bold;
     }
     
     /* Checkboxes */
@@ -242,7 +239,7 @@ h6 span { font-size: 0.45em; }
     }
     
     & label {
-        font-size: 20px;
+        font-size: 18px;
         user-select: none;
         cursor: default;
     }
@@ -254,24 +251,23 @@ h6 span { font-size: 0.45em; }
     -webkit-appearance: none;
     -moz-appearance: none;
     
-    background: var(--brand-primary);
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 0.6rem center;
-    background-size: 1.2rem;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
     
     border: 1px solid var(--brand-tertiary);
     border-radius: var(--radius);
     
-    font-weight: bold;
+    border: 1px solid var(--brand-tertiary);
+    border-radius: var(--radius);
+    
+    text-align: center;
     font-family: inherit;
     color: var(--text-tertiary);
     
     cursor: pointer;
     
-    padding: 0.6rem 2.2rem 0.6rem 1.2rem;
+    padding: 0.5rem 2.1rem 0.6rem 1.2rem;
     
-    transition: background var(--transition), box-shadow var(--transition);
+    transition: background var(--transition);
     
     &:hover:not(:disabled),
     &:focus-visible:not(:disabled) {
@@ -286,7 +282,6 @@ h6 span { font-size: 0.45em; }
     }
     
     & option {
-        font-weight: normal;
         color: var(--text-tertiary);
         background: var(--brand-tertiary);
     }

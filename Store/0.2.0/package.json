@@ -41,6 +41,7 @@
 		]
 	},
 	"devDependencies": {
+		"@electron/rebuild": "^4.0.4",
 		"electron": "^42.4.1",
 		"electron-builder": "^26.15.3",
 		"npm-check-updates": "^22.2.3"

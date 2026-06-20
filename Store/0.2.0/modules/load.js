@@ -4,6 +4,7 @@ import * as tabs from './tabs.js';
 import * as index from './index.js';
 import * as welcome_back from './welcome_back.js';
 import * as select_space from './select_space.js';
+import * as space_fillers from './space_fillers.js';
 
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
@@ -39,6 +40,7 @@ export async function init() {
     } catch (err) {
         // Add a soft error here
     }
+    space_fillers.init();
     await wait(menuDelay);
     await finish_loading();
 }
