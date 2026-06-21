@@ -45,7 +45,6 @@
     position: absolute;
     --tooltip-margin: 10px;
 
-    /* NEW: Nudge variables initialized to 0 */
     --tooltip-nudge-x: 0px;
     --tooltip-nudge-y: 0px;
 
@@ -54,7 +53,6 @@
     bottom: var(--tooltip-bottom, auto);
     left: var(--tooltip-left, auto);
 
-    /* UPDATED: Dynamic transform using base offsets + JS nudges */
     transform: translate(calc(var(--tooltip-x-offset, 0%) + var(--tooltip-nudge-x)),
             calc(var(--tooltip-y-offset, 0%) + var(--tooltip-nudge-y)));
     

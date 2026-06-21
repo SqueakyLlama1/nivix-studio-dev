@@ -25,9 +25,9 @@
         flex-direction: column;
         gap: 5px;
 
-        width: 15em;
+        width: max-content;
 
-        & button, & select {
+        & .nivix_button, & select {
             width: 100%;
         }
 
@@ -43,17 +43,5 @@
     .nivix_checkbox_wrapper {
         position: absolute;
         bottom: 0;
-    }
-}
-
-@media screen and (max-width: 25em) {
-    #select_space {
-        svg {
-            width: 100%;
-        }
-
-        .button_container {
-            width: 100%;
-        }
     }
 }
