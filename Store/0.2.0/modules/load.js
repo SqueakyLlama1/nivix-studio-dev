@@ -9,8 +9,6 @@ import * as space_fillers from './space_fillers.js';
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
 
-const load_menu = getEBD('load_menu');
-
 const versionLabel = getEBD('load_footer_version');
 
 let load_stylesheet;
@@ -25,15 +23,7 @@ export async function init() {
     tooltip_stylesheet = loadCSS('sheets/tooltips.css');
     
     let menuDelay;
-
-    try {
-        await window.storeAPI.initSandbox();
-        console.log('Initialized Sandbox');
-    } catch (err) {
-        // Add a critical error here
-        console.error(`Failed to initialize sandbox: ${err}`);
-        return;
-    }
+    
     try {
         await settings.init();
         menuDelay = settings.preferences.menuDelay ?? 750;
