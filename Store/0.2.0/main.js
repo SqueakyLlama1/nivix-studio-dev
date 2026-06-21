@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 const Database = require('better-sqlite3');
@@ -8,13 +8,18 @@ const path = require('path');
 const os = require('os');
 const { error } = require('console');
 
+let startWidth = 1000;
+let startHeight = 800;
+
 let mainWindow;
 let skippedVersion = null;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: startWidth,
+        height: startHeight,
+        minWidth: 800,
+        minHeight: 600,
         icon: path.join(__dirname, 'assets', 'favicon.png'),
         webPreferences: {
             contextIsolation: true,
@@ -31,7 +36,17 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+    const primaryScreen = screen.getPrimaryDisplay();
+    const { width, height } = primaryScreen.size;
+    if (width < startWidth) {
+        startWidth = 800;
+    }
+    if (height < startHeight) {
+        startHeight = 600;
+    }
+    createWindow();
+});
 
 const sandbox_path = path.join(os.homedir(), 'nvxstdo', 'store');
 
