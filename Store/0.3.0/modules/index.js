@@ -54,8 +54,8 @@ async function main() {
         tooltipsLib.initDelayedTooltips();
         selectspace.init();
         tabs.goto('select-space');
-        /* await selectspace.init();
-        workspace.init();
+        await selectspace.init();
+        /* workspace.init();
         selectspace.selectSpace('My Testing Space');
         tabs.goto('workspace'); */
     } catch(err) {

@@ -9,3 +9,9 @@ dist/
 *.deb
 *.appimage
 *.rpm
+
+# Customization
+desktop.ini
+
+# Extensions
+.VSCodeCounter

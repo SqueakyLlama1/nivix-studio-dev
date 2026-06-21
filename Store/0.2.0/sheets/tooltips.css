@@ -10,18 +10,25 @@
 /* Styled tooltip button */
 .tooltip-button,
 .tooltip-delayed-button {
-    border: none;
-    font-family: monospace;
+    height: 25px;
     aspect-ratio: 1;
+
     background: var(--brand-primary);
-    color: var(--text-tertiary);
+
+    border: none;
     border-radius: 50%;
+
+    color: var(--text-tertiary);
+    font-size: 18px;
+    font-family: monospace;
+
     cursor: pointer;
+
     margin-left: 10px;
 
     &:hover,
     &:focus {
-        border: 1px solid var(--brand-secondary);
+        background: var(--brand-secondary);
     }
 }
 
@@ -31,9 +38,9 @@
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s, transform 0.3s;
-    width: fit-content;
+    width: max-content;
     min-width: 100px;
-    max-width: 200px;
+    max-width: 15vw;
     background: var(--background-secondary, #333);
     border: 1px solid var(--brand-primary);
     font-weight: lighter;

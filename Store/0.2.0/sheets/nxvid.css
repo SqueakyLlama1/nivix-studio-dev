@@ -29,6 +29,10 @@
     --transition: 0.3s ease;
 }
 
+*:focus {
+    outline: 1px solid violet;
+}
+
 html { 
     scroll-behavior: smooth; 
     
@@ -119,8 +123,7 @@ h6 span { font-size: 0.45em; }
     animation: load_spin 1s infinite linear;
 }
 
-.nivix_button {
-    display: inline-block;
+.nivix_primary_button {
     background: var(--brand-primary);
     border: none;
     border-radius: var(--radius);
@@ -128,7 +131,7 @@ h6 span { font-size: 0.45em; }
     text-decoration: none;
     cursor: pointer;
     padding: 0.5rem 1.1rem;
-    transition: background 0.2s;
+    transition: background var(--transition);
     
     &:hover, &:focus {
         &:not(:disabled) {
@@ -147,6 +150,42 @@ h6 span { font-size: 0.45em; }
     
     &:not(.selected):disabled {
         background: #ccc;
+        color: var(--text-quarternary);
+        cursor: not-allowed;
+    }
+}
+
+.nivix_secondary_button {
+    background: transparent;
+    border: none;
+
+    color: var(--brand-primary);
+    text-decoration: none;
+
+    cursor: pointer;
+
+    padding: 0.5rem 1.1rem;
+
+    transition: color var(--transition);
+    
+    &:hover, &:focus {
+        &:not(:disabled) {
+            color: var(--brand-secondary);
+        }
+    }
+    
+    &.selected {
+        color: var(--brand-secondary);
+        font-weight: bold;
+        
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+    
+    &:not(.selected):disabled {
+        background: #ccc;
+
         color: var(--text-quarternary);
         cursor: not-allowed;
     }
@@ -196,7 +235,7 @@ h6 span { font-size: 0.45em; }
         border-radius: 4px;
         background: transparent;
         cursor: default;
-        transition: all 0.2s ease;
+        transition: all var(--transition);
         position: relative;
         margin: 0;
         
@@ -223,6 +262,10 @@ h6 span { font-size: 0.45em; }
         &:disabled {
             cursor: not-allowed;
             opacity: 0.5;
+        }
+
+        &:focus {
+            outline: 1px solid violet;
         }
     }
 }

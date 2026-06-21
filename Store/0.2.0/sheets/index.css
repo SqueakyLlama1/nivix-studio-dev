@@ -115,6 +115,6 @@ input:focus {
     }
 }
 
-.nivix_button, .nivix_input, .nivix_select {
+.nivix_primary_button, .nivix_secondary_button, .nivix_input, .nivix_select {
 	font-size: 18px;
 }
