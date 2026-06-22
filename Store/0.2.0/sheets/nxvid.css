@@ -133,6 +133,13 @@ h6 span { font-size: 0.45em; }
     padding: 0.5rem 1.1rem;
     transition: background var(--transition);
     
+    svg {
+        width: 2em;
+        aspect-ratio: 1;
+        fill: var(--text-tertiary); 
+        transition: fill var(--transition);
+    }
+    
     &:hover, &:focus {
         &:not(:disabled) {
             background: var(--brand-secondary);
@@ -156,21 +163,35 @@ h6 span { font-size: 0.45em; }
 }
 
 .nivix_secondary_button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    
     background: transparent;
     border: none;
-
+    
     color: var(--brand-primary);
     text-decoration: none;
-
+    
     cursor: pointer;
-
+    
     padding: 0.5rem 1.1rem;
-
+    
     transition: color var(--transition);
+    
+    svg {
+        width: 2em;
+        aspect-ratio: 1;
+        fill: var(--brand-primary); 
+        transition: fill var(--transition);
+    }
     
     &:hover, &:focus {
         &:not(:disabled) {
             color: var(--brand-secondary);
+            svg { fill: var(--brand-secondary); }
         }
     }
     
@@ -185,7 +206,7 @@ h6 span { font-size: 0.45em; }
     
     &:not(.selected):disabled {
         background: #ccc;
-
+        
         color: var(--text-quarternary);
         cursor: not-allowed;
     }
@@ -263,7 +284,7 @@ h6 span { font-size: 0.45em; }
             cursor: not-allowed;
             opacity: 0.5;
         }
-
+        
         &:focus {
             outline: 1px solid violet;
         }

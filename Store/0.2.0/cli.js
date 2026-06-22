@@ -1,3 +1,8 @@
+const path = require('path');
+const os = require('os');
+const Database = require('better-sqlite3');
+
+const sandbox_path = path.join(os.homedir(), 'nvxstdo', 'store');
 const db = new Database(path.join(sandbox_path, "inventory.db"));
 
 db.exec(`
@@ -37,8 +42,13 @@ db.exec(`
         PRIMARY KEY (item_id, attr_key)
     );
     
+    /* Indexes for optimal performance */
     CREATE INDEX IF NOT EXISTS idx_attributes_search ON item_attributes_index (attr_key, attr_value COLLATE NOCASE);
+    CREATE INDEX IF NOT EXISTS idx_items_name ON items (name);
+    CREATE INDEX IF NOT EXISTS idx_items_quantity ON items (quantity);
 `);
+
+db.pragma('journal_mode = WAL');
     
 const insertIndexStmt = db.prepare('INSERT OR REPLACE INTO item_attributes_index (item_id, attr_key, attr_value) VALUES (?, ?, ?)');
 const clearIndexStmt = db.prepare('DELETE FROM item_attributes_index WHERE item_id = ?');
@@ -134,55 +144,6 @@ function listAllItemsInCategoryRecursive(categoryId) {
     }));
 }
 
-function queryItemsByAttribute(categoryId, key, operator, value) {
-    const safeOperators = ['=', '>=', '<=', '>', '<', 'LIKE'];
-    if (!safeOperators.includes(operator)) {
-        throw new Error(`Unsupported operator: ${operator}`);
-    }
-    
-    let bindValue = value;
-    if (operator === 'LIKE') {
-        bindValue = `%${bindValue}%`;
-    }
-    
-    const query = `
-    SELECT i.*
-    FROM items i
-    JOIN item_attributes_index idx ON i.id = idx.item_id
-    WHERE i.category_id = ? 
-        AND idx.attr_key = ? 
-        AND idx.attr_value ${operator} ?
-`;
-    
-    const stmt = db.prepare(query);
-    const rows = stmt.all(categoryId, key, String(bindValue));
-    
-    return rows.map(row => ({
-        ...row,
-        attributes: JSON.parse(row.attributes || '{}')
-    }));
-}
-
-function queryItemsByName(name, categoryId = null, strict = false) {
-    const searchName = strict ? name : `%${name}%`;
-    let rows;
-    if (!categoryId) {
-        let stmt = strict 
-        ? db.prepare('SELECT * FROM items WHERE name = ?')
-        : db.prepare('SELECT * FROM items WHERE name LIKE ?');
-        rows = stmt.all(searchName);
-    } else {
-        let stmt = strict 
-        ? db.prepare('SELECT * FROM items WHERE category_id = ? AND name = ?')
-        : db.prepare('SELECT * FROM items WHERE category_id = ? AND name LIKE ?');
-        rows = stmt.all(categoryId, searchName);
-    }
-    return rows.map(row => ({
-        ...row,
-        attributes: JSON.parse(row.attributes || '{}')
-    }));
-}
-
 const updateItem = db.transaction((id, updates = {}) => {
     const currentItem = db.prepare('SELECT * FROM items WHERE id = ?').get(id);
     if (!currentItem) {
@@ -219,50 +180,72 @@ const updateItem = db.transaction((id, updates = {}) => {
     return info.changes > 0;
 });
 
-function queryItemsAdvanced(categoryId, criteria = []) {
+/**
+ * Unified item filtering and searching matrix endpoint.
+ * Supports cross-matching complex rules across native attributes and loose EAV storage structures.
+ */
+function queryItemsUnified({ categoryId = null, rules = [], logicalOp = 'AND' } = {}) {
     const safeOperators = ['=', '>=', '<=', '>', '<', 'LIKE', '!='];
+    const safeLogicalOps = ['AND', 'OR'];
+    const safeNativeFields = ['name', 'quantity', 'quantity_commited', 'restock_point'];
+
+    if (!safeLogicalOps.includes(logicalOp.toUpperCase())) {
+        throw new Error(`Unsupported logical operator: ${logicalOp}`);
+    }
+
     let query = `SELECT DISTINCT i.* FROM items i`;
-    const params = [categoryId];
+    const params = [];
     
     let attrJoinCount = 0;
     let joinClauses = '';
-    let whereClauses = ['i.category_id = ?'];
+    let whereClauses = [];
+
+    // Optional dynamic category scope fallback
+    if (categoryId !== null) {
+        whereClauses.push(`i.category_id = ?`);
+        params.push(categoryId);
+    }
+
+    const ruleClauses = [];
     
-    criteria.forEach((condition) => {
-        if (!safeOperators.includes(condition.operator)) {
-            throw new Error(`Unsafe operator detected: ${condition.operator}`);
+    rules.forEach((rule) => {
+        if (!safeOperators.includes(rule.operator)) {
+            throw new Error(`Unsafe operator detected: ${rule.operator}`);
         }
-        
-        let bindValue = condition.value;
-        if (condition.operator === 'LIKE') {
+
+        let bindValue = rule.value;
+        if (rule.operator === 'LIKE') {
             bindValue = `%${bindValue}%`;
         }
-        
-        if (condition.type === 'native') {
-            const safeNativeFields = ['name', 'quantity', 'quantity_commited', 'restock_point'];
-            if (!safeNativeFields.includes(condition.field)) {
-                throw new Error(`Invalid native column: ${condition.field}`);
+
+        if (rule.type === 'native') {
+            if (!safeNativeFields.includes(rule.field)) {
+                throw new Error(`Invalid native column lookup: ${rule.field}`);
             }
-            
-            whereClauses.push(`i.${condition.field} ${condition.operator} ?`);
+            ruleClauses.push(`i.${rule.field} ${rule.operator} ?`);
             params.push(bindValue);
-            
-        } else if (condition.type === 'attribute') {
+
+        } else if (rule.type === 'attribute') {
             attrJoinCount++;
             const alias = `idx${attrJoinCount}`;
             
             joinClauses += ` JOIN item_attributes_index ${alias} ON i.id = ${alias}.item_id`;
-            whereClauses.push(`${alias}.attr_key = ? AND ${alias}.attr_value ${condition.operator} ?`);
-            
-            params.push(condition.field, String(bindValue));
+            ruleClauses.push(`${alias}.attr_key = ? AND ${alias}.attr_value ${rule.operator} ?`);
+            params.push(rule.field, String(bindValue));
         }
     });
-    
-    const finalQuery = `${query} ${joinClauses} WHERE ${whereClauses.join(' AND ')}`;
-    
+
+    if (ruleClauses.length > 0) {
+        const combinedRules = `(${ruleClauses.join(` ${logicalOp.toUpperCase()} `)})`;
+        whereClauses.push(combinedRules);
+    }
+
+    const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+    const finalQuery = `${query}${joinClauses} ${whereSql}`;
+
     const stmt = db.prepare(finalQuery);
     const rows = stmt.all(...params);
-    
+
     return rows.map(row => ({
         ...row,
         attributes: JSON.parse(row.attributes || '{}')
@@ -286,3 +269,30 @@ function rebuildSearchIndex() {
         return count;
     })();
 }
+
+const repl = require('repl');
+
+function startREPL() {
+    const replServer = repl.start({
+        prompt: 'Nivix Store CLI > ',
+        useColors: true
+    });
+
+    replServer.context.db = db;
+    replServer.context.createSpace = createSpace;
+    replServer.context.listSpaces = listSpaces;
+    replServer.context.deleteSpace = deleteSpace;
+    replServer.context.createCategory = createCategory;
+    replServer.context.listCategories = listCategories;
+    replServer.context.deleteCategory = deleteCategory;
+    replServer.context.createItem = createItem;
+    replServer.context.listItemsByCategory = listItemsByCategory;
+    replServer.context.getItemById = getItemById;
+    replServer.context.deleteItem = deleteItem;
+    replServer.context.listAllItemsInCategoryRecursive = listAllItemsInCategoryRecursive;
+    replServer.context.updateItem = updateItem;
+    replServer.context.queryItemsUnified = queryItemsUnified;
+    replServer.context.rebuildSearchIndex = rebuildSearchIndex;
+}
+
+startREPL();

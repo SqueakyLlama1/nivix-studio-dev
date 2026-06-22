@@ -103,7 +103,7 @@
     border-right: 80px solid transparent;
     border-bottom: 140px solid #202020;
     transform: rotate(25deg);
-    animation: float_erratic 14s ease-in-out infinite;
+    animation: float_fast 14s ease-in-out infinite;
 }
 
 .space_filler_shape.triangle2 {
@@ -139,7 +139,7 @@
     border-right: 50px solid transparent; 
     border-bottom: 100px solid #2b2b2b; 
     transform: rotate(-25deg); 
-    animation: float_erratic 16s ease-in-out infinite;
+    animation: float_fast 16s ease-in-out infinite;
 }
 
 .space_filler_shape.triangle5 { 
@@ -228,7 +228,7 @@
     left: 80%; 
     background-color: #2a2a2a; 
     clip-path: polygon(50% 0%, 85% 25%, 100% 50%, 85% 75%, 50% 100%, 15% 75%, 0% 50%, 15% 25%); 
-    animation: float_erratic 15s ease-in-out infinite;
+    animation: float_fast 15s ease-in-out infinite;
 }
 
 .space_filler_shape.polygon6 { 
@@ -238,7 +238,7 @@
     left: 30%; 
     background-color: #2f2f2f; 
     clip-path: polygon(50% 0%, 100% 25%, 85% 100%, 15% 100%, 0% 25%); 
-    animation: float_erratic 13s ease-in-out infinite;
+    animation: float_fast 13s ease-in-out infinite;
 }
 
 /* ==========================================================================
@@ -260,13 +260,6 @@
     0%   { transform: translate(0, 0) rotate(0deg); }
     33%  { transform: translate(12px, -8px) rotate(10deg); }
     66%  { transform: translate(-5px, -15px) rotate(-5deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-@keyframes float_erratic {
-    0%   { transform: translate(0, 0) rotate(0deg); }
-    40%  { transform: translate(-20px, -12px) rotate(25deg); }
-    75%  { transform: translate(10px, 5px) rotate(-15deg); }
     100% { transform: translate(0, 0) rotate(0deg); }
 }
 

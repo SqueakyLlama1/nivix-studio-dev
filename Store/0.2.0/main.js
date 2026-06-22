@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
-const Database = require('better-sqlite3');
+let dbManager;
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -38,6 +38,7 @@ app.on('window-all-closed', () => {
 
 app.whenReady().then(async () => {
     await init_sandbox();
+    dbManager = require('./dbManager');
     const primaryScreen = screen.getPrimaryDisplay();
     const { width, height } = primaryScreen.size;
     if (width < startWidth) {

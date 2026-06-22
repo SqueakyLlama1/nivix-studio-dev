@@ -8,9 +8,10 @@
 	"type": "commonjs",
 	"main": "main.js",
 	"scripts": {
-		"start": "electron .",
+		"gui": "electron .",
+		"cli": "node cli.js",
 		"dist": "electron-builder --win",
-		"postinstall": "npx electron-rebuild -f -w better-sqlite3"
+		"postinstall": "npx electron-rebuild -o better-sqlite3-electron"
 	},
 	"build": {
 		"artifactName": "NivixStore-${version}-Setup.exe",
@@ -49,6 +50,7 @@
 	},
 	"dependencies": {
 		"better-sqlite3": "^12.11.1",
+		"better-sqlite3-electron": "npm:better-sqlite3@^12.11.1",
 		"electron-updater": "^6.8.9"
 	}
 }
