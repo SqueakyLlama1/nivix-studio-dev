@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 let dbManager;
@@ -26,6 +26,22 @@ function createWindow() {
             nodeIntegration: false,
             preload: path.join(__dirname, 'preload.js')
         }
+    });
+    
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+        const allowedPrefixes = [
+            'https://github.com/',
+            'https://nivixtech.com/',
+            'http://127.0.0.1',
+            'http://localhost'
+        ];
+        
+        const isAllowed = allowedPrefixes.some(prefix => url.startsWith(prefix));
+        
+        if (isAllowed) {
+            shell.openExternal(url);
+        }
+        return { action: 'deny' };
     });
     
     mainWindow.loadFile('index.html');
