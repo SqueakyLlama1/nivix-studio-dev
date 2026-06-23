@@ -50,11 +50,12 @@ app.whenReady().then(async () => {
     createWindow();
 });
 
-const sandbox_path = path.join(os.homedir(), 'nvxstdo', 'store');
+const store_path = path.join(os.homedir(), 'nvxstdo', 'store');
+const studio_path = path.join(os.homedir(), 'nvxstdo');
 
 async function init_sandbox() {
     try {
-        await fs.mkdir(sandbox_path, { recursive: true });
+        await fs.mkdir(store_path, { recursive: true });
     } catch (err) {
         throw new Error(`Failed to initialize sandbox: ${err}`)
     }
@@ -62,13 +63,13 @@ async function init_sandbox() {
 
 const oldFormats = {
     "0.1.0-hub": path.join('appdata', 'store', 'inventory.ndjson'),
-    "0.1.0": "inventory.ndjson"
+    "0.1.0": path.join('store', 'inventory.ndjson')
 }
 
 ipcMain.handle('check-for-old-inventory', async () => {
     // Check if an old inventory exists for the hub version of 0.1.0 - 0.1.1
     try {
-        let expectedOldInventoryPath = path.join(sandbox_path, oldFormats['0.1.0-hub'])
+        let expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0-hub'])
         const inventory = await fs.readFile(expectedOldInventoryPath, 'utf-8');
         
         if (!inventory || inventory.trim() === '') {
@@ -84,7 +85,7 @@ ipcMain.handle('check-for-old-inventory', async () => {
     }
     // Check if an old inventory exists for version 0.1.0
     try {
-        let expectedOldInventoryPath = path.join(sandbox_path, oldFormats['0.1.0']);
+        let expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0']);
         const inventory = await fs.readFile(expectedOldInventoryPath, 'utf-8');
         
         if (!inventory || inventory.trim() === '') {

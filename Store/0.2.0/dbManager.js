@@ -1,9 +1,19 @@
 const path = require('path');
 const os = require('os');
+const fs = require('fs').promises;
+const fsSync = require('fs');
 const Database = require('better-sqlite3-electron');
+const { buffer } = require('stream/consumers');
 
-const sandbox_path = path.join(os.homedir(), 'nvxstdo', 'store');
-const db = new Database(path.join(sandbox_path, "inventory.db"));
+const store_path = path.join(os.homedir(), 'nvxstdo', 'store');
+const studio_path = path.join(os.homedir(), 'nvxstdo');
+
+const oldFormats = {
+    "0.1.0-hub": path.join('appdata', 'store', 'inventory.ndjson'),
+    "0.1.0": path.join('store', 'inventory.ndjson')
+}
+
+const db = new Database(path.join(store_path, "inventory.db"));
 
 db.exec(`
     PRAGMA foreign_keys = ON;
@@ -88,9 +98,9 @@ function deleteCategory(id) {
     return stmt.run(id).changes > 0;
 }
 
-const createItem = db.transaction((name, category, attributes = {}) => {
-    const stmt = db.prepare('INSERT INTO items (name, category_id, attributes) VALUES (?, ?, ?)');
-    const info = stmt.run(name, category, JSON.stringify(attributes));
+const createItem = db.transaction((name, quantity = 0, category, attributes = {}) => {
+    const stmt = db.prepare('INSERT INTO items (name, quantity, category_id, attributes) VALUES (?, ?, ?, ?)');
+    const info = stmt.run(name, quantity, category, JSON.stringify(attributes));
     const itemId = info.lastInsertRowid;
     
     for (const [key, value] of Object.entries(attributes)) {
@@ -266,6 +276,68 @@ function rebuildSearchIndex() {
     })();
 }
 
+const store_path = path.join(os.homedir(), 'nvxstdo', 'store');
+const studio_path = path.join(os.homedir(), 'nvxstdo');
+
+const oldFormats = {
+    "0.1.0-hub": path.join('appdata', 'store', 'inventory.ndjson'),
+    "0.1.0": path.join('store', 'inventory.ndjson')
+}
+
+async function convert(version, space_id) {
+    if (!oldFormats[version]) return;
+
+    const spaces = listSpaces();
+
+    if (!spaces.length) {
+        throw new Error('No spaces detected. You must create a space in order to convert your inventory');
+    }
+
+    let matches = spaces.filter(obj => obj.id === space_id).length;
+    if (matches !== 1) {
+        throw new Error('Either there were more than one matches for the given space, or it was not found');
+    }
+
+    if (version === "0.1.0") {
+        const readline = require('readline');
+        const oldPath = path.join(studio_path, oldFormats[version]);
+        const oldInventory = fsSync.createReadStream(oldPath);
+        const stats = fsSync.statSync(oldPath);
+        const totalBytes = stats.size;
+
+        let bytesProcessed = 0;
+
+        const rl = readline.createInterface({
+            input: oldInventory,
+            crlfDelay: Infinity
+        });
+
+        console.log('Starting conversion from version 0.1.0 to 0.2.0');
+
+        let category;
+        try {
+            console.log('Creating Category "0.1.0 Inventory".');
+            category = createCategory('0.1.0 Inventory', space_id, null, ['location', 'keywords']);
+            console.log('Created category "0.1.0 Inventory".');
+        } catch (err) {
+            throw new Error(`Failed to create category: ${err}`);
+        }
+        for await (const line of rl) {
+            bytesProcessed += Buffer.byteLength(line, 'utf-8') + 1;
+            const percentage = Math.min(((bytesProcessed / totalBytes) * 100), 100).toFixed(1);
+            console.log(`Progress: ${percentage}%`);
+            if (!line.trim()) continue;
+            try {
+                const item = JSON.parse(line);
+                createItem(item.name, item.quantity, category, {'location': item.location, 'keywords': item.keywords});
+            } catch (err) {
+                throw new Error(`Failed to create item: ${err}`);
+            }
+        }
+        console.log("Conversion Completed.")
+    }
+}
+
 // CommonJS Exports
 module.exports = {
     db,
@@ -282,5 +354,6 @@ module.exports = {
     listAllItemsInCategoryRecursive,
     updateItem,
     queryItemsUnified,
-    rebuildSearchIndex
+    rebuildSearchIndex,
+    convert
 };
