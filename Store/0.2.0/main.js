@@ -69,37 +69,23 @@ const oldFormats = {
 ipcMain.handle('check-for-old-inventory', async () => {
     // Check if an old inventory exists for the hub version of 0.1.0 - 0.1.1
     try {
-        let expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0-hub'])
-        const inventory = await fs.readFile(expectedOldInventoryPath, 'utf-8');
-        
-        if (!inventory || inventory.trim() === '') {
-            return false;
-        }
+        const expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0-hub']);
+        await fs.access(expectedOldInventoryPath);
         return "0.1.0-hub";
-    } catch(err) {
-        if (err.code !== "ENOENT") {
-            const errorMsg = `Failed to get old inventory for 0.1.0-hub: ${err.message}`;
-            console.error(errorMsg);
-            throw new Error(errorMsg);
-        }
+    } catch (err) {
+        console.log("0.1.0-hub inventory not found, checking next version...");
     }
+
     // Check if an old inventory exists for version 0.1.0
     try {
-        let expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0']);
-        const inventory = await fs.readFile(expectedOldInventoryPath, 'utf-8');
-        
-        if (!inventory || inventory.trim() === '') {
-            return false;
-        }
+        const expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0']);
+        await fs.access(expectedOldInventoryPath);
         return "0.1.0";
-    } catch(err) {
-        if (err.code === "ENOENT") {
-            return false;
-        }
-        const errorMsg = `Failed to get old inventory for 0.1.0: ${err.message}`;
-        console.error(errorMsg);
-        throw new Error(errorMsg);
+    } catch (err) {
+        console.log("0.1.0 inventory not found.");
     }
+
+    return false; 
 });
 
 const preferencesPath = path.join(os.homedir(), 'nvxstdo', 'store', 'preferences.json');
