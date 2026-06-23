@@ -276,14 +276,6 @@ function rebuildSearchIndex() {
     })();
 }
 
-const store_path = path.join(os.homedir(), 'nvxstdo', 'store');
-const studio_path = path.join(os.homedir(), 'nvxstdo');
-
-const oldFormats = {
-    "0.1.0-hub": path.join('appdata', 'store', 'inventory.ndjson'),
-    "0.1.0": path.join('store', 'inventory.ndjson')
-}
-
 async function convert(version, space_id) {
     if (!oldFormats[version]) return;
 
