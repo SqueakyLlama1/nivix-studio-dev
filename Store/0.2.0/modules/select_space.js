@@ -26,6 +26,7 @@ export async function init(tutorial = false) {
     shapeAnimToggle.checked = preferences.disableShapeAnimations;
 
     toggleShapeAnimations();
+    await populate_spaces_prompt();
     
     isInitialized = true;
     init();
@@ -37,4 +38,38 @@ function toggleShapeAnimations() {
         shape.style.animationPlayState = shapeAnimToggle.checked ? 'paused' : 'running';
     });
     setPreference('disableShapeAnimations', shapeAnimToggle.checked);
+}
+
+// Miscellaneous Button Binding
+
+const connectRemoteServerBtn = getEBD('select_space_connect_server');
+const exposeRemoteServerBtn = getEBD('select_space_start_server');
+const changelogBtn = getEBD('select_space_changelog');
+const creditsBtn = getEBD('select_space_credits');
+const sourceCodeBtn = getEBD('select_space_source');
+const websiteBtn = getEBD('select_space_studio_webpage');
+const closeBtn = getEBD('select_space_quit');
+
+sourceCodeBtn.addEventListener('click', function() {
+    window.open('https://github.com/SqueakyLlama1/nivix-studio-dev/tree/main/Store/0.2.0', '_blank');
+});
+
+websiteBtn.addEventListener('click', function() {
+    window.open('https://nivixtech.com/studio', '_blank');
+});
+
+closeBtn.addEventListener('click', window.close);
+
+// Space Selection System
+
+const choiceSelection = getEBD('select_space_option');
+const continueBtn = getEBD('select_space_continue');
+
+async function populate_spaces_prompt() {
+    const spaces = await window.storeAPI.listSpaces();
+    if (!spaces.length) {
+        const option = new Option("You don't have any spaces");
+        option.disabled = true;
+        choiceSelection.add(option);
+    }
 }

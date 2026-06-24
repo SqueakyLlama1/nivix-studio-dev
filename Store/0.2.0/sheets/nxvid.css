@@ -337,6 +337,12 @@ h6 span { font-size: 0.45em; }
     &:focus-visible:not(:disabled) {
         background-color: var(--brand-secondary);
         border-color: var(--brand-secondary);
+
+        &:open {
+            background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 15 12 9 18 15'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
     }
     
     &:disabled {
@@ -346,8 +352,12 @@ h6 span { font-size: 0.45em; }
     }
     
     & option {
-        color: var(--text-tertiary);
-        background: var(--brand-tertiary);
+        color: var(--text-primary);
+        background: var(--background-secondary);
+
+        &:disabled {
+            color: var(--text-secondary);
+        }
     }
 }
 

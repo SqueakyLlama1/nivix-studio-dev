@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 let dbManager;
@@ -26,6 +26,22 @@ function createWindow() {
             nodeIntegration: false,
             preload: path.join(__dirname, 'preload.js')
         }
+    });
+    
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+        const allowedPrefixes = [
+            'https://github.com/',
+            'https://nivixtech.com/',
+            'http://127.0.0.1',
+            'http://localhost'
+        ];
+        
+        const isAllowed = allowedPrefixes.some(prefix => url.startsWith(prefix));
+        
+        if (isAllowed) {
+            shell.openExternal(url);
+        }
+        return { action: 'deny' };
     });
     
     mainWindow.loadFile('index.html');
@@ -111,3 +127,65 @@ ipcMain.handle('set-preferences', async (_event, preferences) => {
 /* ===========================================
 Inventory API & Frontend Hook
 =========================================== */
+
+// Spaces
+
+ipcMain.handle('create-space', async (_event, name) => {
+    return dbManager.createSpace(name);
+});
+
+ipcMain.handle('list-spaces', async () => {
+    return dbManager.listSpaces();
+});
+
+ipcMain.handle('delete-space', async (_event, id) => {
+    return dbManager.deleteSpace(id);
+});
+
+// Categories
+
+ipcMain.handle('create-category', async (_event, name, space, category = null, fields = []) => {
+    return dbManager.createCategory(name, space, category, fields);
+});
+
+ipcMain.handle('list-categories', async (_event, space) => {
+    return dbManager.listSpaces(space);
+});
+
+ipcMain.handle('delete-category', async (_event, category) => {
+    return dbManager.deleteCategory(category);
+});
+
+// Items
+
+ipcMain.handle('create-item', async (_event, name, quantity = 0, category, attributes = {}) => {
+    return dbManager.createItem(name, quantity, category, attributes);
+});
+
+ipcMain.handle('delete-item', async (_event, id) => {
+    return dbManager.deleteItem(id);
+});
+
+ipcMain.handle('update-item', async (_event, id, updates = {}) => {
+    return dbManager.updateItem(id, updates);
+});
+
+ipcMain.handle('list-items-by-category', async (_event, category) => {
+    return dbManager.listItemsByCategory(category);
+});
+
+ipcMain.handle('get-item-by-id', async (_event, id) => {
+    return dbManager.getItemById(id);
+});
+
+ipcMain.handle('query-items', async (_event, {category = null, rules = [], logicalOp = 'AND'} = {}) => {
+    return dbManager.queryItemsUnified({ categoryId: category, rules, logicalOp });
+});
+
+ipcMain.handle('rebuild-search-index', async (_event) => {
+    return dbManager.rebuildSearchIndex();
+});
+
+ipcMain.handle('convert', async (_event, version, space) => {
+    return dbManager.convert(version, space);
+});
