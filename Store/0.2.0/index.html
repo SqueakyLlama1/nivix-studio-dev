@@ -56,9 +56,7 @@
 			<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
 			<div class="button_container">
 				<p>Select a Space or Create a New One<button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
-				<select id="select_space_option" class="nivix_select" selected="create-new-space">
-					<option value="create-new-space">Create a New Space</option>
-				</select>
+				<select id="select_space_option" class="nivix_select"></select>
 				<button id="select_space_continue" class="nivix_primary_button">Continue</button>
 				<div class="nivix_checkbox_wrapper centered">
 					<label>Disable Shape Animation</label>
@@ -82,13 +80,23 @@
 			<span>Store </span><span id="select_space_footer_version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
 		</div>
 	</div>
-
+	
 	<div class="tab" id="credits">
 		
 	</div>
 	
 	<div class="tab" id="create_space">
-		
+		<div class="space_filler_container autofill"></div>
+		<div class="center">
+			<h1 class="nivix_accent">Create a Space</h1>
+			<div class="button_container">
+				<p>Learn what a space is: <button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
+				<input class="nivix_input" type="text" id="create_space_name" placeholder="Space Name">
+				<button class="nivix_primary_button" id="create_space_continue">Create</button>
+				<button class="nivix_secondary_button" id="create_space_cancel">Cancel</button>
+			</div>
+			<p id="create_space_output"></p>
+		</div>
 	</div>
 	<script src="modules/index.js" type="module"></script>
 </body>

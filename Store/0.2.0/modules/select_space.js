@@ -2,6 +2,7 @@ import { loadCSS } from './file_loader.js';
 import { preferences, setPreference } from './settings.js';
 import * as tabs from './tabs.js';
 import * as index from './index.js';
+import * as create_space from './create_space.js';
 
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
@@ -14,6 +15,7 @@ let isInitialized = false;
 
 export async function init(tutorial = false) {
     if (isInitialized) {
+        await populate_spaces_prompt();
         tabs.goto('select_space', {display: 'flex'});
         return;
     }
@@ -26,7 +28,6 @@ export async function init(tutorial = false) {
     shapeAnimToggle.checked = preferences.disableShapeAnimations;
 
     toggleShapeAnimations();
-    await populate_spaces_prompt();
     
     isInitialized = true;
     init();
@@ -67,9 +68,28 @@ const continueBtn = getEBD('select_space_continue');
 
 async function populate_spaces_prompt() {
     const spaces = await window.storeAPI.listSpaces();
+    choiceSelection.replaceChildren();
+
+    const createSpaceOption = new Option("Create a New Space", 'create-new-space');
+    choiceSelection.add(createSpaceOption);
+    choiceSelection.selected = 'create-new-space';
+
     if (!spaces.length) {
         const option = new Option("You don't have any spaces");
         option.disabled = true;
         choiceSelection.add(option);
+        return;
     }
+
+    spaces.forEach(function(space) {
+        const option = new Option(space.name, space.id);
+        choiceSelection.add(option);
+    });
 }
+
+continueBtn.addEventListener('click', function() {
+    const selection = choiceSelection.value;
+    if (selection === 'create-new-space') {
+        create_space.init();
+    }
+});

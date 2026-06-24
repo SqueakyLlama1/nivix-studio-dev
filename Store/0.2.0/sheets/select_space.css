@@ -27,7 +27,7 @@
         
         width: max-content;
         
-        .nivix_primary_button, & select {
+        .nivix_primary_button, select {
             width: 100%;
         }
 

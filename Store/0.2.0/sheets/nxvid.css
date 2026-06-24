@@ -329,7 +329,7 @@ h6 span { font-size: 0.45em; }
     
     cursor: pointer;
     
-    padding: 0.5rem 2.1rem 0.6rem 1.2rem;
+    padding: 0.5rem 1.1rem;
     
     transition: background var(--transition);
     
@@ -354,6 +354,8 @@ h6 span { font-size: 0.45em; }
     & option {
         color: var(--text-primary);
         background: var(--background-secondary);
+
+        padding: 0;
 
         &:disabled {
             color: var(--text-secondary);
