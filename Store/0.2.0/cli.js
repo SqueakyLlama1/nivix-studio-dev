@@ -58,7 +58,8 @@ db.exec(`
 `);
 
 db.pragma('journal_mode = WAL');
-    
+
+const insertItemStmt = db.prepare('INSERT INTO items (name, quantity, category_id, attributes) VALUES (?, ?, ?, ?)');
 const insertIndexStmt = db.prepare('INSERT OR REPLACE INTO item_attributes_index (item_id, attr_key, attr_value) VALUES (?, ?, ?)');
 const clearIndexStmt = db.prepare('DELETE FROM item_attributes_index WHERE item_id = ?');
 
@@ -110,6 +111,26 @@ const createItem = db.transaction((name, quantity = 0, category, attributes = {}
     return itemId;
 });
 
+const createItemBulk = db.transaction((items, categoryId) => {
+    for (const item of items) {
+        const info = insertItemStmt.run(
+            item.name, 
+            item.quantity || 0, 
+            categoryId, 
+            JSON.stringify(item.attributes)
+        );
+        const itemId = info.lastInsertRowid;
+        
+        clearIndexStmt.run(itemId);
+
+        for (const [key, value] of Object.entries(item.attributes)) {
+            if (value !== null && value !== undefined) {
+                insertIndexStmt.run(itemId, key, String(value));
+            }
+        }
+    }
+});
+
 function listItemsByCategory(categoryId) {
     const stmt = db.prepare('SELECT id, name, quantity, quantity_commited, restock_point, attributes FROM items WHERE category_id = ?');
     const rows = stmt.all(categoryId);
@@ -120,9 +141,9 @@ function listItemsByCategory(categoryId) {
     }));
 }
 
-function getItemById(categoryId, itemId) {
-    const stmt = db.prepare(`SELECT * FROM items WHERE category_id = ? AND id = ?`);
-    const row = stmt.get(categoryId, itemId);
+function getItemById(itemId) {
+    const stmt = db.prepare(`SELECT * FROM items WHERE id = ?`);
+    const row = stmt.get(itemId);
     if (!row) return null;
     return {
         ...row,
@@ -279,17 +300,17 @@ function rebuildSearchIndex() {
     })();
 }
 
-async function convert(version, space_id) {
+async function convert(version, space_id, chunk_cap = 5000) {
     if (!oldFormats[version]) return;
 
     const spaces = listSpaces();
-
+    
     if (!spaces.length) {
         throw new Error('No spaces detected. You must create a space in order to convert your inventory');
     }
 
-    let matches = spaces.filter(obj => obj.id === space_id).length;
-    if (matches !== 1) {
+    const spaceExists = spaces.find(obj => obj.id === space_id);
+    if (!spaceExists) {
         throw new Error('Either there were more than one matches for the given space, or it was not found');
     }
 
@@ -301,6 +322,7 @@ async function convert(version, space_id) {
         const totalBytes = stats.size;
 
         let bytesProcessed = 0;
+        let lastReportedPercentage = -1; 
 
         const rl = readline.createInterface({
             input: oldInventory,
@@ -309,27 +331,81 @@ async function convert(version, space_id) {
 
         console.log('Starting conversion from version 0.1.0 to 0.2.0');
 
-        let category;
+        let categoryId;
         try {
             console.log('Creating Category "0.1.0 Inventory".');
-            category = createCategory('0.1.0 Inventory', space_id, null, ['location', 'keywords']);
+            const category = createCategory('0.1.0 Inventory', space_id, null, ['location', 'keywords']);
+            categoryId = typeof category === 'object' ? category.id : category;
             console.log('Created category "0.1.0 Inventory".');
         } catch (err) {
             throw new Error(`Failed to create category: ${err}`);
         }
+
+        let memoryLimitBytes = Infinity; 
+
+        const ONE_GB = 1024 * 1024 * 1024;
+        const SAFE_V8_MAX_HEAP = 1.5 * ONE_GB;
+        const totalFreeMemory = os.freemem(); 
+
+        if (chunk_cap === 'auto') {
+            const targetMemory = (totalFreeMemory / 2) - ONE_GB;
+            memoryLimitBytes = Math.min(SAFE_V8_MAX_HEAP, Math.max(0, targetMemory));
+            itemThreshold = 50000; 
+            console.log(`Auto-memory mode enabled. Target limit: ${(memoryLimitBytes / 1024 / 1024).toFixed(0)} MB`);
+        } 
+        else if (chunk_cap === 'max') {
+            const targetMemory = totalFreeMemory - ONE_GB;
+            memoryLimitBytes = Math.min(SAFE_V8_MAX_HEAP, Math.max(0, targetMemory));
+            itemThreshold = 200000; 
+            console.log(`Max-performance mode enabled. Target limit: ${(memoryLimitBytes / 1024 / 1024).toFixed(0)} MB`);
+        } 
+        else if (typeof chunk_cap === 'number') {
+            itemThreshold = chunk_cap;
+        }
+
+        const CHUNK_SIZE_LIMIT = itemThreshold;
+        let itemChunk = [];
+
         for await (const line of rl) {
             bytesProcessed += Buffer.byteLength(line, 'utf-8') + 1;
-            const percentage = Math.min(((bytesProcessed / totalBytes) * 100), 100).toFixed(1);
-            console.log(`Progress: ${percentage}%`);
+            
+            const currentPercentage = Math.floor((bytesProcessed / totalBytes) * 100);
+            if (currentPercentage !== lastReportedPercentage) {
+                console.log(`Progress: ${currentPercentage}%`);
+                lastReportedPercentage = currentPercentage;
+            }
+
             if (!line.trim()) continue;
+
             try {
                 const item = JSON.parse(line);
-                createItem(item.name, item.quantity, category, {'location': item.location, 'keywords': item.keywords});
+                
+                itemChunk.push({
+                    name: item.name,
+                    quantity: item.quantity,
+                    attributes: {
+                        'location': item.location,
+                        'keywords': item.keywords
+                    }
+                });
+
+                const currentHeapUsed = process.memoryUsage().heapUsed;
+
+                if (itemChunk.length >= CHUNK_SIZE_LIMIT || currentHeapUsed >= memoryLimitBytes) {
+                    createItemBulk(itemChunk, categoryId);
+                    itemChunk = [];
+                }
+
             } catch (err) {
-                throw new Error(`Failed to create item: ${err}`);
+                throw new Error(`Failed to process item line: ${err}`);
             }
         }
-        console.log("Conversion Completed.")
+
+        if (itemChunk.length > 0) {
+            createItemBulk(itemChunk, categoryId);
+        }
+
+        console.log("Conversion Completed.");
     }
 }
 
