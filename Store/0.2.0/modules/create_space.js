@@ -32,7 +32,14 @@ continueBtn.addEventListener('click', async () => {
     console.log(`Creating New Space: ${nameInput.value}`);
     try {
         await window.storeAPI.createSpace(nameInput.value);
+        if (nameInput.value.toLowerCase().trim() === 'empty' && errorOutput.innerText === 'Space Name Cannot Be Empty') {
+            errorOutput.innerText = 'Haha. Very Funny';
+            await wait(500);
+        }
         select_space.init();
+        await wait(200);
+        errorOutput.innerText = '';
+        nameInput.value = '';
     } catch (err) {
         errorOutput.innerText = `Failed to Create Space: ${err}`;
     }

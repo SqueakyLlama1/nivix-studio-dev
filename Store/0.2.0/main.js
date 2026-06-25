@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, shell, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 let dbManager;
@@ -13,6 +13,89 @@ let startHeight = 800;
 
 let mainWindow;
 let skippedVersion = null;
+
+const store_path = path.join(os.homedir(), 'nvxstdo', 'store');
+const studio_path = path.join(os.homedir(), 'nvxstdo');
+const skippedVersionFilePath = path.join(store_path, 'skippedVersion.txt'); ;
+
+function checkApplicationUpdates() {
+    const isWindows = process.platform === 'win32';
+    const isAppImage = process.platform === 'linux' && !!process.env.APPIMAGE;
+    const isLinuxPackage = process.platform === 'linux' && !process.env.APPIMAGE;
+
+    if (isWindows || isAppImage) {
+        autoUpdater.autoDownload = false;
+
+        autoUpdater.on('update-available', (info) => {
+            if (skippedVersion === info.version) return;
+
+            dialog.showMessageBox(mainWindow, {
+                type: 'info',
+                title: 'Update Available',
+                message: `Version ${info.version} is available. Would you like to download it now?`,
+                buttons: ['Download Now', 'Later', 'Skip This Version'],
+                cancelId: 1
+            }).then((result) => {
+                if (result.response === 0) {
+                    autoUpdater.downloadUpdate();
+                } else if (result.response === 2) {
+                    skippedVersion = info.version;
+                    saveSkippedVersion();
+                }
+            });
+        });
+
+        autoUpdater.on('update-downloaded', (info) => {
+            dialog.showMessageBox(mainWindow, {
+                type: 'info',
+                title: 'Update Ready',
+                message: `Version ${info.version} has been downloaded. Restart the application to install?`,
+                buttons: ['Install Now', 'Later'],
+                cancelId: 1
+            }).then((result) => {
+                if (result.response === 0) {
+                    if (isAppImage) {
+                        process.env.APPIMAGE_SILENT_INSTALL = 'true';
+                    }
+                    autoUpdater.quitAndInstall();
+                }
+            });
+        });
+
+        autoUpdater.checkForUpdates();
+    } else if (isLinuxPackage) {
+        autoUpdater.autoDownload = false;
+
+        autoUpdater.on('update-available', (info) => {
+            if (skippedVersion === info.version) return;
+
+            dialog.showMessageBox(mainWindow, {
+                type: 'info',
+                title: 'Update Available',
+                message: `Version ${info.version} is available. Please update via your system package manager or download the new release online.`,
+                buttons: ['Go to Downloads', 'Later', 'Don\'t Show Again'],
+                cancelId: 1
+            }).then((result) => {
+                if (result.response === 0) {
+                    shell.openExternal('https://nivixtech.com/studio');
+                } else if (result.response === 2) {
+                    skippedVersion = info.version;
+                    saveSkippedVersion();
+                }
+            });
+        });
+
+        autoUpdater.checkForUpdates();
+    }
+}
+
+async function saveSkippedVersion() {
+    try {
+        await fs.writeFile(skippedVersionFilePath, skippedVersion, { encoding: 'utf-8' });
+    } catch(err) {
+        console.error(`Failed to save skipped version: ${err}`);
+    }
+}
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -45,15 +128,23 @@ function createWindow() {
     });
     
     mainWindow.loadFile('index.html');
+
+    mainWindow.webContents.on('did-finish-load', () => {
+        checkApplicationUpdates();
+    });
 }
 
-// Close app when all windows are closed (Windows/Linux)
 app.on('window-all-closed', () => {
     app.quit();
 });
 
 app.whenReady().then(async () => {
     await init_sandbox();
+    try {
+        skippedVersion = await fs.readFile(skippedVersionFilePath, { encoding: 'utf-8' });
+    } catch (err) {
+        console.error(`Failed to load skippde version: ${err}`);
+    }
     dbManager = require('./dbManager');
     const primaryScreen = screen.getPrimaryDisplay();
     const { width, height } = primaryScreen.size;
@@ -65,9 +156,6 @@ app.whenReady().then(async () => {
     }
     createWindow();
 });
-
-const store_path = path.join(os.homedir(), 'nvxstdo', 'store');
-const studio_path = path.join(os.homedir(), 'nvxstdo');
 
 async function init_sandbox() {
     try {
@@ -83,7 +171,6 @@ const oldFormats = {
 }
 
 ipcMain.handle('check-for-old-inventory', async () => {
-    // Check if an old inventory exists for the hub version of 0.1.0 - 0.1.1
     try {
         const expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0-hub']);
         await fs.access(expectedOldInventoryPath);
@@ -92,7 +179,6 @@ ipcMain.handle('check-for-old-inventory', async () => {
         console.log("0.1.0-hub inventory not found, checking next version...");
     }
 
-    // Check if an old inventory exists for version 0.1.0
     try {
         const expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0']);
         await fs.access(expectedOldInventoryPath);
@@ -124,12 +210,6 @@ ipcMain.handle('set-preferences', async (_event, preferences) => {
     }
 });
 
-/* ===========================================
-Inventory API & Frontend Hook
-=========================================== */
-
-// Spaces
-
 ipcMain.handle('create-space', async (_event, name) => {
     return dbManager.createSpace(name);
 });
@@ -142,8 +222,6 @@ ipcMain.handle('delete-space', async (_event, id) => {
     return dbManager.deleteSpace(id);
 });
 
-// Categories
-
 ipcMain.handle('create-category', async (_event, name, space, category = null, fields = []) => {
     return dbManager.createCategory(name, space, category, fields);
 });
@@ -155,8 +233,6 @@ ipcMain.handle('list-categories', async (_event, space) => {
 ipcMain.handle('delete-category', async (_event, category) => {
     return dbManager.deleteCategory(category);
 });
-
-// Items
 
 ipcMain.handle('create-item', async (_event, name, quantity = 0, category, attributes = {}) => {
     return dbManager.createItem(name, quantity, category, attributes);

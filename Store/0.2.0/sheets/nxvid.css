@@ -20,18 +20,16 @@
     
     --background-primary: #f6f6f6;
     --background-secondary: #e8e8e8;
-    --background-tertiary: #c5c5c5;
-    --background-quarternary: #d3d3d3;
-    --background-quinary: #b9b9b9;
+    --background-tertiary: #e2e2e2;
+    --background-quarternary: #dfdfdf;
+    --background-quinary: #cccccc;
     
     --radius: 6px;
     --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     --transition: 0.3s ease;
 }
 
-*:focus {
-    outline: 1px solid violet;
-}
+*:focus { outline: 1px solid violet; }
 
 html { 
     scroll-behavior: smooth; 
@@ -55,16 +53,10 @@ h5 span { font-size: 0.67em; }
 h6 span { font-size: 0.45em; }
 
 /* Custom Scrollbars */
-::-webkit-scrollbar { 
-    width: 7px; 
-    height: 5px; 
-    
-    &-track { background: var(--background-tertiary); }
-    &-thumb { 
-        background: var(--brand-primary); 
-        &:hover { background: var(--brand-secondary); }
-    }
-}
+::-webkit-scrollbar { width: 7px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--background-tertiary); }
+::-webkit-scrollbar-thumb { background: var(--brand-secondary); }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-tertiary); }
 
 .hidden {
     display: none !important;
@@ -108,7 +100,7 @@ h6 span { font-size: 0.45em; }
 .nivix_accent {
     font-family: "GochiHand", "Lucida Handwriting", serif;
     color: var(--brand-primary);
-    text-shadow: 3px 3px 2px #8d8d8d;
+    text-shadow: 1.5px 1.5px 1px #8d8d8d;
 }
 
 .nivix_loader {
@@ -340,8 +332,6 @@ h6 span { font-size: 0.45em; }
 
         &:open {
             background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 15 12 9 18 15'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
-            border-bottom-left-radius: 0px;
-            border-bottom-right-radius: 0px;
         }
     }
     
