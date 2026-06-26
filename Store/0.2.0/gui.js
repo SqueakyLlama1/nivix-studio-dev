@@ -2,7 +2,8 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs').promises;
 const fsSync = require('fs');
-const Database = require('better-sqlite3');
+const Database = require('better-sqlite3-electron');
+const { buffer } = require('stream/consumers');
 
 const store_path = path.join(os.homedir(), 'nvxstdo', 'store');
 const studio_path = path.join(os.homedir(), 'nvxstdo');
@@ -19,16 +20,8 @@ const functions = require('./functions')(db, ctx);
 
 functions.initTables();
 
-const repl = require('repl');
-
-function startREPL() {
-    const replServer = repl.start({
-        prompt: 'Nivix Store > ',
-        useColors: true
-    });
-
-    replServer.context.db = db;
-    Object.assign(replServer.context, functions);
-}
-
-startREPL();
+// CommonJS Exports
+module.exports = {
+    db,
+    ...functions
+};

@@ -145,7 +145,7 @@ app.whenReady().then(async () => {
     } catch (err) {
         console.error(`Failed to load skippde version: ${err}`);
     }
-    dbManager = require('./dbManager');
+    dbManager = require('./gui.js');
     const primaryScreen = screen.getPrimaryDisplay();
     const { width, height } = primaryScreen.size;
     if (width < startWidth) {
