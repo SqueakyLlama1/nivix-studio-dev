@@ -36,23 +36,23 @@
         }
     }
     
-    .bottom_right_container {
+    .action_container {
         position: absolute;
         bottom: 0;
-        right: 0;
+        left: 0;
 
         display: flex;
         flex-direction: column;
 
         width: max-content;
-        max-height: 100%;
+        height: 100%;
         overflow-y: auto;
 
         background: color-mix(in srgb, var(--background-secondary) 70%, transparent);
 
         border-radius: var(--radius);
 
-        margin-right: 5px;
+        margin-left: 5px;
         
         .nivix_secondary_button {
             justify-content: left;

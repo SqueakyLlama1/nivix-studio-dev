@@ -8,6 +8,9 @@ const path = require('path');
 const os = require('os');
 const { error } = require('console');
 
+const permissionManager = require('./permissions.js');
+const permissions = await permissionManager.getPermissions();
+
 let startWidth = 1000;
 let startHeight = 800;
 
@@ -265,3 +268,8 @@ ipcMain.handle('rebuild-search-index', async (_event) => {
 ipcMain.handle('convert', async (_event, version, space) => {
     return dbManager.convert(version, space);
 });
+
+module.exports = {
+    store_path,
+    studio_path
+}
