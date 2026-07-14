@@ -59,6 +59,14 @@
             font-weight: bold;
 
             padding: 0.5rem;
+
+            border-radius: var(--radius);
+
+            transition: background var(--transition), color var(--transition);
+
+            &:hover {
+                background: color-mix(in srgb, var(--background-quinary) 90%, transparent);
+            }
         }
         
         .nivix_bookmark {
