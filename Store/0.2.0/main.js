@@ -2,14 +2,13 @@ const { app, BrowserWindow, ipcMain, screen, shell, dialog } = require('electron
 const { autoUpdater } = require('electron-updater');
 
 let dbManager;
+let permissionManager;
+let permissions;
 
 const fs = require('fs').promises;
 const path = require('path');
 const os = require('os');
 const { error } = require('console');
-
-const permissionManager = require('./permissions.js');
-const permissions = await permissionManager.getPermissions();
 
 let startWidth = 1000;
 let startHeight = 800;
@@ -148,6 +147,8 @@ app.whenReady().then(async () => {
     } catch (err) {
         console.error(`Failed to load skippde version: ${err}`);
     }
+    permissionManager = require('./permissions.js');
+    permissions = await permissionManager.getPermissions();
     dbManager = require('./gui.js');
     const primaryScreen = screen.getPrimaryDisplay();
     const { width, height } = primaryScreen.size;

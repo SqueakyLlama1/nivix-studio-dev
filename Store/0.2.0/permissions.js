@@ -1,8 +1,8 @@
 const fs = require('fs').promises;
 const path = require('path');
-const main = require('./main.js');
+const { store_path } = require('./main.js');
 
-const filePath = path.join(main.store_path, 'permissions.json');
+const filePath = path.join(store_path, 'permissions.json');
 
 let permissions = null; 
 

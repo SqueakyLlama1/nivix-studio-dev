@@ -38,17 +38,17 @@
     
     .action_container {
         position: absolute;
-        bottom: 0;
+        top: 5px;
         left: 0;
 
         display: flex;
         flex-direction: column;
 
         width: max-content;
-        height: 100%;
+        height: calc(100% - 5px);
         overflow-y: auto;
 
-        background: color-mix(in srgb, var(--background-secondary) 70%, transparent);
+        background: color-mix(in srgb, var(--background-secondary) 80%, transparent);
 
         border-radius: var(--radius);
 
