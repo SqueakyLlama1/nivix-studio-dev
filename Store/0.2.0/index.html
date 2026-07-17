@@ -51,35 +51,37 @@
 	
 	<div class="tab" id="select_space">
 		<div class="space_filler_container autofill"></div>
-		<div class="center">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="50" fill="#43a4eb"/><path d="M 118 208.5 L 394 208.5 L 361 158.5 Q 357 151.5, 348 151.5 L 164 151.5 Q 155 151.5, 151 158.5 Z" fill="#ffffff"/><path d="M 125 216.5 L 225 216.5 L 225 238.5 Q 225 254.5, 241 254.5 L 271 254.5 Q 287 254.5, 287 238.5 L 287 216.5 L 387 216.5 Q 399 216.5, 399 228.5 L 399 344.5 Q 399 356.5, 387 356.5 L 125 356.5 Q 113 356.5, 113 344.5 L 113 228.5 Q 113 216.5, 125 216.5 Z" fill="#ffffff"/></svg>
-			<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
-			<div class="button_container">
-				<p>Select a Space or Create a New One<button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
-				<select id="select_space_option" class="nivix_select"></select>
-				<button id="select_space_continue" class="nivix_primary_button">Continue</button>
-				<div class="nivix_checkbox_wrapper centered">
-					<label>Disable Shape Animation</label>
-					<input type="checkbox" class="nivix_input" id="select_space_shapeAnimToggle">
+		<div class="action_container">
+			<h2 class="nivix_bookmark">General</h2>
+			<button id="select_space_studio_webpage" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h420v-140H160v140Zm500 0h140v-360H660v360ZM160-460h420v-140H160v140Z"/></svg> Nivix Studio Webpage</button>
+			<button id="select_space_settings" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg> Settings</button>
+			<button id="select_space_quit" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg> Exit Store</button>
+			<h2 class="nivix_bookmark">Advanced</h2>
+			<button id="select_space_connect_server" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M280-160v-40h-40q-50 0-85-35t-35-85v-120H40v-80h80v-120q0-50 35-85t85-35h40v-40h80v640h-80Zm-40-120h40v-400h-40q-17 0-28.5 11.5T200-640v320q0 17 11.5 28.5T240-280Zm360 120v-160H440v-80h160v-160H440v-80h160v-160h80v40h40q50 0 85 35t35 85v120h80v80h-80v120q0 50-35 85t-85 35h-40v40h-80Zm80-120h40q17 0 28.5-11.5T760-320v-320q0-17-11.5-28.5T720-680h-40v400ZM280-480Zm400 0Z"/></svg> Connect to Remote Server</button>
+			<button id="select_space_start_server" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M120-160v-160h720v160H120Zm80-40h80v-80h-80v80Zm-80-440v-160h720v160H120Zm80-40h80v-80h-80v80Zm-80 280v-160h720v160H120Zm80-40h80v-80h-80v80Z"/></svg> Expose a Local Server</button>
+			<h2 class="nivix_bookmark">Developers</h2>
+			<button id="select_space_source" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M240-280 40-480l200-200 56 56-143 144 143 144-56 56Zm178 132-76-24 200-640 76 24-200 640Zm302-132-56-56 143-144-143-144 56-56 200 200-200 200Z"/></svg> Source Code</button>
+			<button id="select_space_changelog" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm221.5-198.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"/></svg> Changelog</button>
+			<button id="select_space_credits" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M430-200h100v-180h60v-184q0-27-28.5-41.5T480-620q-53 0-81.5 14.5T370-564v184h60v180Zm-105 88.5q-73-31.5-127.5-86t-86-127.5Q80-398 80-480.5t31.5-155q31.5-72.5 86-127t127.5-86Q398-880 480.5-880t155 31.5q72.5 31.5 127 86t86 127Q880-563 880-480.5T848.5-325q-31.5 73-86 127.5t-127 86Q563-80 480.5-80T325-111.5Zm381.5-142Q800-347 800-480t-93.5-226.5Q613-800 480-800t-226.5 93.5Q160-613 160-480t93.5 226.5Q347-160 480-160t226.5-93.5ZM523-657q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm-43 177Z"/></svg> Credits</button>
+			<button id="select_space_documentation" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm0-660v600h600v-600H676v279l-98-59-98 59v-279H180Zm0 600v-600 600Z"/></svg> Documentation</button>
+		</div>
+		<div class="main_container">
+			<div class="center">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="50" fill="#43a4eb"/><path d="M 118 208.5 L 394 208.5 L 361 158.5 Q 357 151.5, 348 151.5 L 164 151.5 Q 155 151.5, 151 158.5 Z" fill="#ffffff"/><path d="M 125 216.5 L 225 216.5 L 225 238.5 Q 225 254.5, 241 254.5 L 271 254.5 Q 287 254.5, 287 238.5 L 287 216.5 L 387 216.5 Q 399 216.5, 399 228.5 L 399 344.5 Q 399 356.5, 387 356.5 L 125 356.5 Q 113 356.5, 113 344.5 L 113 228.5 Q 113 216.5, 125 216.5 Z" fill="#ffffff"/></svg>
+				<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
+				<div class="button_container">
+					<p>Select a Space or Create a New One<button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
+					<select id="select_space_option" class="nivix_select"></select>
+					<button id="select_space_continue" class="nivix_primary_button">Continue</button>
+					<div class="nivix_checkbox_wrapper centered">
+						<label>Disable Shape Animation</label>
+						<input type="checkbox" class="nivix_input" id="select_space_shapeAnimToggle">
+					</div>
+				</div>
+				<div class="footer">
+					<span>Store </span><span id="select_space_footer_version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
 				</div>
 			</div>
-			<div class="action_container">
-				<h2 class="nivix_bookmark">General</h2>
-				<button id="select_space_studio_webpage" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h420v-140H160v140Zm500 0h140v-360H660v360ZM160-460h420v-140H160v140Z"/></svg> Nivix Studio Webpage</button>
-				<button id="select_space_settings" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg> Settings</button>
-				<button id="select_space_quit" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg> Exit Store</button>
-				<h2 class="nivix_bookmark">Advanced</h2>
-				<button id="select_space_connect_server" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M280-160v-40h-40q-50 0-85-35t-35-85v-120H40v-80h80v-120q0-50 35-85t85-35h40v-40h80v640h-80Zm-40-120h40v-400h-40q-17 0-28.5 11.5T200-640v320q0 17 11.5 28.5T240-280Zm360 120v-160H440v-80h160v-160H440v-80h160v-160h80v40h40q50 0 85 35t35 85v120h80v80h-80v120q0 50-35 85t-85 35h-40v40h-80Zm80-120h40q17 0 28.5-11.5T760-320v-320q0-17-11.5-28.5T720-680h-40v400ZM280-480Zm400 0Z"/></svg> Connect to Remote Server</button>
-				<button id="select_space_start_server" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M120-160v-160h720v160H120Zm80-40h80v-80h-80v80Zm-80-440v-160h720v160H120Zm80-40h80v-80h-80v80Zm-80 280v-160h720v160H120Zm80-40h80v-80h-80v80Z"/></svg> Expose a Local Server</button>
-				<h2 class="nivix_bookmark">Developers</h2>
-				<button id="select_space_source" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M240-280 40-480l200-200 56 56-143 144 143 144-56 56Zm178 132-76-24 200-640 76 24-200 640Zm302-132-56-56 143-144-143-144 56-56 200 200-200 200Z"/></svg> Source Code</button>
-				<button id="select_space_changelog" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm221.5-198.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"/></svg> Changelog</button>
-				<button id="select_space_credits" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M430-200h100v-180h60v-184q0-27-28.5-41.5T480-620q-53 0-81.5 14.5T370-564v184h60v180Zm-105 88.5q-73-31.5-127.5-86t-86-127.5Q80-398 80-480.5t31.5-155q31.5-72.5 86-127t127.5-86Q398-880 480.5-880t155 31.5q72.5 31.5 127 86t86 127Q880-563 880-480.5T848.5-325q-31.5 73-86 127.5t-127 86Q563-80 480.5-80T325-111.5Zm381.5-142Q800-347 800-480t-93.5-226.5Q613-800 480-800t-226.5 93.5Q160-613 160-480t93.5 226.5Q347-160 480-160t226.5-93.5ZM523-657q17-17 17-43t-17-43q-17-17-43-17t-43 17q-17 17-17 43t17 43q17 17 43 17t43-17Zm-43 177Z"/></svg> Credits</button>
-				<button id="select_space_documentation" class="nivix_secondary_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M180-120q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm0-660v600h600v-600H676v279l-98-59-98 59v-279H180Zm0 600v-600 600Z"/></svg> Documentation</button>
-			</div>
-		</div>
-		<div class="footer">
-			<span>Store </span><span id="select_space_footer_version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
 		</div>
 	</div>
 	
