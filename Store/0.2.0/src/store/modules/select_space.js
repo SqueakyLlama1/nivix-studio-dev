@@ -1,8 +1,9 @@
 import { loadCSS } from './file_loader.js';
 import { preferences, setPreference } from './settings.js';
 import * as tabs from './tabs.js';
-import * as index from './index.js';
+import * as index from './index.ts';
 import * as create_space from './create_space.js';
+import { electroview } from './index.ts';
 
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
@@ -67,7 +68,7 @@ const choiceSelection = getEBD('select_space_option');
 const continueBtn = getEBD('select_space_continue');
 
 async function populate_spaces_prompt() {
-    const spaces = await window.storeAPI.listSpaces();
+    const spaces = await electroview.rpc?.request.listSpaces();
     choiceSelection.replaceChildren();
 
     const createSpaceOption = new Option("Create a New Space", 'create-new-space');

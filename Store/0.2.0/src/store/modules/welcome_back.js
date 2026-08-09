@@ -1,6 +1,6 @@
 import { loadCSS, unloadCSS } from './file_loader.js';
 import * as tabs from './tabs.js';
-import * as main from './index.js';
+import * as main from './index.ts';
 import * as changelog from './changelog.js';
 import * as select_space from './select_space.js';
 

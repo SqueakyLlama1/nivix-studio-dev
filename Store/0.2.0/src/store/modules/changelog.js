@@ -1,6 +1,6 @@
 import { loadCSS } from './file_loader.js';
 import * as tabs from './tabs.js';
-import * as main from './index.js';
+import * as main from './index.ts';
 
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}

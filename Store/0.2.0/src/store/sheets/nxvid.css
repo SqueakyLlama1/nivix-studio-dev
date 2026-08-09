@@ -1,0 +1,357 @@
+/* Fonts */
+@font-face {
+    font-family: "GochiHand";
+    src: url("../fonts/GochiHand-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Page Setup and Defaults */
+:root {
+    --brand-primary: #43a4eb;
+    --brand-secondary: #258dd8;
+    --brand-tertiary: #40afff;
+    
+    --text-primary: #1c1c1c;
+    --text-secondary: #5d5d5d;
+    --text-tertiary: #f9f9f9;
+    --text-quarternary: #a1a1a1;
+    
+    --background-primary: #f6f6f6;
+    --background-secondary: #e0e0e0;
+    --background-tertiary: #cacaca;
+    --background-quarternary: #c0c0c0;
+    --background-quinary: #b6b6b6;
+    
+    --radius: 6px;
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    --transition: 0.3s ease;
+
+    --outline: #ff6b00;
+}
+
+*:focus { outline: 1px solid var(--outline); }
+
+html { 
+    scroll-behavior: smooth; 
+    
+    &, body {
+        height: 100%;
+    }
+}
+
+body {
+    background: var(--background-primary);
+    margin: 0;
+}
+
+/* Heading Scaling Shorthand */
+h1 span { font-size: 1.5em; }
+h2 span { font-size: 1.17em; }
+h3 span { font-size: 1em; }
+h4 span { font-size: 0.83em; }
+h5 span { font-size: 0.67em; }
+h6 span { font-size: 0.45em; }
+
+/* Custom Scrollbars */
+::-webkit-scrollbar { width: 7px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--background-tertiary); }
+::-webkit-scrollbar-thumb { background: var(--brand-secondary); }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-tertiary); }
+
+.hidden {
+    display: none !important;
+}
+
+/* Layout Elements */
+.center, .vertical_center, .horizontal_center {
+    display: flex;
+    position: relative;
+    height: 100%;
+    flex-direction: column;
+}
+
+.center {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.vertical_center {
+    justify-content: center;
+}
+
+.horizontal_center {
+    align-items: center;
+    text-align: center;
+}
+
+.nivix_footer {
+    flex-shrink: 0;
+    min-height: 0;
+    background: var(--brand-primary);
+    border-radius: var(--radius);
+    color: white;
+    text-align: center;
+    padding: 5px;
+    margin: 5px;
+}
+
+/* Nivix Visual Identity Elements */
+.nivix_accent {
+    font-family: "GochiHand", "Lucida Handwriting", serif;
+    color: var(--brand-primary);
+    text-shadow: 1.5px 1.5px 1px #8d8d8d;
+}
+
+.nivix_loader {
+    width: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: 
+    radial-gradient(farthest-side, var(--brand-primary) 94%, #0000) top/8px 8px no-repeat,
+    conic-gradient(#0000 30%, var(--brand-primary));
+    mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+    -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+    animation: load_spin 1s infinite linear;
+}
+
+.nivix_primary_button {
+    background: var(--brand-primary);
+    border: none;
+    border-radius: var(--radius);
+    color: var(--text-tertiary);
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0.5rem 1.1rem;
+    transition: background var(--transition);
+    
+    svg {
+        width: 2em;
+        aspect-ratio: 1;
+        fill: var(--text-tertiary); 
+        transition: fill var(--transition);
+    }
+    
+    &:hover {
+        &:not(:disabled) {
+            background-image: linear-gradient(180deg, var(--brand-secondary), var(--brand-primary));
+        }
+    }
+    
+    &.selected, &:active {
+        background: var(--brand-secondary);
+        
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+    
+    &:not(.selected):disabled {
+        background: #ccc;
+        color: var(--text-quarternary);
+        cursor: not-allowed;
+    }
+}
+
+.nivix_secondary_button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    
+    background: transparent;
+    border: none;
+    
+    color: var(--brand-primary);
+    text-decoration: none;
+    
+    cursor: pointer;
+    
+    padding: 0.5rem 1.1rem;
+    
+    transition: color var(--transition);
+    
+    svg {
+        width: 2em;
+        aspect-ratio: 1;
+        fill: var(--brand-primary); 
+        transition: fill var(--transition);
+    }
+    
+    &:hover {
+        &:not(:disabled) {
+            color: var(--brand-secondary);
+            svg { fill: var(--brand-secondary); }
+        }
+    }
+    
+    &.selected, &:active {
+        color: var(--brand-secondary);
+        font-weight: bold;
+        
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+    
+    &:not(.selected):disabled {
+        background: #ccc;
+        
+        color: var(--text-quarternary);
+        cursor: not-allowed;
+    }
+}
+
+.nivix_bookmark {
+    display: block;
+    width: fit-content;
+    background: var(--brand-primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--text-tertiary);
+    padding: 0.5rem 1.1rem;
+    box-sizing: border-box;
+    
+    &.right {
+        border-radius: var(--radius) 0 0 var(--radius);
+    }
+}
+
+/* Form Inputs (Text & Numbers) */
+.nivix_input {
+    &[type="text"], &[type="number"] {
+        background: var(--background-secondary);
+        border: none;
+        border-radius: var(--radius);
+        text-decoration: none;
+        padding: 0.5rem 1.1rem;
+        
+        &:focus {
+            background-image: linear-gradient(180deg, var(--background-tertiary), var(--background-secondary));
+        }
+    }
+    
+    &::placeholder {
+        color: var(--text-secondary);
+        font-weight: bold;
+    }
+    
+    /* Checkboxes */
+    &[type="checkbox"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ff4d4d;
+        border-radius: 4px;
+        background: transparent;
+        cursor: default;
+        transition: all var(--transition);
+        position: relative;
+        margin: 0;
+        
+        &:checked {
+            border-color: #26a65b;
+            background: #26a65b;
+            
+            &::before {
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 12px;
+                height: 12px;
+                background: #fff;
+                border-radius: 50%;
+            }
+        }
+        
+        &:hover:not(:disabled) {
+            filter: brightness(1.2);
+        }
+        
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        &:focus {
+            outline: 1px solid var(--outline);
+        }
+    }
+}
+
+/* Checkbox Wrappers */
+.nivix_checkbox_wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    
+    &.centered {
+        justify-content: center;
+    }
+    
+    & label {
+        font-size: 18px;
+        user-select: none;
+        cursor: default;
+    }
+}
+
+/* Select and Options Dropdowns */
+.nivix_select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
+    
+    border: none;
+    border-radius: var(--radius);
+    
+    text-align: center;
+    font-family: inherit;
+    color: var(--text-tertiary);
+    
+    cursor: pointer;
+    
+    padding: 0.5rem 1.1rem;
+    
+    transition: background var(--transition);
+    
+    &:hover:not(:disabled),
+    &:focus-visible:not(:disabled) {
+        background-color: var(--brand-secondary);
+        
+        &:open {
+            background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 15 12 9 18 15'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
+        }
+    }
+    
+    &:disabled {
+        background: #ccc;
+        color: var(--text-quarternary);
+        cursor: not-allowed;
+    }
+    
+    & option {
+        color: var(--text-primary);
+        background: var(--background-secondary);
+        
+        padding: 0;
+        
+        &:disabled {
+            color: var(--text-secondary);
+        }
+    }
+}
+
+/* Animations */
+@keyframes load_spin { 
+    100% {
+        transform: rotate(1turn);
+    }
+}

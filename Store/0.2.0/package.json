@@ -1,56 +1,18 @@
 {
 	"name": "nivix-store",
 	"version": "0.2.0",
-	"description": "Generic Inventory Management App for Startup Businesses",
+	"description": "Web-Based Easy Inventory Management App for Businesses and Home Users",
 	"license": "Apache-2.0",
 	"author": "Christian Bone <bone.christian.c@outlook.com>",
-	"homepage": "https://www.nivixtech.com/studio",
-	"type": "commonjs",
-	"main": "main.js",
 	"scripts": {
-		"gui": "electron .",
-		"cli": "node cli.js",
-		"dist": "electron-builder --win",
-		"postinstall": "npx electron-rebuild -o better-sqlite3-electron"
-	},
-	"build": {
-		"artifactName": "NivixStore-${version}-Setup.exe",
-		"appId": "com.nivixtech.store",
-		"productName": "Nivix Store",
-		"copyright": "Copyright (C) 2026 Christian Bone / Nivix Technology",
-		"directories": {
-			"output": "dist"
-		},
-		"files": [
-			"**/*",
-			"!dist/*"
-		],
-		"win": {
-			"target": "nsis",
-			"icon": "favicon.ico"
-		},
-		"nsis": {
-			"oneClick": false,
-			"allowToChangeInstallationDirectory": true,
-			"createDesktopShortcut": true
-		},
-		"icon": "build/icon.ico",
-		"publish": [
-			{
-				"provider": "generic",
-				"url": "https://downloads.nivixtech.com/studio/release/store/"
-			}
-		]
-	},
-	"devDependencies": {
-		"@electron/rebuild": "^4.0.4",
-		"electron": "^42.4.1",
-		"electron-builder": "^26.15.3",
-		"npm-check-updates": "^22.2.3"
+		"gui": "electrobun dev",
+		"cli": "electrobun dev -- --cli"
 	},
 	"dependencies": {
-		"better-sqlite3": "^12.11.1",
-		"better-sqlite3-electron": "npm:better-sqlite3@^12.11.1",
-		"electron-updater": "^6.8.9"
+		"electrobun": "1.18.1"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"rcedit": "^5.0.2"
 	}
 }

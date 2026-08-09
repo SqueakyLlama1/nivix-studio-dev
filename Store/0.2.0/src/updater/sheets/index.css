@@ -1,0 +1,69 @@
+body {
+    padding: 0;
+    background: transparent;
+    
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.center {
+    background: var(--background-primary);
+    border-radius: var(--radius);
+    
+    animation: window_open 0.25s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    transform-origin: center center;
+}
+
+.nivix_loader {
+    margin-bottom: 25px;
+}
+
+h1 {
+    font-size: 5em;
+    margin: 0;
+    user-select: none;
+}
+
+#debug_output {
+    background: var(--background-secondary);
+    border-radius: var(--radius);
+    
+    color: var(--text-primary);
+    
+    padding: 0.3rem 0.7rem;
+    
+    .error {
+        color: red;
+    }
+    
+    .warning {
+        color: orange;
+    }
+}
+
+.footer {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    
+    position: fixed;
+    bottom: 0;
+    
+    width: calc(100% - 10px);
+    padding: 5px;
+    
+    button, a {
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+@keyframes window_open {
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

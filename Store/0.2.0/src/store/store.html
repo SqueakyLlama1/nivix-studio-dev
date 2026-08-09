@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://nivixtech.com https://*.nivixtech.com; img-src 'self' data: https://nivixtech.com https://*.nivixtech.com;">
-	
-	<title>Nivix Store</title>
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://nivixtech.com https://*.nivixtech.com ws://localhost:50000; img-src 'self' data: https://nivixtech.com https://*.nivixtech.com ws://localhost:50000;">
 	
 	<link rel="stylesheet" type="text/css" href="sheets/nxvid.css">
 	
@@ -20,7 +18,7 @@
 			<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
 			<div class="nivix_loader"></div>
 		</div>
-		<div class="footer">
+		<div class="nivix_footer">
 			<span>Store </span><span id="load_footer_version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
 		</div>
 	</div>
@@ -78,7 +76,7 @@
 						<input type="checkbox" class="nivix_input" id="select_space_shapeAnimToggle">
 					</div>
 				</div>
-				<div class="footer">
+				<div class="nivix_footer">
 					<span>Store </span><span id="select_space_footer_version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
 				</div>
 			</div>
@@ -102,6 +100,6 @@
 			<p id="create_space_output"></p>
 		</div>
 	</div>
-	<script src="modules/index.js" type="module"></script>
+	<script src="./index.js" type="module"></script>
 </body>
 </html>

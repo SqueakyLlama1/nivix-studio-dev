@@ -250,7 +250,7 @@ module.exports = (db, ctx) => {
         }
 
         if (version === "0.1.0") {
-            const readline = require('readline');
+            const readline = require('node:readline');
             const oldPath = path.join(ctx.studio_path, ctx.oldFormats[version]);
             const oldInventory = fsSync.createReadStream(oldPath);
             const stats = fsSync.statSync(oldPath);

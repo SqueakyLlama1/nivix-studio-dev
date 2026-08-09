@@ -1,6 +1,7 @@
 import { loadCSS } from './file_loader.js';
 import * as tabs from './tabs.js';
 import * as select_space from './select_space.js';
+import { electroview } from './index.ts';
 
 function getEBD(id) {return document.getElementById(id);}
 function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
@@ -31,7 +32,7 @@ continueBtn.addEventListener('click', async () => {
     };
     console.log(`Creating New Space: ${nameInput.value}`);
     try {
-        await window.storeAPI.createSpace(nameInput.value);
+        await electroview.rpc?.request.createSpace(nameInput.value);
         if (nameInput.value.toLowerCase().trim() === 'empty' && errorOutput.innerText === 'Space Name Cannot Be Empty') {
             errorOutput.innerText = 'Haha. Very Funny';
             await wait(500);

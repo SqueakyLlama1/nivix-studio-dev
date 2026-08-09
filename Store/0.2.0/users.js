@@ -1,1 +1,0 @@
-const { store_path } = require('./main.js');

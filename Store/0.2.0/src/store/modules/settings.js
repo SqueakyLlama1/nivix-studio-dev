@@ -1,4 +1,5 @@
 function getEBD(id) {return document.getElementById(id)};
+import { electroview } from './index.ts';
 
 export let preferences = {
     disableAnimations: false,
@@ -7,7 +8,7 @@ export let preferences = {
 };
 
 export async function init() {
-    const savedPreferences = await window.storeAPI.getPreferences();
+    const savedPreferences = await electroview.rpc?.request.getPreferences();
     if (savedPreferences && Object.keys(savedPreferences).length > 0) {
         preferences = savedPreferences;
         return;
@@ -26,5 +27,5 @@ export async function setPreference(key, value) {
         throw new Error(errorMsg);
     }
     preferences[key] = value;
-    await window.storeAPI.setPreferences(preferences);
+    await electroview.rpc?.request.setPreferences(preferences);
 }

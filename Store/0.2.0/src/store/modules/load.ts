@@ -5,24 +5,25 @@ import * as index from './index.js';
 import * as welcome_back from './welcome_back.js';
 import * as select_space from './select_space.js';
 import * as space_fillers from './space_fillers.js';
+import { electroview } from './index.ts';
 
-function getEBD(id) {return document.getElementById(id);}
-function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
+function getEBD(id: string) {return document.getElementById(id);}
+function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
 
 const versionLabel = getEBD('load_footer_version');
 
-let load_stylesheet;
+let load_stylesheet: string;
 let tooltip_stylesheet;
 
 let isFinishing = false;
 
 export async function init() {
-    versionLabel.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
+    versionLabel!.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
     
     load_stylesheet = loadCSS('sheets/load.css');
     tooltip_stylesheet = loadCSS('sheets/tooltips.css');
     
-    let menuDelay;
+    let menuDelay: number = 750;
     
     try {
         await settings.init();
@@ -42,7 +43,7 @@ async function finish_loading() {
     await tabs.remove('load_menu');
     unloadCSS(load_stylesheet);
 
-    const versionToConvert = await window.storeAPI.needsConversion();
+    const versionToConvert = await electroview.rpc?.request.needsConversion();
     if (versionToConvert) {
         console.log('Old inventory found, showing welcome back screen');
         welcome_back.init();
