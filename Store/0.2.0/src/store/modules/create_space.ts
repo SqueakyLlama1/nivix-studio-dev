@@ -6,8 +6,8 @@ import { electroview } from './index.ts';
 function getEBD(id: string) {return document.getElementById(id);}
 function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
 
-let isInitialized = false;
-let create_space_stylesheet;
+let isInitialized: boolean = false;
+let create_space_stylesheet: string;
 
 export async function init() {
     if (isInitialized) {

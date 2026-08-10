@@ -6,6 +6,7 @@ import * as welcome_back from './welcome_back.ts';
 import * as select_space from './select_space.ts';
 import * as space_fillers from './space_fillers.ts';
 import { electroview } from './index.ts';
+import { populateSVGs } from "./file_loader.ts";
 
 function getEBD(id: string) {return document.getElementById(id);}
 function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
@@ -25,12 +26,59 @@ export async function init() {
     
     let menuDelay: number = 750;
     
+    // Load User Preferences
     try {
         await settings.init();
         menuDelay = settings.preferences['menuDelay'] ?? 750;
     } catch (err) {
         // Add a soft error here
     }
+    
+    // Replace SVG Placeholders with SVGs
+    try {
+        await populateSVGs((path) => electroview.rpc!.request.readFile({ path }));
+    } catch {
+        try {
+            await populateSVGs();
+        } catch {}
+        // Ignore, non-critical error
+    }
+    
+    // Attempt to bind tab-navigation fix.
+    try {
+        document.addEventListener('keydown', (event: KeyboardEvent): void => {
+            if (event.key !== 'Tab') return;
+            
+            // Query all potential focusable elements in the document
+            const selector = 'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])';
+            const focusables = Array.from(
+                document.querySelectorAll<HTMLElement>(selector)
+            ).filter((el: HTMLElement) => {
+                // Ensure element is interactive, visible, and enabled
+                const isVisible = el.offsetWidth > 0 && el.offsetHeight > 0;
+                const isNotDisabled = !el.hasAttribute('disabled');
+                return isVisible && isNotDisabled;
+            });
+            
+            if (focusables.length === 0) return;
+            
+            const firstEl = focusables[0];
+            const lastEl = focusables[focusables.length - 1];
+            const activeElement = document.activeElement as HTMLElement | null;
+            
+            // Trap backward tab (Shift + Tab) on first element
+            if (event.shiftKey && activeElement === firstEl) {
+                lastEl.focus();
+                event.preventDefault();
+            } 
+            // Trap forward tab (Tab) on last element
+            else if (!event.shiftKey && activeElement === lastEl) {
+                firstEl.focus();
+                event.preventDefault();
+            }
+        });
+    } catch {}
+    
     space_fillers.init();
     await wait(menuDelay);
     await finish_loading();
@@ -42,7 +90,7 @@ async function finish_loading() {
     
     await tabs.remove('load_menu');
     unloadCSS(load_stylesheet);
-
+    
     const versionToConvert = await electroview.rpc?.request.needsConversion();
     if (versionToConvert) {
         console.log('Old inventory found, showing welcome back screen');

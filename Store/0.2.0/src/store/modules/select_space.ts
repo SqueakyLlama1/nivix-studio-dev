@@ -83,7 +83,7 @@ async function populate_spaces_prompt() {
     }
 
     spaces.forEach(function(space: Space) {
-        const option = new Option(space.name, space.id);
+        const option = new Option(space.name, String(space.id));
         choiceSelection.add(option);
     });
 }

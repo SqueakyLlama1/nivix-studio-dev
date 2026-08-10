@@ -23,14 +23,12 @@
         .center {
             position: relative;
             
-            .footer {
+            .nivix_footer {
                 position: absolute;
                 bottom: 0;
                 
                 box-sizing: border-box;
                 width: 100%;
-                
-                font-weight: bold;
             }
         }
         
@@ -77,8 +75,8 @@
             
             transition: background var(--transition), color var(--transition);
             
-            &:hover {
-                background: color-mix(in srgb, var(--background-quinary) 90%, transparent);
+            &:hover, &:focus {
+                background-image: linear-gradient(180deg, var(--background-tertiary), var(--background-secondary));;
             }
         }
         

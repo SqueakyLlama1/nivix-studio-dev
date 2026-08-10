@@ -1,4 +1,4 @@
-export function init_database(db) {
+export function init_database(db: any) {
     db.run(`
             PRAGMA foreign_keys = ON;
             PRAGMA journal_mode = WAL;

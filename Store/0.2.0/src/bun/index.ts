@@ -9,7 +9,7 @@ import { BrowserView, BrowserWindow } from "electrobun/bun";
 import Database from 'bun:sqlite';
 
 import * as updater from "./updater.js";
-import * as utils from "./launcher_utils.js";
+import * as utils from "./updater_utils.ts";
 import { type UpdaterRPCType } from '../shared/bun/updater_rpc_type.ts';
 import { type StoreRPCType } from '../shared/bun/store_rpc_type.ts';
 
@@ -28,7 +28,7 @@ const ctx = { studio_path, oldFormats };
 
 let functionsModule;
 let functions: Record<string, (...args: any[]) => any> = {};
-let db;
+let db: Database;
 
 const updaterRPC = BrowserView.defineRPC<UpdaterRPCType>({
 	maxRequestTime: 5000,
@@ -163,6 +163,12 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				space: string;
 			}) {
 				return await functions['convert'](version, space);
+			},
+			async readFile({ path: relativePath }: { path: string }) {
+				const absolutePath = path.resolve(import.meta.dir, '../views/store/', relativePath);
+				
+				const file = Bun.file(absolutePath);
+				return await file.text();
 			}
 		}
 	}
@@ -248,7 +254,7 @@ async function init() {
 	updaterWindow.webview.rpc?.send.displayDebug({ message: "Initializing SQLite Database..." });
 	
 	try {
-		const initModule = await import('./init_database_function.js');
+		const initModule = await import('./init_database_function.ts');
 		await initModule.init_database(db);
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
@@ -282,6 +288,6 @@ async function init() {
 init();
 
 export default {
-    store_path,
-    studio_path
+	store_path,
+	studio_path
 };

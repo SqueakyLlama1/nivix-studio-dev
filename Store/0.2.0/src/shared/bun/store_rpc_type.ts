@@ -91,6 +91,12 @@ export type StoreRPCType = {
                 };
                 response: any;
             };
+            readFile: {
+                params: {
+                    path: string;
+                };
+                response: string;
+            }
         };
         messages: {};
     }>;

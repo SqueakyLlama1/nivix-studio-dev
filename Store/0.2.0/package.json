@@ -5,8 +5,8 @@
 	"license": "Apache-2.0",
 	"author": "Christian Bone <bone.christian.c@outlook.com>",
 	"scripts": {
-		"gui": "electrobun dev",
-		"cli": "electrobun dev -- --cli"
+		"gui": "node -e \"fs.rmSync('build', {recursive: true, force: true})\" && electrobun dev",
+		"cli": "node -e \"fs.rmSync('build', {recursive: true, force: true})\" && electrobun dev -- --cli"
 	},
 	"dependencies": {
 		"electrobun": "1.18.1"
