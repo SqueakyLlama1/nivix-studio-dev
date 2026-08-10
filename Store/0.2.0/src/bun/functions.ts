@@ -1,79 +1,159 @@
-module.exports = (db, ctx) => {
-    const insertItemStmt = db.prepare('INSERT INTO items (name, quantity, category_id, attributes) VALUES (?, ?, ?, ?)');
-    const insertIndexStmt = db.prepare('INSERT OR REPLACE INTO item_attributes_index (item_id, attr_key, attr_value) VALUES (?, ?, ?)');
-    const clearIndexStmt = db.prepare('DELETE FROM item_attributes_index WHERE item_id = ?');
+import * as fsSync from 'node:fs';
+import * as path from 'node:path';
+import * as readline from 'node:readline';
+import * as os from 'node:os';
+import type { Database } from 'bun:sqlite';
 
-    const createSpace = (name) => {
+export interface AppContext {
+    studio_path: string;
+    oldFormats: Record<string, string>;
+}
+
+export interface Space {
+    id: number | bigint;
+    name: string;
+}
+
+export interface Category {
+    id: number | bigint;
+    name: string;
+    parent_space: number | bigint;
+    parent_category: number | bigint | null;
+    fields_template: string[] | string;
+}
+
+export interface ItemInput {
+    name: string;
+    quantity?: number;
+    attributes?: Record<string, any>;
+}
+
+export interface Item {
+    id: number | bigint;
+    name: string;
+    quantity: number;
+    quantity_commited?: number;
+    restock_point?: number;
+    category_id: number | bigint;
+    attributes: Record<string, any>;
+}
+
+export interface QueryRule {
+    type: 'native' | 'attribute';
+    field: string;
+    operator: '=' | '>=' | '<=' | '>' | '<' | 'LIKE' | '!=';
+    value: any;
+}
+
+export interface QueryUnifiedOptions {
+    categoryId?: number | bigint | null;
+    rules?: QueryRule[];
+    logicalOp?: 'AND' | 'OR';
+}
+
+export type ChunkCap = 'auto' | 'max' | number;
+
+export default function createDatabaseApi(db: Database, ctx: AppContext) {
+    const insertItemStmt = db.prepare(
+        'INSERT INTO items (name, quantity, category_id, attributes) VALUES (?, ?, ?, ?)'
+    );
+    const insertIndexStmt = db.prepare(
+        'INSERT OR REPLACE INTO item_attributes_index (item_id, attr_key, attr_value) VALUES (?, ?, ?)'
+    );
+    const clearIndexStmt = db.prepare(
+        'DELETE FROM item_attributes_index WHERE item_id = ?'
+    );
+
+    const createSpace = (name: string): number | bigint => {
         const stmt = db.prepare('INSERT INTO spaces (name) VALUES (?)');
         const info = stmt.run(name);
         return info.lastInsertRowid;
     };
 
-    const listSpaces = () => {
-        return db.prepare('SELECT * FROM spaces').all();
+    const listSpaces = (): Space[] => {
+        return db.prepare('SELECT * FROM spaces').all() as Space[];
     };
 
-    const deleteSpace = (id) => {
+    const deleteSpace = (id: number | bigint): boolean => {
         const stmt = db.prepare('DELETE FROM spaces WHERE id = ?');
         return stmt.run(id).changes > 0;
     };
 
-    const createCategory = (name, space, category = null, fields = []) => {
-        const stmt = db.prepare('INSERT INTO categories (name, parent_space, parent_category, fields_template) VALUES (?, ?, ?, ?)');
+    const createCategory = (
+        name: string,
+        space: number | bigint,
+        category: number | bigint | null = null,
+        fields: string[] = []
+    ): number | bigint => {
+        const stmt = db.prepare(
+            'INSERT INTO categories (name, parent_space, parent_category, fields_template) VALUES (?, ?, ?, ?)'
+        );
         const info = stmt.run(name, space, category, JSON.stringify(fields));
         return info.lastInsertRowid;
     };
 
-    const listCategories = (space) => {
-        const stmt = db.prepare('SELECT id, name, parent_category, fields_template FROM categories WHERE parent_space = ?');
-        const rows = stmt.all(space);
+    const listCategories = (space: number | bigint): Category[] => {
+        const stmt = db.prepare(
+            'SELECT id, name, parent_category, fields_template FROM categories WHERE parent_space = ?'
+        );
+        const rows = stmt.all(space) as any[];
         return rows.map(row => ({
             ...row,
             fields_template: JSON.parse(row.fields_template || '[]')
         }));
     };
 
-    const deleteCategory = (id) => {
+    const deleteCategory = (id: number | bigint): boolean => {
         const stmt = db.prepare('DELETE FROM categories WHERE id = ?');
         return stmt.run(id).changes > 0;
     };
 
-    const createItem = db.transaction((name, quantity = 0, category, attributes = {}) => {
-        const stmt = db.prepare('INSERT INTO items (name, quantity, category_id, attributes) VALUES (?, ?, ?, ?)');
-        const info = stmt.run(name, quantity, category, JSON.stringify(attributes));
-        const itemId = info.lastInsertRowid;
-        
-        for (const [key, value] of Object.entries(attributes)) {
-            if (value !== null && value !== undefined) {
-                insertIndexStmt.run(itemId, key, String(value));
-            }
-        }
-        return itemId;
-    });
-
-    const createItemBulk = db.transaction((items, categoryId) => {
-        for (const item of items) {
-            const info = insertItemStmt.run(
-                item.name, 
-                item.quantity || 0, 
-                categoryId, 
-                JSON.stringify(item.attributes)
+    const createItem = db.transaction(
+        (name: string, quantity = 0, category: number | bigint, attributes: Record<string, any> = {}) => {
+            const stmt = db.prepare(
+                'INSERT INTO items (name, quantity, category_id, attributes) VALUES (?, ?, ?, ?)'
             );
+            const info = stmt.run(name, quantity, category, JSON.stringify(attributes));
             const itemId = info.lastInsertRowid;
             
-            clearIndexStmt.run(itemId);
-
-            for (const [key, value] of Object.entries(item.attributes)) {
+            for (const [key, value] of Object.entries(attributes)) {
                 if (value !== null && value !== undefined) {
                     insertIndexStmt.run(itemId, key, String(value));
                 }
             }
+            return itemId;
         }
-    });
+    );
 
-    const listItemsByCategory = (categoryId) => {
-        const stmt = db.prepare('SELECT id, name, quantity, quantity_commited, restock_point, attributes FROM items WHERE category_id = ?');
-        const rows = stmt.all(categoryId);
+    const createItemBulk = db.transaction(
+        (items: ItemInput[], categoryId: number | bigint) => {
+            for (const item of items) {
+                const info = insertItemStmt.run(
+                    item.name, 
+                    item.quantity || 0, 
+                    categoryId, 
+                    JSON.stringify(item.attributes || {})
+                );
+                const itemId = info.lastInsertRowid;
+                
+                clearIndexStmt.run(itemId);
+
+                if (item.attributes) {
+                    for (const [key, value] of Object.entries(item.attributes)) {
+                        if (value !== null && value !== undefined) {
+                            insertIndexStmt.run(itemId, key, String(value));
+                        }
+                    }
+                }
+            }
+        }
+    );
+
+    const listItemsByCategory = (categoryId: number | bigint): Item[] => {
+        const stmt = db.prepare(
+            'SELECT id, name, quantity, quantity_commited, restock_point, attributes FROM items WHERE category_id = ?'
+        );
+        const rows = stmt.all(categoryId) as any[];
         
         return rows.map(row => ({
             ...row,
@@ -81,9 +161,9 @@ module.exports = (db, ctx) => {
         }));
     };
 
-    const getItemById = (itemId) => {
-        const stmt = db.prepare(`SELECT * FROM items WHERE id = ?`);
-        const row = stmt.get(itemId);
+    const getItemById = (itemId: number | bigint): Item | null => {
+        const stmt = db.prepare('SELECT * FROM items WHERE id = ?');
+        const row = stmt.get(itemId) as any;
         if (!row) return null;
         return {
             ...row,
@@ -91,40 +171,40 @@ module.exports = (db, ctx) => {
         };
     };
 
-    const deleteItem = (id) => {
+    const deleteItem = (id: number | bigint): boolean => {
         const stmt = db.prepare('DELETE FROM items WHERE id = ?');
         return stmt.run(id).changes > 0;
     };
 
-    const listAllItemsInCategoryRecursive = (categoryId) => {
+    const listAllItemsInCategoryRecursive = (categoryId: number | bigint): Item[] => {
         const query = `
-        WITH RECURSIVE subcategories AS (
-            SELECT id FROM categories WHERE id = ?
-            UNION ALL
-            SELECT c.id FROM categories c
-            JOIN subcategories s ON c.parent_category = s.id
-        )
-        SELECT i.* FROM items i
-        WHERE i.category_id IN subcategories;
-    `;
-        const rows = db.prepare(query).all(categoryId);
+            WITH RECURSIVE subcategories AS (
+                SELECT id FROM categories WHERE id = ?
+                UNION ALL
+                SELECT c.id FROM categories c
+                JOIN subcategories s ON c.parent_category = s.id
+            )
+            SELECT i.* FROM items i
+            WHERE i.category_id IN subcategories;
+        `;
+        const rows = db.prepare(query).all(categoryId) as any[];
         return rows.map(row => ({
             ...row,
             attributes: JSON.parse(row.attributes || '{}')
         }));
     };
 
-    const updateItem = db.transaction((id, updates = {}) => {
-        const currentItem = db.prepare('SELECT * FROM items WHERE id = ?').get(id);
+    const updateItem = db.transaction((id: number | bigint, updates: Partial<ItemInput> & Record<string, any> = {}) => {
+        const currentItem = db.prepare('SELECT * FROM items WHERE id = ?').get(id) as any;
         if (!currentItem) {
             throw new Error(`Item with ID ${id} not found.`);
         }
         
         const newName = updates.name !== undefined ? updates.name : currentItem.name;
-        const newCategory = updates.category_id !== undefined ? updates.category_id : currentItem.category_id;
+        const newCategory = updates['category_id'] !== undefined ? updates['category_id'] : currentItem.category_id;
         const newQty = updates.quantity !== undefined ? updates.quantity : currentItem.quantity;
-        const newCommited = updates.quantity_commited !== undefined ? updates.quantity_commited : currentItem.quantity_commited;
-        const newRestock = updates.restock_point !== undefined ? updates.restock_point : currentItem.restock_point;
+        const newCommited = updates['quantity_commited'] !== undefined ? updates['quantity_commited'] : currentItem.quantity_commited;
+        const newRestock = updates['restock_point'] !== undefined ? updates['restock_point'] : currentItem.restock_point;
         
         let mergedAttributes = JSON.parse(currentItem.attributes || '{}');
         if (updates.attributes) {
@@ -132,10 +212,10 @@ module.exports = (db, ctx) => {
         }
         
         const stmt = db.prepare(`
-        UPDATE items 
-        SET name = ?, category_id = ?, quantity = ?, quantity_commited = ?, restock_point = ?, attributes = ? 
-        WHERE id = ?
-    `);
+            UPDATE items 
+            SET name = ?, category_id = ?, quantity = ?, quantity_commited = ?, restock_point = ?, attributes = ? 
+            WHERE id = ?
+        `);
             
         const info = stmt.run(newName, newCategory, newQty, newCommited, newRestock, JSON.stringify(mergedAttributes), id);
         
@@ -150,7 +230,7 @@ module.exports = (db, ctx) => {
         return info.changes > 0;
     });
 
-    const queryItemsUnified = ({ categoryId = null, rules = [], logicalOp = 'AND' } = {}) => {
+    const queryItemsUnified = ({ categoryId = null, rules = [], logicalOp = 'AND' }: QueryUnifiedOptions = {}): Item[] => {
         const safeOperators = ['=', '>=', '<=', '>', '<', 'LIKE', '!='];
         const safeLogicalOps = ['AND', 'OR'];
         const safeNativeFields = ['name', 'quantity', 'quantity_commited', 'restock_point'];
@@ -159,19 +239,19 @@ module.exports = (db, ctx) => {
             throw new Error(`Unsupported logical operator: ${logicalOp}`);
         }
 
-        let query = `SELECT DISTINCT i.* FROM items i`;
-        const params = [];
+        const query = `SELECT DISTINCT i.* FROM items i`;
+        const params: any[] = [];
         
         let attrJoinCount = 0;
         let joinClauses = '';
-        let whereClauses = [];
+        const whereClauses: string[] = [];
 
         if (categoryId !== null) {
             whereClauses.push(`i.category_id = ?`);
             params.push(categoryId);
         }
 
-        const ruleClauses = [];
+        const ruleClauses: string[] = [];
         
         rules.forEach((rule) => {
             if (!safeOperators.includes(rule.operator)) {
@@ -209,7 +289,7 @@ module.exports = (db, ctx) => {
         const finalQuery = `${query}${joinClauses} ${whereSql}`;
 
         const stmt = db.prepare(finalQuery);
-        const rows = stmt.all(...params);
+        const rows = stmt.all(...params) as any[];
 
         return rows.map(row => ({
             ...row,
@@ -217,10 +297,10 @@ module.exports = (db, ctx) => {
         }));
     };
 
-    const rebuildSearchIndex = () => {
+    const rebuildSearchIndex = (): number => {
         return db.transaction(() => {
             db.prepare('DELETE FROM item_attributes_index').run();
-            const items = db.prepare('SELECT id, attributes FROM items').all();
+            const items = db.prepare('SELECT id, attributes FROM items').all() as any[];
             let count = 0;
             for (const item of items) {
                 const attributes = JSON.parse(item.attributes || '{}');
@@ -235,7 +315,7 @@ module.exports = (db, ctx) => {
         })();
     };
 
-    const convert = async (version, space_id, chunk_cap = 5000) => {
+    const convert = async (version: string, space_id: number | bigint, chunk_cap: ChunkCap = 5000): Promise<void> => {
         if (!ctx.oldFormats[version]) return;
 
         const spaces = listSpaces();
@@ -250,7 +330,6 @@ module.exports = (db, ctx) => {
         }
 
         if (version === "0.1.0") {
-            const readline = require('node:readline');
             const oldPath = path.join(ctx.studio_path, ctx.oldFormats[version]);
             const oldInventory = fsSync.createReadStream(oldPath);
             const stats = fsSync.statSync(oldPath);
@@ -266,18 +345,18 @@ module.exports = (db, ctx) => {
 
             console.log('Starting conversion from version 0.1.0 to 0.2.0');
 
-            let categoryId;
+            let categoryId: number | bigint;
             try {
                 console.log('Creating Category "0.1.0 Inventory".');
                 const category = createCategory('0.1.0 Inventory', space_id, null, ['location', 'keywords']);
-                categoryId = typeof category === 'object' ? category.id : category;
+                categoryId = typeof category === 'object' ? (category as any).id : category;
                 console.log('Created category "0.1.0 Inventory".');
             } catch (err) {
                 throw new Error(`Failed to create category: ${err}`);
             }
 
             let memoryLimitBytes = Infinity; 
-            let itemThreshold;
+            let itemThreshold = 5000;
 
             const ONE_GB = 1024 * 1024 * 1024;
             const SAFE_V8_MAX_HEAP = 1.5 * ONE_GB;
@@ -300,7 +379,7 @@ module.exports = (db, ctx) => {
             }
 
             const CHUNK_SIZE_LIMIT = itemThreshold;
-            let itemChunk = [];
+            let itemChunk: ItemInput[] = [];
 
             for await (const line of rl) {
                 bytesProcessed += Buffer.byteLength(line, 'utf-8') + 1;
@@ -363,4 +442,4 @@ module.exports = (db, ctx) => {
         rebuildSearchIndex,
         convert
     };
-};
+}

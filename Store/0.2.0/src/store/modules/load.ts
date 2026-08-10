@@ -1,10 +1,10 @@
-import { loadCSS, unloadCSS } from './file_loader.js';
-import * as settings from './settings.js';
-import * as tabs from './tabs.js';
-import * as index from './index.js';
-import * as welcome_back from './welcome_back.js';
-import * as select_space from './select_space.js';
-import * as space_fillers from './space_fillers.js';
+import { loadCSS, unloadCSS } from './file_loader.ts';
+import * as settings from './settings.ts';
+import * as tabs from './tabs.ts';
+import * as index from './index.ts';
+import * as welcome_back from './welcome_back.ts';
+import * as select_space from './select_space.ts';
+import * as space_fillers from './space_fillers.ts';
 import { electroview } from './index.ts';
 
 function getEBD(id: string) {return document.getElementById(id);}
@@ -27,7 +27,7 @@ export async function init() {
     
     try {
         await settings.init();
-        menuDelay = settings.preferences.menuDelay ?? 750;
+        menuDelay = settings.preferences['menuDelay'] ?? 750;
     } catch (err) {
         // Add a soft error here
     }

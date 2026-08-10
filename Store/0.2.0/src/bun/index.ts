@@ -10,8 +10,8 @@ import Database from 'bun:sqlite';
 
 import * as updater from "./updater.js";
 import * as utils from "./launcher_utils.js";
-import { type UpdaterRPCType } from '../shared/bun/updater_rpc_type.js';
-import { type StoreRPCType } from '../shared/bun/store_rpc_type.js';
+import { type UpdaterRPCType } from '../shared/bun/updater_rpc_type.ts';
+import { type StoreRPCType } from '../shared/bun/store_rpc_type.ts';
 
 function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
 
@@ -261,7 +261,7 @@ async function init() {
 	updaterWindow.webview.rpc?.send.displayDebug({ message: "Loading Functions..." });
 	
 	try {
-		functionsModule = await import('./functions.js');
+		functionsModule = await import('./functions.ts');
 		const initFunctions = functionsModule.default || functionsModule;
 		
 		if (typeof initFunctions === 'function') {
@@ -271,7 +271,7 @@ async function init() {
 		}
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
-		console.error(`Error loading functions.js module: ${message}`);
+		console.error(`Error loading functions.ts module: ${message}`);
 		functions = {};
 	}
 	

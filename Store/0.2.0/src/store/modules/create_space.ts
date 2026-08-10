@@ -1,10 +1,10 @@
-import { loadCSS } from './file_loader.js';
-import * as tabs from './tabs.js';
-import * as select_space from './select_space.js';
+import { loadCSS } from './file_loader.ts';
+import * as tabs from './tabs.ts';
+import * as select_space from './select_space.ts';
 import { electroview } from './index.ts';
 
-function getEBD(id) {return document.getElementById(id);}
-function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
+function getEBD(id: string) {return document.getElementById(id);}
+function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
 
 let isInitialized = false;
 let create_space_stylesheet;
@@ -20,10 +20,10 @@ export async function init() {
     init();
 }
 
-const nameInput = getEBD('create_space_name');
-const continueBtn = getEBD('create_space_continue');
-const cancelBtn = getEBD('create_space_cancel');
-const errorOutput = getEBD('create_space_output');
+const nameInput = getEBD('create_space_name') as HTMLInputElement;
+const continueBtn = getEBD('create_space_continue') as HTMLButtonElement;
+const cancelBtn = getEBD('create_space_cancel') as HTMLButtonElement;
+const errorOutput = getEBD('create_space_output') as HTMLSpanElement;
 
 continueBtn.addEventListener('click', async () => {
     if (!nameInput.value || !nameInput.value.trim() || nameInput.value.trim() === '') {
@@ -46,4 +46,4 @@ continueBtn.addEventListener('click', async () => {
     }
 });
 
-cancelBtn.addEventListener('click', select_space.init);
+cancelBtn.addEventListener('click', () => select_space.init());

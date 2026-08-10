@@ -1,5 +1,5 @@
 import { Electroview } from "electrobun/view";
-import { type StoreRPCType } from '../../shared/bun/store_rpc_type.js';
+import { type StoreRPCType } from '../../shared/bun/store_rpc_type.ts';
 
 import * as load from './load.ts';
 

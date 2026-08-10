@@ -1,20 +1,20 @@
-import { loadCSS } from './file_loader.js';
-import { preferences, setPreference } from './settings.js';
-import * as tabs from './tabs.js';
+import { loadCSS } from './file_loader.ts';
+import { preferences, setPreference } from './settings.ts';
+import * as tabs from './tabs.ts';
 import * as index from './index.ts';
-import * as create_space from './create_space.js';
+import * as create_space from './create_space.ts';
 import { electroview } from './index.ts';
+import { type Space } from '../../shared/bun/store_types.ts';
 
-function getEBD(id) {return document.getElementById(id);}
-function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
+function getEBD(id: string) {return document.getElementById(id);}
 
-const versionLabel = getEBD('select_space_footer_version');
-const shapeAnimToggle = getEBD('select_space_shapeAnimToggle');
+const versionLabel = getEBD('select_space_footer_version') as HTMLSpanElement;
+const shapeAnimToggle = getEBD('select_space_shapeAnimToggle') as HTMLInputElement;
 
-let select_space_stylesheet;
-let isInitialized = false;
+let select_space_stylesheet: string;
+let isInitialized: boolean = false;
 
-export async function init(tutorial = false) {
+export async function init(tutorial?: boolean) {
     if (isInitialized) {
         await populate_spaces_prompt();
         tabs.goto('select_space', {display: 'flex'});
@@ -26,7 +26,7 @@ export async function init(tutorial = false) {
     versionLabel.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
     
     shapeAnimToggle.addEventListener('change', toggleShapeAnimations);
-    shapeAnimToggle.checked = preferences.disableShapeAnimations;
+    shapeAnimToggle.checked = preferences['disableShapeAnimations'];
 
     toggleShapeAnimations();
     
@@ -35,7 +35,7 @@ export async function init(tutorial = false) {
 }
 
 function toggleShapeAnimations() {
-    const shapes = document.querySelectorAll('.space_filler_shape');
+    const shapes = document.querySelectorAll<HTMLElement>('.space_filler_shape');
     shapes.forEach(function(shape) {
         shape.style.animationPlayState = shapeAnimToggle.checked ? 'paused' : 'running';
     });
@@ -44,13 +44,13 @@ function toggleShapeAnimations() {
 
 // Miscellaneous Button Binding
 
-const connectRemoteServerBtn = getEBD('select_space_connect_server');
-const exposeRemoteServerBtn = getEBD('select_space_start_server');
-const changelogBtn = getEBD('select_space_changelog');
-const creditsBtn = getEBD('select_space_credits');
-const sourceCodeBtn = getEBD('select_space_source');
-const websiteBtn = getEBD('select_space_studio_webpage');
-const closeBtn = getEBD('select_space_quit');
+const connectRemoteServerBtn = getEBD('select_space_connect_server') as HTMLButtonElement;
+const exposeRemoteServerBtn = getEBD('select_space_start_server') as HTMLButtonElement;
+const changelogBtn = getEBD('select_space_changelog') as HTMLButtonElement;
+const creditsBtn = getEBD('select_space_credits') as HTMLButtonElement;
+const sourceCodeBtn = getEBD('select_space_source') as HTMLButtonElement;
+const websiteBtn = getEBD('select_space_studio_webpage') as HTMLButtonElement;
+const closeBtn = getEBD('select_space_quit') as HTMLButtonElement;
 
 sourceCodeBtn.addEventListener('click', function() {
     window.open('https://github.com/SqueakyLlama1/nivix-studio-dev/tree/main/Store/0.2.0', '_blank');
@@ -64,8 +64,8 @@ closeBtn.addEventListener('click', window.close);
 
 // Space Selection System
 
-const choiceSelection = getEBD('select_space_option');
-const continueBtn = getEBD('select_space_continue');
+const choiceSelection = getEBD('select_space_option') as HTMLSelectElement;
+const continueBtn = getEBD('select_space_continue') as HTMLButtonElement;
 
 async function populate_spaces_prompt() {
     const spaces = await electroview.rpc?.request.listSpaces();
@@ -73,7 +73,7 @@ async function populate_spaces_prompt() {
 
     const createSpaceOption = new Option("Create a New Space", 'create-new-space');
     choiceSelection.add(createSpaceOption);
-    choiceSelection.selected = 'create-new-space';
+    choiceSelection.value = 'create-new-space';
 
     if (!spaces.length) {
         const option = new Option("You don't have any spaces");
@@ -82,7 +82,7 @@ async function populate_spaces_prompt() {
         return;
     }
 
-    spaces.forEach(function(space) {
+    spaces.forEach(function(space: Space) {
         const option = new Option(space.name, space.id);
         choiceSelection.add(option);
     });

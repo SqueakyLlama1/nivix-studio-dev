@@ -1,30 +1,31 @@
-import { preferences } from './settings.js';
-import { unloadCSS } from './file_loader.js';
+import { preferences } from './settings.ts';
+import { unloadCSS } from './file_loader.ts';
+import { type TabOptions } from '../../shared/bun/store_types.ts';
 
-let previousTab;
+let previousTab: string | undefined;
 
-function getEBD(id) {return document.getElementById(id)};
-function wait(ms) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
+function getEBD(id: string) {return document.getElementById(id)};
+function wait(ms: number) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
 
-export let programaticAnimationDuration = preferences.disableAnimations ? 0 : 325;
+export let programaticAnimationDuration = preferences['disableAnimations'] ? 0 : 325;
 
 const fadeInAnimation = "fadeInPage 0.3s ease-out forwards";
 const fadeOutAnimation = "fadeOutPage 0.3s ease-in-out forwards";
 
-export async function remove(id, options = {}) {
-    const instant = options.instant !== undefined ? options.instant : preferences.disableAnimations;
-    const thisElement = getEBD(id);
+export async function remove(id: string, options: TabOptions = {}) {
+    const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];
+    const thisElement = getEBD(id) as HTMLElement;
     if (instant) {
-        thisElement.parentElement.removeChild(thisElement);
+        thisElement.remove();
     } else {
         thisElement.style.animation = fadeOutAnimation;
         await wait(programaticAnimationDuration);
-        thisElement.parentElement.removeChild(thisElement);
+        thisElement.remove();
     }
 }
 
-export async function goto(id, options = {}) {
-    const instant = options.instant !== undefined ? options.instant : preferences.disableAnimations;
+export async function goto(id: string, options: TabOptions = {}) {
+    const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];
     let logPrevious = options.logPrevious !== undefined ? options.logPrevious : true;
     const display = options.display;
 
@@ -38,7 +39,7 @@ export async function goto(id, options = {}) {
     }
 
     let tabsHidden = 0;
-    let lastHiddenTab;
+    let lastHiddenTab: string | undefined;
     const existingTabs = document.querySelectorAll('.tab');
 
     existingTabs.forEach(function(existingTab) {
@@ -60,9 +61,9 @@ export async function goto(id, options = {}) {
     show(id, { instant, display });
 }
 
-export async function hide(id, options = {}) {
-    const instant = options.instant !== undefined ? options.instant : preferences.disableAnimations;
-    const thisElement = getEBD(id);
+export async function hide(id: string, options: TabOptions = {}) {
+    const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];
+    const thisElement = getEBD(id) as HTMLElement;
 
     if (instant) {
         thisElement.style.display = "none";
@@ -73,10 +74,10 @@ export async function hide(id, options = {}) {
     }
 }
 
-export async function show(id, options = {}) {
-    const instant = options.instant !== undefined ? options.instant : preferences.disableAnimations;
+export async function show(id: string, options: TabOptions = {}) {
+    const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];
     const thisDisplay = options.display ? options.display : "block";
-    const thisElement = getEBD(id);
+    const thisElement = getEBD(id) as HTMLElement;
 
     if (instant) {
         thisElement.style.display = thisDisplay;

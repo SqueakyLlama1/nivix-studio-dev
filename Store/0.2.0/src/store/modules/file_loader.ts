@@ -1,8 +1,8 @@
 const loadedStylesheets = new Map();
 
-let stylesheetCounter = 0;
+let stylesheetCounter:number = 0;
 
-export function loadCSS(href, parent = document.head) {
+export function loadCSS(href: string, parent: HTMLElement = document.head) {
     console.log(`Loading Stylesheet - Source: ${href}, Parent: ${parent}`);
     for (const [id, link] of loadedStylesheets.entries()) {
         if (link.getAttribute('href') === href) {
@@ -28,7 +28,7 @@ export function loadCSS(href, parent = document.head) {
     return id;
 }
 
-export function unloadCSS(id) {
+export function unloadCSS(id: string) {
     console.log(`Unloading Stylesheet with ID: ${id}`);
     if (loadedStylesheets.has(id)) {
         const link = loadedStylesheets.get(id);

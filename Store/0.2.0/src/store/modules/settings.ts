@@ -1,7 +1,6 @@
-function getEBD(id) {return document.getElementById(id)};
 import { electroview } from './index.ts';
 
-export let preferences = {
+export let preferences: Record<string, any> = {
     disableAnimations: false,
     menuDelay: 750,
     disableShapeAnimations: false
@@ -15,7 +14,7 @@ export async function init() {
     }
 }
 
-export async function setPreference(key, value) {
+export async function setPreference(key: string, value: any) {
     if (!(key in preferences)) {
         const errorMsg = `Unknown key: ${key}`;
         console.error(errorMsg);

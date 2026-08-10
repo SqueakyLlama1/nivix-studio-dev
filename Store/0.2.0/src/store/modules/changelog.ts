@@ -1,12 +1,11 @@
-import { loadCSS } from './file_loader.js';
-import * as tabs from './tabs.js';
+import { loadCSS } from './file_loader.ts';
+import * as tabs from './tabs.ts';
 import * as main from './index.ts';
 
-function getEBD(id) {return document.getElementById(id);}
-function wait(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
+function getEBD(id: string) {return document.getElementById(id);}
 
-const backBtn = getEBD('changelog_back');
-const versionLabel = getEBD('changelog_version');
+const backBtn = getEBD('changelog_back') as HTMLButtonElement;
+const versionLabel = getEBD('changelog_version') as HTMLSpanElement;
 
 let changelog_stylesheet;
 let isInitialized = false;
