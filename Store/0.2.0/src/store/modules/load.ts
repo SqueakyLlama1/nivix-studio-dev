@@ -1,10 +1,13 @@
 import { loadCSS, unloadCSS } from './file_loader.ts';
+
 import * as settings from './settings.ts';
 import * as tabs from './tabs.ts';
 import * as index from './index.ts';
 import * as welcome_back from './welcome_back.ts';
 import * as select_space from './select_space.ts';
 import * as space_fillers from './space_fillers.ts';
+import * as notifications from './notifications.ts';
+
 import { electroview } from './index.ts';
 import { populateSVGs } from "./file_loader.ts";
 
@@ -14,7 +17,6 @@ function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms)
 const versionLabel = getEBD('load_footer_version');
 
 let load_stylesheet: string;
-
 let isFinishing = false;
 
 export async function init() {
@@ -25,20 +27,20 @@ export async function init() {
     
     let menuDelay: number = 750;
     
+    try {
+        notifications.init();
+    } catch (err) {
+        const message = err as string;
+        console.warn(`Failed to load notifications module: ${message}`);
+    }
+    
     // Load User Preferences
     try {
         await settings.init();
-        // THIS DATABASE CONNECTION IS PURELY FOR TESTING ONLY
-        await electroview.rpc?.request.setDatabase({
-            database: 'sqlite'
-        });
-        await electroview.rpc?.request.setDatabase({
-            database: 'sql',
-            databasePath: 'mariadb://root:Chr!stianN1vix@localhost:3306/nivix_testing_database'
-        });
         menuDelay = settings.preferences['menuDelay'] ?? 750;
     } catch (err) {
-        // Add a soft error here
+        const message = err as string;
+        notifications.show_notification(`Non-Critical Error: Failed to load user preferences: ${message}`, 'warning');
     }
     
     // Replace SVG Placeholders with SVGs
@@ -47,8 +49,10 @@ export async function init() {
     } catch {
         try {
             await populateSVGs();
-        } catch {}
-        // Ignore, non-critical error
+        } catch (err) {
+            const message = err as string;
+            notifications?.show_notification(`Non-Critical Error: Failed to replace icon placeholders: ${message}`, 'warning');
+        }
     }
     
     // Attempt to bind tab-navigation fix.
@@ -56,12 +60,10 @@ export async function init() {
         document.addEventListener('keydown', (event: KeyboardEvent): void => {
             if (event.key !== 'Tab') return;
             
-            // Query all potential focusable elements in the document
             const selector = 'a[href], button, input, textarea, select, [tabindex]:not([tabindex="-1"])';
             const focusables = Array.from(
                 document.querySelectorAll<HTMLElement>(selector)
             ).filter((el: HTMLElement) => {
-                // Ensure element is interactive, visible, and enabled
                 const isVisible = el.offsetWidth > 0 && el.offsetHeight > 0;
                 const isNotDisabled = !el.hasAttribute('disabled');
                 return isVisible && isNotDisabled;
@@ -73,20 +75,35 @@ export async function init() {
             const lastEl = focusables[focusables.length - 1];
             const activeElement = document.activeElement as HTMLElement | null;
             
-            // Trap backward tab (Shift + Tab) on first element
             if (event.shiftKey && activeElement === firstEl) {
                 lastEl.focus();
                 event.preventDefault();
-            } 
-            // Trap forward tab (Tab) on last element
-            else if (!event.shiftKey && activeElement === lastEl) {
+            } else if (!event.shiftKey && activeElement === lastEl) {
                 firstEl.focus();
                 event.preventDefault();
             }
         });
-    } catch {}
+    } catch (err) {
+        const message = err as string;
+        notifications?.show_notification(`Non-Critical Error: Failed to load keyboard navigation fix: ${message}`, 'warning');
+    }
     
-    space_fillers.init();
+    // Initialize space filler shapes
+    try {
+        space_fillers.init();
+    } catch (err) {
+        const message = err as string;
+        notifications?.show_notification(`Non-Critical Error: Failed to load space filler shapes: ${message}`, 'warning');
+    }
+
+    // Set initial database to local SQLite
+    try {
+        electroview.rpc!.request.setDatabase({ database: 'sqlite' });
+    } catch (err) {
+        const message = err as string;
+        notifications.show_notification(`Critical Error: Failed to initialize database, app loading will no longer progress. ${message}`);
+    }
+    
     await wait(menuDelay);
     await finish_loading();
 }

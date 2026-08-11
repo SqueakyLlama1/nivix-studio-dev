@@ -11,7 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="sheets/index.css">
 </head>
 <body>
-	<div class="tab previsible-flex" id="load_menu">
+	<div id="load_menu" class="tab previsible-flex">
 		<div class="space_filler_container autofill"></div>
 		<div class="center">
 			<svgPlaceholder>assets/svg/favicon.svg</svgPlaceholder>
@@ -23,7 +23,7 @@
 		</div>
 	</div>
 	
-	<div class="tab" id="welcome_back">
+	<div id="welcome_back" class="tab">
 		<div class="center">
 			<div class="space_filler_container autofill"></div>
 			<h1><span class="nivix_accent">Welcome Back</span> to Nivix Store!</h1>
@@ -39,7 +39,7 @@
 		</div>
 	</div>
 	
-	<div class="tab" id="changelog">
+	<div id="changelog" class="tab">
 		<div class="space_filler_container autofill"></div>
 		<div class="heading">
 			<span>Changelog for version <span id="changelog_version">X.X.X</span></span>
@@ -47,7 +47,7 @@
 		<button id="changelog_back" class="nivix_primary_button">Back</button>
 	</div>
 	
-	<div class="tab" id="select_space">
+	<div id="select_space" class="tab">
 		<div class="space_filler_container autofill"></div>
 		<div class="action_container">
 			<h2 class="nivix_bookmark">General</h2>
@@ -78,7 +78,7 @@
 					<button id="select_space_continue" class="nivix_primary_button">Continue</button>
 					<div class="nivix_checkbox_wrapper centered">
 						<label>Disable Shape Animation</label>
-						<input type="checkbox" class="nivix_input" id="select_space_shapeAnimToggle">
+						<input id="select_space_shapeAnimToggle" type="checkbox" class="nivix_input">
 					</div>
 				</div>
 				<div class="nivix_footer">
@@ -88,30 +88,58 @@
 		</div>
 	</div>
 	
-	<div class="tab" id="credits">
+	<div id="credits" class="tab">
 		
 	</div>
 	
-	<div class="tab" id="create_space">
+	<div id="create_space" class="tab">
 		<div class="space_filler_container autofill"></div>
 		<div class="center">
 			<h1 class="nivix_accent">Create a Space</h1>
 			<div class="button_container">
 				<p>Learn what a space is: <button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
-				<input class="nivix_input" type="text" id="create_space_name" placeholder="Space Name">
-				<button class="nivix_primary_button" id="create_space_continue">Create</button>
-				<button class="nivix_secondary_button" id="create_space_cancel">Cancel</button>
+				<input id="create_space_name" class="nivix_input" type="text" placeholder="Space Name">
+				<button id="create_space_continue" class="nivix_primary_button">Create</button>
+				<button id="create_space_cancel" class="nivix_secondary_button">Cancel</button>
 			</div>
 			<p id="create_space_output"></p>
 		</div>
 	</div>
-
-	<div class="tab" id="connect_database">
+	
+	<div id="connect_database" class="tab">
 		<div class="space_filler_container autofill"></div>
 		<div class="center">
 			<h1 class="nivix_accent">Connect to a Remote Database</h1>
-			<button class="nivix_primary_button tooltip-support-button tip-right">Disclaimer<span class="tooltip">This feature currently only officially supports SQL based providers like MySQL and MariaDB.</span></button>
-			<button id="connect_database_back" class="nivix_primary_button">Back</button>
+			<div class="container">
+				<form id="connect_database_form">
+					<div class="horizontal_container">
+						<input id="connect_database_prefix" class="nivix_input" type="text" placeholder="Prefix" value="mysql://" required>
+						<input id="connect_database_hostname" class="nivix_input" type="text" placeholder="Hostname" required>
+						<input id="connect_database_port" class="nivix_input" type="number" min="0" max="65535" placeholder="Port" required>
+					</div>
+					<input id="connect_database_database" class="nivix_input" type="text" placeholder="Database Name" required>
+					<input id="connect_database_username" class="nivix_input" type="text" placeholder="Username" required>
+					<input id="connect_database_password" class="nivix_input" type="password" placeholder="Password" required>
+					<button id="connect_database_connect" class="nivix_primary_button" type="submit">Connect</button>
+				</form>
+				
+				<hr>
+				
+				<input id="connect_database_url" class="nivix_input" type="url" placeholder="Custom URL (Optional)">
+				<button id="connect_database_url_submit" class="nivix_primary_button">Connect with Custom URL</button>
+
+				<hr>
+				
+				<div class="horizontal_container">
+					<button id="connect_database_back" class="nivix_primary_button">Back</button>
+					<button class="nivix_primary_button tooltip-support-button tip-bottom">Disclaimer<span class="tooltip">This feature currently only officially supports SQL based providers like MySQL and MariaDB.</span></button>
+				</div>
+
+				<hr>
+
+				<span id="connect_database_status" class="nivix_input">Not Connected</span>
+				<button id="connect_database_disconnect" class="nivix_primary_button" disabled>Disconnect</button>
+			</div>
 		</div>
 	</div>
 	<script src="./index.js" type="module"></script>

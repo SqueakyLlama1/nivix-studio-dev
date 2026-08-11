@@ -27,7 +27,7 @@
     --radius: 4px;
     --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     --transition: 0.3s ease;
-
+    
     --outline: #ff6b00;
 }
 
@@ -221,7 +221,19 @@ h6 span { font-size: 0.45em; }
 
 /* Form Inputs (Text & Numbers) */
 .nivix_input {
-    &[type="text"], &[type="number"] {
+    &:is(
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
+    input[type="email"],
+    input[type="url"],
+    input[type="tel"],
+    input[type="search"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    textarea
+    ) {
         background: var(--background-secondary);
         border: none;
         border-radius: var(--radius);
@@ -229,7 +241,11 @@ h6 span { font-size: 0.45em; }
         padding: 0.5rem 1.1rem;
         
         &:focus {
-            background-image: linear-gradient(180deg, var(--background-tertiary), var(--background-secondary));
+            background-image: linear-gradient(
+            180deg,
+            var(--background-tertiary),
+            var(--background-secondary)
+            );
         }
     }
     

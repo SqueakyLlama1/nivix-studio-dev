@@ -1,7 +1,7 @@
-import { SQL } from "bun";
+import type mysql from 'mysql2/promise';
 
-export async function init_database(db: SQL): Promise<void> {
-    const queries = [
+export async function init_database(db: mysql.Pool): Promise<void> {
+    const tableQueries = [
         `CREATE TABLE IF NOT EXISTS spaces (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL
@@ -38,14 +38,26 @@ export async function init_database(db: SQL): Promise<void> {
             PRIMARY KEY (item_id, attr_key),
             CONSTRAINT fk_attr_index_item 
                 FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
-
-        `CREATE INDEX IF NOT EXISTS idx_attributes_search ON item_attributes_index (attr_key, attr_value);`,
-        `CREATE INDEX IF NOT EXISTS idx_items_name ON items (name);`,
-        `CREATE INDEX IF NOT EXISTS idx_items_quantity ON items (quantity);`
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`
     ];
 
-    for (const query of queries) {
-        await db.unsafe(query);
+    const indexQueries = [
+        `CREATE INDEX idx_attributes_search ON item_attributes_index (attr_key, attr_value);`,
+        `CREATE INDEX idx_items_name ON items (name);`,
+        `CREATE INDEX idx_items_quantity ON items (quantity);`
+    ];
+
+    for (const query of tableQueries) {
+        await db.query(query);
+    }
+
+    for (const query of indexQueries) {
+        try {
+            await db.query(query);
+        } catch (err: any) {
+            if (err.code !== 'ER_DUP_KEYNAME' && err.errno !== 1061) {
+                throw err;
+            }
+        }
     }
 }

@@ -3,6 +3,10 @@ import type { RPCSchema } from "electrobun";
 export type UpdaterRPCType = {
     bun: RPCSchema<{
         requests: {
+            ready: {
+                params: void;
+                response: boolean;
+            };
             checkUpdate: {
                 params: void;
                 response: boolean;

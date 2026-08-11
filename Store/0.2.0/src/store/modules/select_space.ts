@@ -73,7 +73,7 @@ closeBtn.addEventListener('click', () => {
 const choiceSelection = getEBD('select_space_option') as HTMLSelectElement;
 const continueBtn = getEBD('select_space_continue') as HTMLButtonElement;
 
-async function populate_spaces_prompt() {
+export async function populate_spaces_prompt() {
     const spaces = await electroview.rpc?.request.listSpaces();
     choiceSelection.replaceChildren();
 

@@ -7,7 +7,7 @@ export default {
 		version: "0.2.0",
 	},
 	scripts: {
-		preBuild: "scripts/pre_build.ts",
+		preBuild: "scripts/pre_build.ts"
 	},
 	build: {
 		bun: {

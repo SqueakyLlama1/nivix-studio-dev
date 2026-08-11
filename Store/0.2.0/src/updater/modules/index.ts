@@ -12,10 +12,10 @@ const rpc = Electroview.defineRPC<UpdaterRPCType>({
         },
     }
 });
-const electroview = new Electroview({ rpc });
+let electroview: Electroview<typeof rpc>;
 
-function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
-function getEBD(id: string) {return document.getElementById(id);}
+function wait(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
+function getEBD(id: string) { return document.getElementById(id); }
 
 async function displayDebug(message: string, type = '') {
     console.log(`Display Debug Function Recieved: ${message}, ${type}`);
@@ -26,7 +26,7 @@ async function displayDebug(message: string, type = '') {
     messageElement.innerText = message;
     
     outputElement?.replaceChildren(messageElement);
-
+    
     if (type === 'error') {
         const loader = getEBD('loader');
         // Remove loader to indicate a fatal error, and that the app is no longer loading and will not progress further.
@@ -37,13 +37,13 @@ async function displayDebug(message: string, type = '') {
     }
 }
 
-const quitBtn = getEBD('quitBtn');
-
 async function init() {
+    const quitBtn = getEBD('quitBtn');
+    
     quitBtn?.addEventListener('click', () => {
         electroview.rpc?.request.close();
     });
-
+    
     displayDebug('Checking for updates...');
     const updateAvailable = await electroview.rpc?.request.checkUpdate();
     if (updateAvailable) {
@@ -54,4 +54,13 @@ async function init() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('load', async () => {
+    await wait(100);
+    try {
+        electroview = new Electroview({ rpc });
+        await electroview.rpc?.request.ready();
+        await init();
+    } catch (err) {
+        console.error("Failed to signal ready to Bun:", err);
+    }
+});
