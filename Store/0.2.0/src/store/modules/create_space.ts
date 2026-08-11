@@ -7,14 +7,13 @@ function getEBD(id: string) {return document.getElementById(id);}
 function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
 
 let isInitialized: boolean = false;
-let create_space_stylesheet: string;
 
 export async function init() {
     if (isInitialized) {
         tabs.goto('create_space', {display: 'flex'});
         return;
     }
-    create_space_stylesheet = loadCSS('sheets/create_space.css');
+    loadCSS('sheets/create_space.css');
 
     isInitialized = true;
     init();

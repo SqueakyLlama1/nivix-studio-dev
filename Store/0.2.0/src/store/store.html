@@ -58,10 +58,7 @@
 			
 			<h2 class="nivix_bookmark">Advanced</h2>
 			
-			<div class="action_tooltip_container">
-				<button id="select_space_connect_database" class="nivix_secondary_button"><svgPlaceholder>assets/svg/database.svg</svgPlaceholder> Connect to Remote Database</button>
-				<button class="tooltip-button tip-right">i<span class="tooltip">This option currently only supports SQL based databases like MySQL and MariaDB.</span></button>
-			</div>
+			<button id="select_space_connect_database" class="nivix_secondary_button"><svgPlaceholder>assets/svg/database.svg</svgPlaceholder> Connect to Remote Database</button>
 			<button id="select_space_start_interface" class="nivix_secondary_button"><svgPlaceholder>assets/svg/interface.svg</svgPlaceholder> Start Remote Interface</button>
 			
 			<h2 class="nivix_bookmark">Developers</h2>
@@ -106,6 +103,15 @@
 				<button class="nivix_secondary_button" id="create_space_cancel">Cancel</button>
 			</div>
 			<p id="create_space_output"></p>
+		</div>
+	</div>
+
+	<div class="tab" id="connect_database">
+		<div class="space_filler_container autofill"></div>
+		<div class="center">
+			<h1 class="nivix_accent">Connect to a Remote Database</h1>
+			<button class="nivix_primary_button tooltip-support-button tip-right">Disclaimer<span class="tooltip">This feature currently only officially supports SQL based providers like MySQL and MariaDB.</span></button>
+			<button id="connect_database_back" class="nivix_primary_button">Back</button>
 		</div>
 	</div>
 	<script src="./index.js" type="module"></script>

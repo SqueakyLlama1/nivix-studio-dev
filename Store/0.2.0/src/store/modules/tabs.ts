@@ -2,10 +2,10 @@ import { preferences } from './settings.ts';
 import { unloadCSS } from './file_loader.ts';
 import { type TabOptions } from '../../shared/bun/store_types.ts';
 
-let previousTab: string | undefined;
+let previousTab: { id: string; display?: string } | undefined;
 
-function getEBD(id: string) {return document.getElementById(id)};
-function wait(ms: number) {return new Promise((resolve) => {setTimeout(resolve, ms)})}
+function getEBD(id: string) { return document.getElementById(id); }
+function wait(ms: number) { return new Promise((resolve) => { setTimeout(resolve, ms); }); }
 
 export let programaticAnimationDuration = preferences['disableAnimations'] ? 0 : 325;
 
@@ -27,32 +27,38 @@ export async function remove(id: string, options: TabOptions = {}) {
 export async function goto(id: string, options: TabOptions = {}) {
     const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];
     let logPrevious = options.logPrevious !== undefined ? options.logPrevious : true;
-    const display = options.display;
+    let display = options.display;
 
-    if (id == 'previous') {
+    if (id === 'previous') {
         if (!previousTab) {
             // Add a soft error here
             return;
         }
-        id = previousTab;
+        id = previousTab.id;
+        if (display === undefined) {
+            display = previousTab.display;
+        }
         logPrevious = false;
     }
 
     let tabsHidden = 0;
-    let lastHiddenTab: string | undefined;
+    let lastHiddenTab: { id: string; display?: string } | undefined;
     const existingTabs = document.querySelectorAll('.tab');
 
     existingTabs.forEach(function(existingTab) {
         let existingTabElement = getEBD(existingTab.id);
-        if (!existingTabElement || existingTabElement.style.display == 'none' || existingTabElement.style.display == '') {
+        if (!existingTabElement || existingTabElement.style.display === 'none' || existingTabElement.style.display === '') {
             return;
         }
+        
+        const activeDisplay = existingTabElement.style.display || getComputedStyle(existingTabElement).display;
+
         hide(existingTab.id, { instant });
         tabsHidden++;
-        lastHiddenTab = existingTab.id;
+        lastHiddenTab = { id: existingTab.id, display: activeDisplay };
     });
 
-    if (!logPrevious) console.log(`Not logging '${lastHiddenTab}' as previous tab.`);
+    if (!logPrevious) console.log(`Not logging '${lastHiddenTab?.id}' as previous tab.`);
     if (tabsHidden > 0 && logPrevious) {
         previousTab = lastHiddenTab;
     }

@@ -7,7 +7,6 @@ function getEBD(id: string) {return document.getElementById(id);}
 const backBtn = getEBD('changelog_back') as HTMLButtonElement;
 const versionLabel = getEBD('changelog_version') as HTMLSpanElement;
 
-let changelog_stylesheet;
 let isInitialized = false;
 
 export async function init() {

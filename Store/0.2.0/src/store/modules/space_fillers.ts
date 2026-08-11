@@ -1,10 +1,7 @@
 import { loadCSS } from './file_loader.ts';
 
-let space_fillers_stylesheet: string;
-
 export async function init() {
-    space_fillers_stylesheet = loadCSS('sheets/space_fillers.css');
-    
+    loadCSS('sheets/space_fillers.css');
     autofillSpacefillers();
 }
 

@@ -14,7 +14,6 @@ function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms)
 const versionLabel = getEBD('load_footer_version');
 
 let load_stylesheet: string;
-let tooltip_stylesheet;
 
 let isFinishing = false;
 
@@ -22,13 +21,21 @@ export async function init() {
     versionLabel!.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
     
     load_stylesheet = loadCSS('sheets/load.css');
-    tooltip_stylesheet = loadCSS('sheets/tooltips.css');
+    loadCSS('sheets/tooltips.css');
     
     let menuDelay: number = 750;
     
     // Load User Preferences
     try {
         await settings.init();
+        // THIS DATABASE CONNECTION IS PURELY FOR TESTING ONLY
+        await electroview.rpc?.request.setDatabase({
+            database: 'sqlite'
+        });
+        await electroview.rpc?.request.setDatabase({
+            database: 'sql',
+            databasePath: 'mariadb://root:Chr!stianN1vix@localhost:3306/nivix_testing_database'
+        });
         menuDelay = settings.preferences['menuDelay'] ?? 750;
     } catch (err) {
         // Add a soft error here

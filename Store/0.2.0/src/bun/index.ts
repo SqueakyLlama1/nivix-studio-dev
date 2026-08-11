@@ -2,33 +2,29 @@ import path from 'path';
 import os from 'os';
 import fs from 'fs/promises';
 
-const updaterLogicDelay = 2000; // Delay before the logic in the updater starts, in milleseconds, for flair.
-const initLogicDelay = 100; // Delay after each task in the init function, in milleseconds, for flair.
-
 import { BrowserView, BrowserWindow } from "electrobun/bun";
 import Database from 'bun:sqlite';
+import { SQL } from 'bun';
 
 import * as updater from "./updater.js";
 import * as utils from "./updater_utils.ts";
 import { type UpdaterRPCType } from '../shared/bun/updater_rpc_type.ts';
 import { type StoreRPCType } from '../shared/bun/store_rpc_type.ts';
 
-function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
-
 const studio_path = path.join(os.homedir(), 'nvxstdo');
 const store_path = path.join(studio_path, 'store');
 const preferences_path = path.join(store_path, 'preferences.json');
 
-const oldFormats = {
+const old_formats = {
 	"0.1.0-hub": path.join('appdata', 'store', 'inventory.ndjson'),
 	"0.1.0": path.join('store', 'inventory.ndjson')
 };
 
-const ctx = { studio_path, oldFormats };
+const ctx = { studio_path, old_formats };
 
-let functionsModule;
+let functions_module;
 let functions: Record<string, (...args: any[]) => any> = {};
-let db: Database;
+let db: Database | SQL;
 
 const updaterRPC = BrowserView.defineRPC<UpdaterRPCType>({
 	maxRequestTime: 5000,
@@ -55,7 +51,7 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 		requests: {
 			async needsConversion() {
 				try {
-					const expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0-hub']);
+					const expectedOldInventoryPath = path.join(studio_path, old_formats['0.1.0-hub']);
 					await fs.access(expectedOldInventoryPath);
 					return "0.1.0-hub";
 				} catch {
@@ -63,7 +59,7 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				}
 				
 				try {
-					const expectedOldInventoryPath = path.join(studio_path, oldFormats['0.1.0']);
+					const expectedOldInventoryPath = path.join(studio_path, old_formats['0.1.0']);
 					await fs.access(expectedOldInventoryPath);
 					return "0.1.0";
 				} catch {
@@ -169,6 +165,28 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				
 				const file = Bun.file(absolutePath);
 				return await file.text();
+			},
+			async setDatabase({ database, databasePath }: { database: string, databasePath?: string }) {
+				if (database === 'sql') {
+					db = new SQL(databasePath!);
+					functions_module = await import('./remote_sql_driver.ts');
+					const init_module = await import('./init_remote_sql_database.ts');
+					init_module.init_database(db);
+					functions = functions_module.default(db, ctx);
+				} else if (database === 'sqlite') {
+					db = new Database(path.join(store_path, 'inventory.db'));
+					functions_module = await import('./local_sqlite_driver.ts');
+					const init_module = await import('./init_local_sqlite_database.ts');
+					init_module.init_database(db);
+					functions = functions_module.default(db, ctx);
+				} else {
+					throw new Error('Database not recognized.');
+				}
+			}
+		},
+		messages: {
+			closeStore() {
+				storeWindow.close();
 			}
 		}
 	}
@@ -179,16 +197,6 @@ type StoreRPC = ReturnType<typeof BrowserView.defineRPC<StoreRPCType>>;
 
 let storeWindow: BrowserWindow<StoreRPC>;
 let updaterWindow: BrowserWindow<UpdaterRPC>;
-
-async function init_sandbox() {
-	try {
-		await fs.mkdir(store_path, { recursive: true });
-		await fs.mkdir(studio_path, { recursive: true });
-	} catch (err) {
-		const message = err instanceof Error ? err.message : String(err);
-		throw new Error(`Failed to initialize sandbox directories: ${message}`);
-	}
-}
 
 function openStore() {
 	const width = 800;
@@ -230,15 +238,16 @@ function openUpdater() {
 
 async function init() {
 	openUpdater();
-	await wait(updaterLogicDelay);
 	
 	updaterWindow.webview.rpc?.send.displayDebug({ message: "Initializing App Sandbox..." });
 	
 	try {
 		await updater.init();
-		await init_sandbox();
+
+		await fs.mkdir(store_path, { recursive: true });
+		await fs.mkdir(studio_path, { recursive: true });
 	} catch (err) {
-		const message = err instanceof Error ? err.message : String(err);
+		const message = err as string;
 		updaterWindow.webview.rpc?.send.displayDebug({ message, type: 'error'});
 		return;
 	}
@@ -246,43 +255,9 @@ async function init() {
 	try {
 		db = new Database(path.join(store_path, "inventory.db"));
 	} catch (err) {
-		const message = err instanceof Error ? err.message : String(err);
+		const message = err as string;
 		throw new Error(`Failed to open/connect SQLite Database: ${message}`);
 	}
-	
-	await wait(initLogicDelay);
-	updaterWindow.webview.rpc?.send.displayDebug({ message: "Initializing SQLite Database..." });
-	
-	try {
-		const initModule = await import('./init_local_sql_database.ts');
-		initModule.init_database(db);
-	} catch (err) {
-		const message = err instanceof Error ? err.message : String(err);
-		console.error(message);
-		updaterWindow.webview.rpc?.send.displayDebug({ message, type: 'error'});
-		throw new Error(`Database Migration Failed: ${message}`);
-	}
-	
-	await wait(initLogicDelay);
-	updaterWindow.webview.rpc?.send.displayDebug({ message: "Loading Functions..." });
-	
-	try {
-		functionsModule = await import('./local_sql_driver.ts');
-		const initFunctions = functionsModule.default || functionsModule;
-		
-		if (typeof initFunctions === 'function') {
-			functions = initFunctions(db, ctx);
-		} else {
-			functions = initFunctions || {};
-		}
-	} catch (err) {
-		const message = err instanceof Error ? err.message : String(err);
-		console.error(`Error loading functions.ts module: ${message}`);
-		functions = {};
-	}
-	
-	await wait(initLogicDelay);
-	updaterWindow.webview.rpc?.send.readyToCheckUpdates();
 }
 
 init();

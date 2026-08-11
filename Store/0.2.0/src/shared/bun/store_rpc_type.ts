@@ -96,9 +96,18 @@ export type StoreRPCType = {
                     path: string;
                 };
                 response: string;
+            };
+            setDatabase: {
+                params: {
+                    database: string;
+                    databasePath?: string;
+                };
+                response: void;
             }
         };
-        messages: {};
+        messages: {
+            closeStore: void;
+        };
     }>;
     webview: RPCSchema<{
         requests: {};

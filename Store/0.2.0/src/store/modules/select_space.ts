@@ -3,6 +3,7 @@ import { preferences, setPreference } from './settings.ts';
 import * as tabs from './tabs.ts';
 import * as index from './index.ts';
 import * as create_space from './create_space.ts';
+import * as connect_database from './connect_database.ts';
 import { electroview } from './index.ts';
 import { type Space } from '../../shared/bun/store_types.ts';
 
@@ -11,7 +12,6 @@ function getEBD(id: string) {return document.getElementById(id);}
 const versionLabel = getEBD('select_space_footer_version') as HTMLSpanElement;
 const shapeAnimToggle = getEBD('select_space_shapeAnimToggle') as HTMLInputElement;
 
-let select_space_stylesheet: string;
 let isInitialized: boolean = false;
 
 export async function init(tutorial?: boolean) {
@@ -21,7 +21,7 @@ export async function init(tutorial?: boolean) {
         return;
     }
     
-    select_space_stylesheet = loadCSS('sheets/select_space.css');
+    loadCSS('sheets/select_space.css');
     
     versionLabel.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
     
@@ -44,13 +44,17 @@ function toggleShapeAnimations() {
 
 // Miscellaneous Button Binding
 
-const connectRemoteServerBtn = getEBD('select_space_connect_server') as HTMLButtonElement;
+const connectRemoteServerBtn = getEBD('select_space_connect_database') as HTMLButtonElement;
 const exposeRemoteServerBtn = getEBD('select_space_start_server') as HTMLButtonElement;
 const changelogBtn = getEBD('select_space_changelog') as HTMLButtonElement;
 const creditsBtn = getEBD('select_space_credits') as HTMLButtonElement;
 const sourceCodeBtn = getEBD('select_space_source') as HTMLButtonElement;
 const websiteBtn = getEBD('select_space_studio_webpage') as HTMLButtonElement;
 const closeBtn = getEBD('select_space_quit') as HTMLButtonElement;
+
+connectRemoteServerBtn.addEventListener('click', function() {
+    connect_database.init();
+});
 
 sourceCodeBtn.addEventListener('click', function() {
     window.open('https://github.com/SqueakyLlama1/nivix-studio-dev/tree/main/Store/0.2.0', '_blank');
@@ -60,7 +64,9 @@ websiteBtn.addEventListener('click', function() {
     window.open('https://nivixtech.com/studio', '_blank');
 });
 
-closeBtn.addEventListener('click', window.close);
+closeBtn.addEventListener('click', () => {
+    electroview.rpc?.send.closeStore();
+});
 
 // Space Selection System
 

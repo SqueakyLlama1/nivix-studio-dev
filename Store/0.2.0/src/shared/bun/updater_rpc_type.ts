@@ -25,7 +25,6 @@ export type UpdaterRPCType = {
                 message: string;
                 type?: string;
             };
-            readyToCheckUpdates: void;
         };
     }>;
 };

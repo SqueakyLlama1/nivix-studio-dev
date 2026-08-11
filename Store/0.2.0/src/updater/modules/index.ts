@@ -1,8 +1,6 @@
 import { Electroview } from "electrobun/view";
 import { type UpdaterRPCType } from "../../shared/bun/updater_rpc_type";
 
-const logicDelay = 100; // Delay after each task in the check updates function, in milleseconds, for flair.
-
 const rpc = Electroview.defineRPC<UpdaterRPCType>({
     handlers: {
         requests: {},
@@ -10,9 +8,6 @@ const rpc = Electroview.defineRPC<UpdaterRPCType>({
             displayDebug({ message, type }) {
                 console.log(`RPC Message Recieved: ${message}, ${type}`);
                 displayDebug(message, type);
-            },
-            readyToCheckUpdates() {
-                checkUpdates();
             }
         },
     }
@@ -48,18 +43,13 @@ async function init() {
     quitBtn?.addEventListener('click', () => {
         electroview.rpc?.request.close();
     });
-}
 
-async function checkUpdates() {
     displayDebug('Checking for updates...');
     const updateAvailable = await electroview.rpc?.request.checkUpdate();
     if (updateAvailable) {
-        await wait(logicDelay);
         displayDebug(`New version ${updateAvailable} is available. Download now?`);
     } else {
-        await wait(logicDelay);
         displayDebug(`No new versions found, continuing to store..`);
-        await wait(logicDelay);
         electroview.rpc?.request.storeHandoff();
     }
 }
