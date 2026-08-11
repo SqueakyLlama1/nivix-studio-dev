@@ -20,8 +20,7 @@ let isInitialized: boolean = false;
 let populateRequest = 0;
 
 const connectRemoteServerBtn = getEBD('select_space_connect_database') as HTMLButtonElement;
-const exposeRemoteServerBtn = getEBD('select_space_start_server') as HTMLButtonElement;
-const changelogBtn = getEBD('select_space_changelog') as HTMLButtonElement;
+const exposeRemoteInterfaceBtn = getEBD('select_space_start_interface') as HTMLButtonElement;
 const creditsBtn = getEBD('select_space_credits') as HTMLButtonElement;
 const sourceCodeBtn = getEBD('select_space_source') as HTMLButtonElement;
 const issuesBtn = getEBD('select_space_issues') as HTMLButtonElement;

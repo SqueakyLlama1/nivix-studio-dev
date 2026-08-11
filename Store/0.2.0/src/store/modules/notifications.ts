@@ -4,6 +4,7 @@ interface NotificationItem {
     message: string;
     type: string;
     duration: number;
+    sticky: boolean;
 }
 
 const queue: NotificationItem[] = [];
@@ -13,8 +14,13 @@ export function init(): void {
     loadCSS("sheets/notifications.css");
 }
 
-export function show_notification(message: string, type: string = "info", duration: number = 3000): void {
-    queue.push({ message, type, duration });
+export function show_notification(
+    message: string, 
+    type: string = "info", 
+    duration: number = 3000, 
+    sticky: boolean = type === "error"
+): void {
+    queue.push({ message, type, duration, sticky });
     
     if (!isProcessing) {
         processQueue();
@@ -76,6 +82,8 @@ function renderNotification(item: NotificationItem): Promise<void> {
         
         closeBtn.addEventListener("click", dismiss);
         
-        dismissTimer = window.setTimeout(dismiss, item.duration);
+        if (!item.sticky) {
+            dismissTimer = window.setTimeout(dismiss, item.duration);
+        }
     });
 }
