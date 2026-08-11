@@ -17,8 +17,12 @@
     h1 {
         color: var(--brand-primary);
         transform: scale(1.5);
+        
+        sup {
+            font-size: 0.5em;
+        }
     }
-
+    
     .footer {
         font-weight: bold;
     }

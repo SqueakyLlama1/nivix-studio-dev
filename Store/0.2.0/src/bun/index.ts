@@ -254,8 +254,8 @@ async function init() {
 	updaterWindow.webview.rpc?.send.displayDebug({ message: "Initializing SQLite Database..." });
 	
 	try {
-		const initModule = await import('./init_database_function.ts');
-		await initModule.init_database(db);
+		const initModule = await import('./init_local_sql_database.ts');
+		initModule.init_database(db);
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
 		console.error(message);
@@ -267,7 +267,7 @@ async function init() {
 	updaterWindow.webview.rpc?.send.displayDebug({ message: "Loading Functions..." });
 	
 	try {
-		functionsModule = await import('./functions.ts');
+		functionsModule = await import('./local_sql_driver.ts');
 		const initFunctions = functionsModule.default || functionsModule;
 		
 		if (typeof initFunctions === 'function') {

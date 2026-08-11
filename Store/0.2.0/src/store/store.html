@@ -51,16 +51,19 @@
 		<div class="space_filler_container autofill"></div>
 		<div class="action_container">
 			<h2 class="nivix_bookmark">General</h2>
-
+			
 			<button id="select_space_studio_webpage" class="nivix_secondary_button"><svgPlaceholder>assets/svg/website.svg</svgPlaceholder> Nivix Studio Webpage</button>
 			<button id="select_space_settings" class="nivix_secondary_button"><svgPlaceholder>assets/svg/settings.svg</svgPlaceholder> Settings</button>
 			<button id="select_space_quit" class="nivix_secondary_button"><svgPlaceholder>assets/svg/exit.svg</svgPlaceholder> Exit Store</button>
-
+			
 			<h2 class="nivix_bookmark">Advanced</h2>
-
-			<button id="select_space_connect_database" class="nivix_secondary_button"><svgPlaceholder>assets/svg/database.svg</svgPlaceholder> Connect to Remote Database</button>
+			
+			<div class="action_tooltip_container">
+				<button id="select_space_connect_database" class="nivix_secondary_button"><svgPlaceholder>assets/svg/database.svg</svgPlaceholder> Connect to Remote Database</button>
+				<button class="tooltip-button tip-right">i<span class="tooltip">This option currently only supports SQL based databases like MySQL and MariaDB.</span></button>
+			</div>
 			<button id="select_space_start_interface" class="nivix_secondary_button"><svgPlaceholder>assets/svg/interface.svg</svgPlaceholder> Start Remote Interface</button>
-
+			
 			<h2 class="nivix_bookmark">Developers</h2>
 			
 			<button id="select_space_source" class="nivix_secondary_button"><svgPlaceholder>assets/svg/source.svg</svgPlaceholder> Source Code</button>
