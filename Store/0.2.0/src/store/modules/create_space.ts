@@ -10,13 +10,13 @@ let isInitialized: boolean = false;
 
 export async function init() {
     if (isInitialized) {
-        tabs.goto('create_space', {display: 'flex'});
+        await tabs.goto('create_space', {display: 'flex'});
         return;
     }
     loadCSS('sheets/create_space.css');
 
     isInitialized = true;
-    init();
+    await tabs.goto('create_space', { display: 'flex' });
 }
 
 const nameInput = getEBD('create_space_name') as HTMLInputElement;
@@ -25,23 +25,27 @@ const cancelBtn = getEBD('create_space_cancel') as HTMLButtonElement;
 const errorOutput = getEBD('create_space_output') as HTMLSpanElement;
 
 continueBtn.addEventListener('click', async () => {
+	if (continueBtn.disabled) return;
     if (!nameInput.value || !nameInput.value.trim() || nameInput.value.trim() === '') {
         errorOutput.innerText = `Space Name Cannot Be Empty`;
         return;
     };
     console.log(`Creating New Space: ${nameInput.value}`);
     try {
+		continueBtn.disabled = true;
         await electroview.rpc?.request.createSpace(nameInput.value);
         if (nameInput.value.toLowerCase().trim() === 'empty' && errorOutput.innerText === 'Space Name Cannot Be Empty') {
             errorOutput.innerText = 'Haha. Very Funny';
             await wait(500);
         }
-        select_space.init();
+        await select_space.init();
         await wait(200);
         errorOutput.innerText = '';
         nameInput.value = '';
     } catch (err) {
         errorOutput.innerText = `Failed to Create Space: ${err}`;
+	} finally {
+		continueBtn.disabled = false;
     }
 });
 

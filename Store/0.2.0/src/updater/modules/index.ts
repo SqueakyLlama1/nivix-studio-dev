@@ -50,7 +50,7 @@ async function init() {
         displayDebug(`New version ${updateAvailable} is available. Download now?`);
     } else {
         displayDebug(`No new versions found, continuing to store..`);
-        electroview.rpc?.request.storeHandoff();
+        await electroview.rpc?.request.storeHandoff();
     }
 }
 

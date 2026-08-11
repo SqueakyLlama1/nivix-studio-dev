@@ -5,8 +5,8 @@
 	"license": "Apache-2.0",
 	"author": "Christian Bone <bone.christian.c@outlook.com>",
 	"scripts": {
-		"gui": "taskkill /F /IM bun.exe /T 2>nul & taskkill /F /IM electrobun.exe /T 2>nul & node -e \"fs.rmSync('build', {recursive: true, force: true})\" && electrobun dev",
-		"cli": "taskkill /F /IM bun.exe /T 2>nul & taskkill /F /IM electrobun.exe /T 2>nul & node -e \"fs.rmSync('build', {recursive: true, force: true})\" && electrobun dev -- --cli"
+		"gui": "electrobun dev",
+		"cli": "electrobun dev -- --cli"
 	},
 	"dependencies": {
 		"electrobun": "1.18.1",

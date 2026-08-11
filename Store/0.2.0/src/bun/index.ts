@@ -22,9 +22,78 @@ const old_formats = {
 
 const ctx = { studio_path, old_formats };
 
-let functions_module;
 let functions: Record<string, (...args: any[]) => any> = {};
-let db: Database | mysql.Pool;
+let db: Database | mysql.Pool | null = null;
+let initialization: Promise<void> | null = null;
+let databaseQueue: Promise<void> = Promise.resolve();
+let preferencesWrite: Promise<void> = Promise.resolve();
+
+function enqueueDatabaseTask<T>(task: () => Promise<T> | T): Promise<T> {
+	const result = databaseQueue.then(task, task);
+	databaseQueue = result.then(() => undefined, () => undefined);
+	return result;
+}
+
+function withDatabase<T>(operation: (api: Record<string, (...args: any[]) => any>) => Promise<T> | T): Promise<T> {
+	return enqueueDatabaseTask(() => {
+		if (!db || Object.keys(functions).length === 0) {
+			throw new Error('The database is not ready.');
+		}
+		return operation(functions);
+	});
+}
+
+async function closeDatabase(): Promise<void> {
+	if (!db) return;
+	if ('end' in db) {
+		await db.end();
+	} else {
+		db.close();
+	}
+	db = null;
+	functions = {};
+}
+
+async function configureDatabase(database: string, databasePath?: string): Promise<void> {
+	if (database === 'sql') {
+		if (!databasePath) throw new Error('A remote database URL is required.');
+		const remoteDb = mysql.createPool(databasePath);
+		try {
+			const [{ default: createApi }, initModule] = await Promise.all([
+				import('./remote_sql_driver.ts'),
+				import('./init_remote_sql_database.ts')
+			]);
+			await initModule.init_database(remoteDb);
+			await closeDatabase();
+			db = remoteDb;
+			functions = createApi(remoteDb, ctx);
+		} catch (error) {
+			await remoteDb.end();
+			throw error;
+		}
+		return;
+	}
+
+	if (database === 'sqlite') {
+		const localDb = new Database(path.join(store_path, 'inventory.db'));
+		try {
+			const [{ default: createApi }, initModule] = await Promise.all([
+				import('./local_sqlite_driver.ts'),
+				import('./init_local_sqlite_database.ts')
+			]);
+			initModule.init_database(localDb);
+			await closeDatabase();
+			db = localDb;
+			functions = createApi(localDb, ctx);
+		} catch (error) {
+			localDb.close();
+			throw error;
+		}
+		return;
+	}
+
+	throw new Error('Database not recognized.');
+}
 
 const updaterRPC = BrowserView.defineRPC<UpdaterRPCType>({
 	maxRequestTime: 5000,
@@ -38,11 +107,19 @@ const updaterRPC = BrowserView.defineRPC<UpdaterRPCType>({
 				return await updater.updateAvailable();
 			},
 			storeHandoff() {
-				if (updaterWindow) updaterWindow.close();
-				openStore();
+				// Do not destroy the WebView while it is still sending this RPC response.
+				setTimeout(() => {
+					const windowToClose = updaterWindow;
+					openStore();
+					windowToClose?.close();
+					if (updaterWindow === windowToClose) updaterWindow = null;
+				}, 0);
 			},
 			close() {
-				if (updaterWindow) updaterWindow.close();
+				setTimeout(() => {
+					updaterWindow?.close();
+					updaterWindow = null;
+				}, 0);
 			}
 		},
 		messages: {}
@@ -81,17 +158,19 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 			},
 			async setPreferences(preferences: object) {
 				const data = JSON.stringify(preferences || {}, null, 2);
-				await fs.writeFile(preferences_path, data);
+				const write = preferencesWrite.then(() => fs.writeFile(preferences_path, data));
+				preferencesWrite = write.catch(() => undefined);
+				await write;
 				return true;
 			},
 			async createSpace(name: string) {
-				return await functions['createSpace'](name);
+				return withDatabase(api => api['createSpace'](name));
 			},
 			async listSpaces() {
-				return await functions['listSpaces']();
+				return withDatabase(api => api['listSpaces']());
 			},
 			async deleteSpace(id: string) {
-				return await functions['deleteSpace'](id);
+				return withDatabase(api => api['deleteSpace'](id));
 			},
 			async createCategory({
 				name,
@@ -104,13 +183,13 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				category?: any;
 				fields?: any[]
 			}) {
-				return await functions['createCategory'](name, space, category, fields);
+				return withDatabase(api => api['createCategory'](name, space, category, fields));
 			},
 			async listCategories(space: string) {
-				return await functions['listCategories'](space);
+				return withDatabase(api => api['listCategories'](space));
 			},
 			async deleteCategory(category: string) {
-				return await functions['deleteCategory'](category);
+				return withDatabase(api => api['deleteCategory'](category));
 			},
 			async createItem({
 				name,
@@ -123,19 +202,19 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				category: string;
 				attributes?: object;
 			}) {
-				return await functions['createItem'](name, quantity, category, attributes);
+				return withDatabase(api => api['createItem'](name, quantity, category, attributes));
 			},
 			async deleteItem(id: string) {
-				return await functions['deleteItem'](id);
+				return withDatabase(api => api['deleteItem'](id));
 			},
 			async updateItem({ id, updates = {} }: { id: string; updates?: object }) {
-				return await functions['updateItem'](id, updates);
+				return withDatabase(api => api['updateItem'](id, updates));
 			},
 			async listItemsByCategory(category: string) {
-				return await functions['listItemsByCategory'](category);
+				return withDatabase(api => api['listItemsByCategory'](category));
 			},
 			async getItemById(id: string) {
-				return await functions['getItemById'](id);
+				return withDatabase(api => api['getItemById'](id));
 			},
 			async queryItems({
 				category = null,
@@ -146,14 +225,14 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				rules?: any[];
 				logicalOp?: string;
 			} | void = {}) {
-				return await functions['queryItemsUnified']({
+				return withDatabase(api => api['queryItemsUnified']({
 					categoryId: category,
 					rules,
 					logicalOp
-				});
+				}));
 			},
 			async rebuildSearchIndex() {
-				return await functions['rebuildSearchIndex']();
+				return withDatabase(api => api['rebuildSearchIndex']());
 			},
 			async convert({
 				version,
@@ -162,7 +241,7 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				version: string;
 				space: string;
 			}) {
-				return await functions['convert'](version, space);
+				return withDatabase(api => api['convert'](version, space));
 			},
 			async readFile({ path: relativePath }: { path: string }) {
 				const absolutePath = path.resolve(import.meta.dir, '../views/store/', relativePath);
@@ -170,29 +249,7 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				return await file.text();
 			},
 			async setDatabase({ database, databasePath }: { database: string, databasePath?: string }) {
-				if (database === 'sql') {
-					if (db && 'end' in db) {
-						await db.end();
-					}
-					
-					db = mysql.createPool(databasePath!);
-					functions_module = await import('./remote_sql_driver.ts');
-					const init_module = await import('./init_remote_sql_database.ts');
-					await init_module.init_database(db);
-					functions = functions_module.default(db, ctx);
-				} else if (database === 'sqlite') {
-					if (db && 'end' in db) {
-						await db.end();
-					}
-					
-					db = new Database(path.join(store_path, 'inventory.db'));
-					functions_module = await import('./local_sqlite_driver.ts');
-					const init_module = await import('./init_local_sqlite_database.ts');
-					await init_module.init_database(db);
-					functions = functions_module.default(db, ctx);
-				} else {
-					throw new Error('Database not recognized.');
-				}
+				await enqueueDatabaseTask(() => configureDatabase(database, databasePath));
 			}
 		},
 		messages: {
@@ -210,6 +267,7 @@ let storeWindow: BrowserWindow<StoreRPC> | null = null;
 let updaterWindow: BrowserWindow<UpdaterRPC> | null = null;
 
 function openStore() {
+	if (storeWindow) return;
 	const width = 800;
 	const height = 600;
 	const { x, y } = utils.getCenterXY(width, height);
@@ -228,6 +286,7 @@ function openStore() {
 }
 
 function openUpdater() {
+	if (updaterWindow) return;
 	const width = 700;
 	const height = 400;
 	const { x, y } = utils.getCenterXY(width, height);
@@ -249,34 +308,26 @@ function openUpdater() {
 	updaterWindow = windowInstance;
 
 	windowInstance.webview.on('dom-ready', () => {
-		init();
+		void init().catch(error => console.error('Failed to initialize application:', error));
 	});
 }
 
-async function init() {
-	if (updaterWindow) {
-		updaterWindow.webview.rpc?.send.displayDebug({ message: "Initializing App Sandbox..." });
+function init(): Promise<void> {
+	if (!initialization) {
+		initialization = (async () => {
+			updaterWindow?.webview.rpc?.send.displayDebug({ message: 'Initializing App Sandbox...' });
+			await fs.mkdir(studio_path, { recursive: true });
+			await fs.mkdir(store_path, { recursive: true });
+			await updater.init();
+			await enqueueDatabaseTask(() => configureDatabase('sqlite'));
+		})().catch(error => {
+			initialization = null;
+			const message = error instanceof Error ? error.message : String(error);
+			updaterWindow?.webview.rpc?.send.displayDebug({ message, type: 'error' });
+			throw error;
+		});
 	}
-	
-	try {
-		await updater.init();
-		
-		await fs.mkdir(store_path, { recursive: true });
-		await fs.mkdir(studio_path, { recursive: true });
-	} catch (err) {
-		const message = err as string;
-		if (updaterWindow) {
-			updaterWindow.webview.rpc?.send.displayDebug({ message, type: 'error'});
-		}
-		return;
-	}
-	
-	try {
-		db = new Database(path.join(store_path, "inventory.db"));
-	} catch (err) {
-		const message = err as string;
-		throw new Error(`Failed to open/connect SQLite Database: ${message}`);
-	}
+	return initialization;
 }
 
 openUpdater();

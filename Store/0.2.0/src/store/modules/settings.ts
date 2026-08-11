@@ -5,6 +5,7 @@ export let preferences: Record<string, any> = {
     menuDelay: 750,
     disableShapeAnimations: false
 };
+let preferenceWrite: Promise<void> = Promise.resolve();
 
 export async function init() {
     const savedPreferences = await electroview.rpc?.request.getPreferences();
@@ -26,5 +27,10 @@ export async function setPreference(key: string, value: any) {
         throw new Error(errorMsg);
     }
     preferences[key] = value;
-    await electroview.rpc?.request.setPreferences(preferences);
+    const snapshot = { ...preferences };
+    const write = preferenceWrite.then(async () => {
+        await electroview.rpc?.request.setPreferences(snapshot);
+    });
+    preferenceWrite = write.catch(() => undefined);
+    await write;
 }

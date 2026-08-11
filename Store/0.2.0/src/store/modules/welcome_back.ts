@@ -11,13 +11,19 @@ const skipBtn = getEBD('welcome_back_skip') as HTMLButtonElement;
 const continueBtn = getEBD('welcome_back_continue') as HTMLButtonElement;
 
 let welcomeback_stylesheet;
+let isInitialized = false;
 
 export async function init() {
+    if (isInitialized) {
+        await tabs.goto('welcome_back');
+        return;
+    }
     welcomeback_stylesheet = loadCSS('sheets/welcome_back.css');
 
     quitBtn.addEventListener('click', main.quit);
     skipBtn.addEventListener('click', () => { select_space.init(); });
     continueBtn.addEventListener('click', () => {select_space.init(true)});
 
-    tabs.show('welcome_back');
+    isInitialized = true;
+    await tabs.goto('welcome_back');
 }

@@ -3,6 +3,7 @@ import { unloadCSS } from './file_loader.ts';
 import { type TabOptions } from '../../shared/bun/store_types.ts';
 
 let previousTab: { id: string; display?: string } | undefined;
+let navigationQueue: Promise<void> = Promise.resolve();
 
 function getEBD(id: string) { return document.getElementById(id); }
 function wait(ms: number) { return new Promise((resolve) => { setTimeout(resolve, ms); }); }
@@ -24,7 +25,13 @@ export async function remove(id: string, options: TabOptions = {}) {
     }
 }
 
-export async function goto(id: string, options: TabOptions = {}) {
+export function goto(id: string, options: TabOptions = {}): Promise<void> {
+    const navigation = navigationQueue.then(() => gotoNow(id, options));
+    navigationQueue = navigation.catch(() => undefined);
+    return navigation;
+}
+
+async function gotoNow(id: string, options: TabOptions = {}) {
     const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];
     let logPrevious = options.logPrevious !== undefined ? options.logPrevious : true;
     let display = options.display;

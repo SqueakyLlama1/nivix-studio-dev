@@ -19,5 +19,5 @@ export async function init() {
     versionLabel.innerText = main.store.sessionVersion || 'Failed to get session version.';
     isInitialized = true;
     console.log('Initialized Changelog Menu');
-    init();
+    await tabs.goto('changelog', { logPrevious: true });
 }

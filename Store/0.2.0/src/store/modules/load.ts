@@ -18,8 +18,19 @@ const versionLabel = getEBD('load_footer_version');
 
 let load_stylesheet: string;
 let isFinishing = false;
+let initialization: Promise<void> | null = null;
 
-export async function init() {
+export function init(): Promise<void> {
+    if (!initialization) {
+        initialization = initialize().catch(error => {
+            initialization = null;
+            throw error;
+        });
+    }
+    return initialization;
+}
+
+async function initialize() {
     versionLabel!.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
     
     load_stylesheet = loadCSS('sheets/load.css');
@@ -96,13 +107,7 @@ export async function init() {
         notifications?.show_notification(`Non-Critical Error: Failed to load space filler shapes: ${message}`, 'warning');
     }
 
-    // Set initial database to local SQLite
-    try {
-        electroview.rpc!.request.setDatabase({ database: 'sqlite' });
-    } catch (err) {
-        const message = err as string;
-        notifications.show_notification(`Critical Error: Failed to initialize database, app loading will no longer progress. ${message}`);
-    }
+    // Bun completes local database initialization before it opens this view.
     
     await wait(menuDelay);
     await finish_loading();
@@ -118,16 +123,16 @@ async function finish_loading() {
     const versionToConvert = await electroview.rpc?.request.needsConversion();
     if (versionToConvert) {
         console.log('Old inventory found, showing welcome back screen');
-        welcome_back.init();
+        await welcome_back.init();
         return;
     }
-    select_space.init();
+    await select_space.init();
 }
 
 export function checkLoadState() {
     if (document.readyState === 'complete') {
-        init();
+        void init();
     } else {
-        window.addEventListener('load', init);
+        window.addEventListener('load', () => void init(), { once: true });
     }
 }

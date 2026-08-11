@@ -59,43 +59,40 @@ function isValidConnectionString(connectionString: string): boolean {
 }
 
 export function init() {
-    if (!isInitialized) {
-        backBtn?.addEventListener('click', () => {
-            tabs.goto('previous');
-        });
-        
-        form?.addEventListener('submit', (event) => {
-            event.preventDefault();
-            connectDatabase();
-        });
-
-        urlSubmitBtn?.addEventListener('click', () => {
-            const url = urlInput?.value?.trim() || '';
-            connectDatabase(url);
-        });
-
-        disconnectBtn?.addEventListener('click', disconnectDatabase);
-        
-        try {
-            loadCSS('sheets/connect_database.css');
-        } catch (err) {
-            console.error('[Connect Database] Failed to load module stylesheet:', err);
-        }
-
-        isInitialized = true;
+    if (isInitialized) {
+        void tabs.goto('connect_database', { logPrevious: true });
+        return;
     }
     
-    tabs.goto('connect_database', { logPrevious: true });
+    backBtn?.addEventListener('click', () => {
+        tabs.goto('previous');
+    });
+    
+    form?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        connectDatabase();
+    });
+    
+    urlSubmitBtn?.addEventListener('click', () => {
+        const url = urlInput?.value?.trim() || '';
+        connectDatabase(url);
+    });
+    
+    disconnectBtn?.addEventListener('click', disconnectDatabase);
+    
+    loadCSS('sheets/connect_database.css');
+    isInitialized = true;
+    void tabs.goto('connect_database', { logPrevious: true });
 }
 
 async function connectDatabase(customURL?: string) {
     let target = '';
-
+    
     if (!electroview?.rpc?.request?.setDatabase) {
         notifications?.show_notification('RPC Connection unavailable. Please restart the application.', 'error');
         return;
     }
-
+    
     if (customURL) {
         target = customURL.trim();
         if (!target) {
@@ -109,19 +106,19 @@ async function connectDatabase(customURL?: string) {
         const database = databaseInput?.value?.trim() || '';
         const username = usernameInput?.value?.trim() || '';
         const password = passwordInput?.value?.trim() || '';
-
+        
         if (!hostname) {
             notifications?.show_notification('Please provide a host or IP address.', 'warning');
             hostnameInput?.focus();
             return;
         }
-
+        
         if (!database) {
             notifications?.show_notification('Please specify a database name.', 'warning');
             databaseInput?.focus();
             return;
         }
-
+        
         if (port) {
             const parsedPort = Number(port);
             if (isNaN(parsedPort) || parsedPort <= 0 || parsedPort > 65535) {
@@ -130,37 +127,37 @@ async function connectDatabase(customURL?: string) {
                 return;
             }
         }
-
+        
         const encodedUser = encodeURIComponent(username);
         const encodedPass = encodeURIComponent(password);
-
+        
         const auth = encodedUser ? (encodedPass ? `${encodedUser}:${encodedPass}@` : `${encodedUser}@`) : '';
         const portPart = port ? `:${port}` : '';
         const scheme = prefix.endsWith('://') ? prefix : `${prefix}://`;
-
+        
         target = `${scheme}${auth}${hostname}${portPart}/${database}`;
     }
-
+    
     if (!isValidConnectionString(target)) {
         notifications?.show_notification('Invalid connection URL format generated. Please check your inputs.', 'error');
         return;
     }
-
+    
     try {
         setLoadingState(true);
         notifications?.show_notification('Attempting to connect to database...');
         if (statusOutput) statusOutput.innerText = 'Connecting to database...';
-
+        
         await electroview.rpc.request.setDatabase({
             database: 'sql',
             databasePath: target
         });
-
+        
         connected = true;
         notifications?.show_notification('Successfully connected to database!');
         if (statusOutput) statusOutput.innerText = 'Connected to Database';
         
-        select_space.populate_spaces_prompt();
+        await select_space.populate_spaces_prompt();
     } catch (err) {
         connected = false;
         const message = getErrorMessage(err);
@@ -176,21 +173,21 @@ async function disconnectDatabase() {
         notifications?.show_notification("You aren't connected to a remote database.", 'warning');
         return;
     }
-
+    
     if (!electroview?.rpc?.request?.setDatabase) {
         notifications?.show_notification('RPC Connection unavailable. Please restart the application.', 'error');
         return;
     }
-
+    
     try {
         setLoadingState(true);
         notifications?.show_notification('Disconnecting from remote database...');
         if (statusOutput) statusOutput.innerText = 'Disconnecting...';
-
+        
         await electroview.rpc.request.setDatabase({ database: 'sqlite' });
-
+        
         connected = false;
-        select_space.populate_spaces_prompt();
+        await select_space.populate_spaces_prompt();
         if (statusOutput) statusOutput.innerText = 'Not Connected';
         notifications?.show_notification('Disconnected from remote database. Switched to local SQLite.');
     } catch (err) {
