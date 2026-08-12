@@ -32,7 +32,7 @@ const manageBtn = getEBD('select_space_manage') as HTMLButtonElement;
 const choiceSelection = getEBD('select_space_option') as HTMLSelectElement;
 const continueBtn = getEBD('select_space_continue') as HTMLButtonElement;
 
-export async function init(tutorial?: boolean) {
+export async function init() {
     if (isInitialized) {
         await populate_spaces_prompt();
         tabs.goto('select_space', {display: 'flex'});

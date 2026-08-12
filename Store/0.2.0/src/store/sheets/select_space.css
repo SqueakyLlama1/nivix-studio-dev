@@ -75,10 +75,10 @@
             
             border-radius: var(--radius);
             
-            transition: background var(--transition), color var(--transition);
+            transition: color var(--transition);
             
             &:hover, &:focus {
-                background-image: linear-gradient(180deg, var(--background-tertiary), var(--background-secondary));;
+                background-image: linear-gradient(180deg, var(--background-tertiary), var(--background-secondary));
             }
         }
         

@@ -8,6 +8,10 @@
         transform: scale(1.5);
     }
 
+    hr {
+        width: 100%;
+    }
+
     .button_container {
         display: flex;
         flex-direction: column;

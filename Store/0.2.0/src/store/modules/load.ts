@@ -3,7 +3,6 @@ import { loadCSS, unloadCSS } from './file_loader.ts';
 import * as settings from './settings.ts';
 import * as tabs from './tabs.ts';
 import * as index from './index.ts';
-import * as welcome_back from './welcome_back.ts';
 import * as select_space from './select_space.ts';
 import * as space_fillers from './space_fillers.ts';
 import * as notifications from './notifications.ts';
@@ -120,12 +119,6 @@ async function finish_loading() {
     await tabs.remove('load_menu');
     unloadCSS(load_stylesheet);
     
-    const versionToConvert = await electroview.rpc?.request.needsConversion();
-    if (versionToConvert) {
-        console.log('Old inventory found, showing welcome back screen');
-        await welcome_back.init();
-        return;
-    }
     await select_space.init();
 }
 

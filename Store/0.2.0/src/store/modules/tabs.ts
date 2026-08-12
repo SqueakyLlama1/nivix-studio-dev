@@ -1,5 +1,4 @@
 import { preferences } from './settings.ts';
-import { unloadCSS } from './file_loader.ts';
 import { type TabOptions } from '../../shared/bun/store_types.ts';
 
 let previousTab: { id: string; display?: string } | undefined;

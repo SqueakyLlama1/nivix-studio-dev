@@ -130,24 +130,6 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 	maxRequestTime: 5000,
 	handlers: {
 		requests: {
-			async needsConversion() {
-				try {
-					const expectedOldInventoryPath = path.join(studio_path, old_formats['0.1.0-hub']);
-					await fs.access(expectedOldInventoryPath);
-					return "0.1.0-hub";
-				} catch {
-					// ignore
-				}
-				
-				try {
-					const expectedOldInventoryPath = path.join(studio_path, old_formats['0.1.0']);
-					await fs.access(expectedOldInventoryPath);
-					return "0.1.0";
-				} catch {
-					// ignore
-				}
-				return false;
-			},
 			async getPreferences() {
 				try {
 					const preferencesContents = await fs.readFile(preferences_path, 'utf-8');

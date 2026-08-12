@@ -3,10 +3,6 @@ import type { RPCSchema } from "electrobun";
 export type StoreRPCType = {
     bun: RPCSchema<{
         requests: {
-            needsConversion: {
-                params: void;
-                response: boolean | string;
-            };
             getPreferences: {
                 params: void;
                 response: Record<string, any>;

@@ -1,0 +1,81 @@
+#manage_spaces {
+    width: 100%;
+    height: 100%;
+    
+    .center {
+        box-sizing: border-box;
+        padding: 20px;
+    }
+    
+    #manage_spaces_list {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        
+        box-sizing: border-box;
+        
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        
+        margin: 5px;
+        
+        .center .button_container {
+            position: relative;
+            
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            
+            box-sizing: border-box;
+            
+            width: 100%;
+            
+            background: var(--background-secondary);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            
+            padding: 0.3rem;
+            
+            transition: background var(--transition), color var(--transition);
+            
+            &:nth-child(even) {
+                background: var(--background-tertiary);
+                
+                &:hover, &:focus {
+                    background-image: linear-gradient(180deg, var(--background-quarternary), var(--background-tertiary));
+                }
+            }
+            
+            &:hover, &:focus {
+                background-image: linear-gradient(180deg, var(--background-tertiary), var(--background-secondary));
+            }
+            
+            .name-column, .number-column {
+                text-align: left;
+                flex: 1;
+            }
+            
+            .number-column {
+                flex: 0.3;
+            }
+            
+            .actions {
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+            }
+            
+            .nivix_primary_button {
+                padding: 0.3rem 0.9rem;
+            }
+        }
+    }
+}

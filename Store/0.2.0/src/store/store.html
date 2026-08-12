@@ -23,22 +23,6 @@
 		</div>
 	</div>
 	
-	<div id="welcome_back" class="tab">
-		<div class="center">
-			<div class="space_filler_container autofill"></div>
-			<h1><span class="nivix_accent">Welcome Back</span> to Nivix Store!</h1>
-			<p>There have been a few changes since you last used Store. Your old inventory needs to be copied to our new format. To do so we are going to walk you through how to copy your inventory to the new system and begin using the new Store. Click "Explore the New Changes" below to get started.</p>
-			<div class="button_container">
-				<button id="welcome_back_quit" class="nivix_primary_button">Close Store</button>
-				<button id="welcome_back_skip" class="nivix_primary_button">Skip the Tutorial</button>
-				<button id="welcome_back_continue" class="nivix_primary_button">Explore the New Changes</button>
-				<button class="nivix_primary_button tooltip-support-button tip-right">Disclaimer
-					<span class="tooltip">Your old inventory still exists even after conversion. It should be in either <code>/home/nvxstdo/store/</code> (if you're on Linux), or <code>C:\Users\&lt;your username&gt;\nxstdo\store\</code> (if you're on Windows) as the file "inventory.ndjson"</span>
-				</button>
-			</div>
-		</div>
-	</div>
-	
 	<div id="changelog" class="tab">
 		<div class="space_filler_container autofill"></div>
 		<div class="heading">
@@ -88,12 +72,42 @@
 			</div>
 		</div>
 	</div>
-
+	
 	<div id="manage_spaces" class="tab">
-		<button id="manage_spaces_back" class="nivix_primary_button">Back</button>
+		<div class="space_filler_container autofill"></div>
+		<div class="center">
+			<div id="manage_spaces_list">
+				<div class="item">
+					<span class="name-column">My Testing Space 1</span>
+					<span class="number-column">0 Items</span>
+					<span class="number-column">0 Categories</span>
+					<div class="actions">
+						<button class="nivix_primary_button">Rename</button>
+						<button class="nivix_primary_button">Export</button>
+						<button class="nivix_primary_button dangerous">Delete</button>
+					</div>
+				</div>
+				<div class="item selected">
+					<span class="name-column">My Testing Space 1</span>
+					<span class="number-column">0 Items</span>
+					<span class="number-column">0 Categories</span>
+					<div class="actions">
+						<button class="nivix_primary_button">Rename</button>
+						<button class="nivix_primary_button">Export</button>
+						<button class="nivix_primary_button dangerous">Delete</button>
+					</div>
+				</div>
+			</div>
+			<div class="button_container">
+				<button id="manage_spaces_back" class="nivix_primary_button">Back</button>
+				<button id="manage_spaces_refresh" class="nivix_primary_button">Refresh</button>
+				<button id="manage_spaces_create" class="nivix_primary_button">Create New</button>
+			</div>
+		</div>
 	</div>
 	
 	<div id="credits" class="tab">
+		<div class="space_filler_container autofill"></div>
 		<div class="center">
 			<button id="credits_back" class="nivix_primary_button">Back</button>
 		</div>
@@ -107,6 +121,14 @@
 				<p>Learn what a space is: <button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
 				<input id="create_space_name" class="nivix_input" type="text" placeholder="Space Name">
 				<button id="create_space_continue" class="nivix_primary_button">Create</button>
+
+				<hr>
+
+				<button id="create_space_import" class="nivix_primary_button">Import from file</button>
+				<button id="create_space_convert" class="nivix_primary_button">Import from old inventory</button>
+
+				<hr>
+
 				<button id="create_space_cancel" class="nivix_secondary_button">Cancel</button>
 			</div>
 			<p id="create_space_output"></p>
@@ -134,16 +156,16 @@
 				
 				<input id="connect_database_url" class="nivix_input" type="url" placeholder="Custom URL (Optional)">
 				<button id="connect_database_url_submit" class="nivix_primary_button">Connect with Custom URL</button>
-
+				
 				<hr>
 				
 				<div class="horizontal_container">
 					<button id="connect_database_back" class="nivix_primary_button">Back</button>
 					<button class="nivix_primary_button tooltip-support-button tip-bottom">Disclaimer<span class="tooltip">This feature currently only officially supports SQL based providers like MySQL and MariaDB.</span></button>
 				</div>
-
+				
 				<hr>
-
+				
 				<span id="connect_database_status" class="nivix_input">Not Connected</span>
 				<button id="connect_database_disconnect" class="nivix_primary_button" disabled>Disconnect</button>
 			</div>
