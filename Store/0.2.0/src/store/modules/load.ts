@@ -3,12 +3,19 @@ import { loadCSS, unloadCSS } from './file_loader.ts';
 import * as settings from './settings.ts';
 import * as tabs from './tabs.ts';
 import * as index from './index.ts';
-import * as select_space from './select_space.ts';
 import * as space_fillers from './space_fillers.ts';
 import * as notifications from './notifications.ts';
 
 import { electroview } from './index.ts';
 import { populateSVGs } from "./file_loader.ts";
+
+// Import all modules that listen for tabchange events, so electrobun can package them, and all top-level code is ran.
+
+import './connect_database.ts';
+import './create_space.ts';
+import './credits.ts';
+import './manage_spaces.ts';
+import './select_space.ts';
 
 function getEBD(id: string) {return document.getElementById(id);}
 function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
@@ -105,8 +112,6 @@ async function initialize() {
         const message = err as string;
         notifications?.show_notification(`Non-Critical Error: Failed to load space filler shapes: ${message}`, 'warning');
     }
-
-    // Bun completes local database initialization before it opens this view.
     
     await wait(menuDelay);
     await finish_loading();
@@ -119,7 +124,7 @@ async function finish_loading() {
     await tabs.remove('load_menu');
     unloadCSS(load_stylesheet);
     
-    await select_space.init();
+    tabs.goto('select_space', { display: 'flex' });
 }
 
 export function checkLoadState() {

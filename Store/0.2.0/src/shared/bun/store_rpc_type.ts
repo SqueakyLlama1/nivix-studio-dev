@@ -99,7 +99,15 @@ export type StoreRPCType = {
                     databasePath?: string;
                 };
                 response: void;
-            }
+            };
+            getDatabase: {
+                params: void;
+                response: string;
+            };
+            pingServer: {
+                params: void;
+                response: boolean;
+            };
         };
         messages: {
             closeStore: void;

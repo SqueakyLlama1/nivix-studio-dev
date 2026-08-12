@@ -1,3 +1,4 @@
+import type { TabChangeEventDetail } from "../../shared/bun/store_types.ts";
 import { loadCSS } from "./file_loader.ts";
 import * as tabs from './tabs.ts';
 
@@ -8,10 +9,7 @@ let isInitialized: boolean = false;
 const backBtn = getEBD('credits_back') as HTMLButtonElement;
 
 export function init() {
-    if (isInitialized) {
-        tabs.goto('credits', { display: 'flex', logPrevious: true });
-        return;
-    }
+    if (isInitialized) return;
 
     loadCSS('sheets/credits.css');
 
@@ -20,5 +18,10 @@ export function init() {
     });
 
     isInitialized = true;
-    void tabs.goto('credits', { display: 'flex', logPrevious: true });
 }
+
+window.addEventListener('tabchange', (event) => {
+    const eventDetails = event as CustomEvent<TabChangeEventDetail>;
+    const { tabId } = eventDetails.detail;
+    if (tabId === 'credits') init();
+});

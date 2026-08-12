@@ -121,14 +121,12 @@
 				<p>Learn what a space is: <button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
 				<input id="create_space_name" class="nivix_input" type="text" placeholder="Space Name">
 				<button id="create_space_continue" class="nivix_primary_button">Create</button>
-
+				
 				<hr>
-
 				<button id="create_space_import" class="nivix_primary_button">Import from file</button>
 				<button id="create_space_convert" class="nivix_primary_button">Import from old inventory</button>
-
+				
 				<hr>
-
 				<button id="create_space_cancel" class="nivix_secondary_button">Cancel</button>
 			</div>
 			<p id="create_space_output"></p>
@@ -140,6 +138,17 @@
 		<div class="center">
 			<h1 class="nivix_accent">Connect to a Remote Database</h1>
 			<div class="container">
+				<p class="nivix_label top">Connection Profiles</p>
+				<hr>
+				<div class="horizontal_container connection_profiles">
+					<select id="connect_database_profiles" class="nivix_select"></select>
+					<button id="connect_database_profile_load" class="nivix_primary_button" type="button">Load</button>
+					<button id="connect_database_profile_delete" class="nivix_secondary_button" type="button" disabled>Delete</button>
+				</div>
+				<p class="nivix_disclaimer">Passwords aren't saved.</p>
+				
+				<p class="nivix_label">Quick Connect</p>
+				<hr>
 				<form id="connect_database_form">
 					<div class="horizontal_container">
 						<input id="connect_database_prefix" class="nivix_input" type="text" placeholder="Prefix" value="mysql://" required>
@@ -150,22 +159,30 @@
 					<input id="connect_database_username" class="nivix_input" type="text" placeholder="Username" required>
 					<input id="connect_database_password" class="nivix_input" type="password" placeholder="Password" required>
 					<button id="connect_database_connect" class="nivix_primary_button" type="submit">Connect</button>
+					
+					<hr>
+					<input id="connect_database_profile_name" class="nivix_input" type="text" maxlength="64" placeholder="Profile Name">
+					<button id="connect_database_profile_save" class="nivix_primary_button" type="button">Save as Profile</button>
+					<div class="nivix_checkbox_wrapper">
+						<label for="connect_database_save_last_profile">Save Last Connection</label>
+						<input id="connect_database_save_last_profile" class="nivix_input" type="checkbox">
+					</div>
 				</form>
 				
+				<p class="nivix_label">Custom URL Connection</p>
 				<hr>
-				
 				<input id="connect_database_url" class="nivix_input" type="url" placeholder="Custom URL (Optional)">
 				<button id="connect_database_url_submit" class="nivix_primary_button">Connect with Custom URL</button>
+				<p class="nivix_disclaimer">Use this if the Quick Connect scheme doesn't work.</p>
 				
 				<hr>
-				
 				<div class="horizontal_container">
 					<button id="connect_database_back" class="nivix_primary_button">Back</button>
 					<button class="nivix_primary_button tooltip-support-button tip-bottom">Disclaimer<span class="tooltip">This feature currently only officially supports SQL based providers like MySQL and MariaDB.</span></button>
 				</div>
 				
+				<p class="nivix_label">Connection Status</p>
 				<hr>
-				
 				<span id="connect_database_status" class="nivix_input">Not Connected</span>
 				<button id="connect_database_disconnect" class="nivix_primary_button" disabled>Disconnect</button>
 			</div>

@@ -3,14 +3,18 @@ import { electroview } from './index.ts';
 export let preferences: Record<string, any> = {
     disableAnimations: false,
     menuDelay: 750,
-    disableShapeAnimations: false
+    disableShapeAnimations: false,
+    databaseConnectionProfiles: [],
+    lastDatabaseConnection: null,
+    saveLastConnection: false
 };
 let preferenceWrite: Promise<void> = Promise.resolve();
 
 export async function init() {
     const savedPreferences = await electroview.rpc?.request.getPreferences();
     if (savedPreferences && Object.keys(savedPreferences).length > 0) {
-        preferences = savedPreferences;
+        // Preserve new defaults when a user has an older preferences file.
+        preferences = { ...preferences, ...savedPreferences };
         return;
     }
 }

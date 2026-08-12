@@ -28,6 +28,8 @@ let initialization: Promise<void> | null = null;
 let databaseQueue: Promise<void> = Promise.resolve();
 let preferencesWrite: Promise<void> = Promise.resolve();
 
+let activeDB: string;
+
 function enqueueDatabaseTask<T>(task: () => Promise<T> | T): Promise<T> {
 	const result = databaseQueue.then(task, task);
 	databaseQueue = result.then(() => undefined, () => undefined);
@@ -57,23 +59,40 @@ async function closeDatabase(): Promise<void> {
 async function configureDatabase(database: string, databasePath?: string): Promise<void> {
 	if (database === 'sql') {
 		if (!databasePath) throw new Error('A remote database URL is required.');
-		const remoteDb = mysql.createPool(databasePath);
+		
+		const remoteDb = mysql.createPool({
+			uri: databasePath,
+			connectTimeout: 3000,
+			enableKeepAlive: true,
+			keepAliveInitialDelay: 5000,
+			waitForConnections: true,
+			connectionLimit: 10,
+		});
+		
 		try {
+			await remoteDb.query({
+				sql: 'SELECT 1',
+				timeout: 3000,
+			});
+			
 			const [{ default: createApi }, initModule] = await Promise.all([
 				import('./remote_sql_driver.ts'),
 				import('./init_remote_sql_database.ts')
 			]);
+			
 			await initModule.init_database(remoteDb);
 			await closeDatabase();
+			
 			db = remoteDb;
 			functions = createApi(remoteDb, ctx);
+			activeDB = 'sql';
 		} catch (error) {
 			await remoteDb.end();
 			throw error;
 		}
 		return;
 	}
-
+	
 	if (database === 'sqlite') {
 		const localDb = new Database(path.join(store_path, 'inventory.db'));
 		try {
@@ -83,20 +102,22 @@ async function configureDatabase(database: string, databasePath?: string): Promi
 			]);
 			initModule.init_database(localDb);
 			await closeDatabase();
+			
 			db = localDb;
 			functions = createApi(localDb, ctx);
+			activeDB = 'sqlite';
 		} catch (error) {
 			localDb.close();
 			throw error;
 		}
 		return;
 	}
-
+	
 	throw new Error('Database not recognized.');
 }
 
 const updaterRPC = BrowserView.defineRPC<UpdaterRPCType>({
-	maxRequestTime: 5000,
+	maxRequestTime: 20000,
 	handlers: {
 		requests: {
 			async ready() {
@@ -127,7 +148,7 @@ const updaterRPC = BrowserView.defineRPC<UpdaterRPCType>({
 });
 
 const storeRPC = BrowserView.defineRPC<StoreRPCType>({
-	maxRequestTime: 5000,
+	maxRequestTime: 20000,
 	handlers: {
 		requests: {
 			async getPreferences() {
@@ -232,6 +253,29 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 			},
 			async setDatabase({ database, databasePath }: { database: string, databasePath?: string }) {
 				await enqueueDatabaseTask(() => configureDatabase(database, databasePath));
+			},
+			getDatabase() {
+				return activeDB;
+			},
+			async pingServer(): Promise<boolean> {
+				if (activeDB === 'sql' && db) {
+					try {
+						await (db as mysql.Pool).query({
+							sql: 'SELECT 1',
+							timeout: 2000,
+						});
+						return true;
+					} catch (error) {
+						console.error('Database heartbeat ping failed:', error);
+						return false;
+					}
+				}
+				
+				if (activeDB === 'sqlite' && db) {
+					return true;
+				}
+				
+				return false;
 			}
 		},
 		messages: {
@@ -286,9 +330,9 @@ function openUpdater() {
 		},
 		rpc: updaterRPC
 	});
-
+	
 	updaterWindow = windowInstance;
-
+	
 	windowInstance.webview.on('dom-ready', () => {
 		void init().catch(error => console.error('Failed to initialize application:', error));
 	});

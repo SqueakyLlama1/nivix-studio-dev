@@ -2,14 +2,9 @@ import { loadCSS } from './file_loader.ts';
 import { preferences, setPreference } from './settings.ts';
 
 import * as tabs from './tabs.ts';
-import * as index from './index.ts';
-import * as create_space from './create_space.ts';
-import * as connect_database from './connect_database.ts';
-import * as manage_spaces from './manage_spaces.ts';
-import * as credits from './credits.ts';
+import { store, electroview } from './index.ts';
 
-import { electroview } from './index.ts';
-import { type Space } from '../../shared/bun/store_types.ts';
+import { type Space, type TabChangeEventDetail } from '../../shared/bun/store_types.ts';
 
 function getEBD(id: string) {return document.getElementById(id);}
 
@@ -33,17 +28,22 @@ const choiceSelection = getEBD('select_space_option') as HTMLSelectElement;
 const continueBtn = getEBD('select_space_continue') as HTMLButtonElement;
 
 export async function init() {
-    if (isInitialized) {
-        await populate_spaces_prompt();
-        tabs.goto('select_space', {display: 'flex'});
-        return;
-    }
+    if (isInitialized) return;
     
     loadCSS('sheets/select_space.css');
 
-    manageBtn.addEventListener('click', manage_spaces.init);
-    connectRemoteServerBtn.addEventListener('click', connect_database.init);
-    creditsBtn.addEventListener('click', credits.init);
+    manageBtn.addEventListener('click', function() {
+        tabs.goto('manage_spaces');
+    });
+
+    connectRemoteServerBtn.addEventListener('click', function() {
+        tabs.goto('connect_database');
+    });
+
+    creditsBtn.addEventListener('click', function() {
+        tabs.goto('credits');
+    });
+
     refreshBtn.addEventListener('click', populate_spaces_prompt);
     
     sourceCodeBtn.addEventListener('click', function() {
@@ -62,7 +62,7 @@ export async function init() {
         electroview.rpc?.send.closeStore();
     });
     
-    versionLabel.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
+    versionLabel.innerText = `v${store.sessionVersion}` || "Failed to get session version";
     
     shapeAnimToggle.addEventListener('change', toggleShapeAnimations);
     shapeAnimToggle.checked = preferences['disableShapeAnimations'];
@@ -70,12 +70,6 @@ export async function init() {
     toggleShapeAnimations();
     
     isInitialized = true;
-    try {
-        await populate_spaces_prompt();
-    } catch (error) {
-        console.error('Failed to populate spaces:', error);
-    }
-    await tabs.goto('select_space', { display: 'flex' });
 }
 
 function toggleShapeAnimations() {
@@ -115,6 +109,15 @@ export async function populate_spaces_prompt() {
 continueBtn.addEventListener('click', function() {
     const selection = choiceSelection.value;
     if (selection === 'create-new-space') {
-        void create_space.init();
+        tabs.goto('create_space');
+    }
+});
+
+window.addEventListener('tabchange', (event) => {
+    const eventDetails = event as CustomEvent<TabChangeEventDetail>;
+    const { tabId } = eventDetails.detail;
+    if (tabId === 'select_space') {
+        init();
+        populate_spaces_prompt();
     }
 });

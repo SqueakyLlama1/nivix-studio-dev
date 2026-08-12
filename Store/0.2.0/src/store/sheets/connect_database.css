@@ -15,6 +15,11 @@
             }
         }
 
+        .nivix_checkbox_wrapper {
+            flex: 1;
+            justify-content: center;
+        }
+
         .horizontal_container {
             display: flex;
             flex-direction: row;
@@ -22,8 +27,18 @@
 
             width: 100%;
 
-            button, input[type="url"] {
+            button, input[type="url"], input[type="text"] {
                 flex: 1;
+            }
+
+            &.connection_profiles {
+                button {
+                    flex: 0;
+                }
+
+                select {
+                    flex: 1;
+                }
             }
         }
     }

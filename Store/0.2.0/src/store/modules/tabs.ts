@@ -1,7 +1,7 @@
 import { preferences } from './settings.ts';
 import { type TabOptions } from '../../shared/bun/store_types.ts';
 
-let previousTab: { id: string; display?: string } | undefined;
+let navigationHistory: { id: string; display?: string }[] = [];
 let navigationQueue: Promise<void> = Promise.resolve();
 
 function getEBD(id: string) { return document.getElementById(id); }
@@ -36,13 +36,14 @@ async function gotoNow(id: string, options: TabOptions = {}) {
     let display = options.display;
 
     if (id === 'previous') {
-        if (!previousTab) {
-            // Add a soft error here
+        const lastTab = navigationHistory.pop();
+        if (!lastTab) {
+            console.warn('No previous tab found in history navigation stack.');
             return;
         }
-        id = previousTab.id;
+        id = lastTab.id;
         if (display === undefined) {
-            display = previousTab.display;
+            display = lastTab.display;
         }
         logPrevious = false;
     }
@@ -64,9 +65,8 @@ async function gotoNow(id: string, options: TabOptions = {}) {
         lastHiddenTab = { id: existingTab.id, display: activeDisplay };
     });
 
-    if (!logPrevious) console.log(`Not logging '${lastHiddenTab?.id}' as previous tab.`);
-    if (tabsHidden > 0 && logPrevious) {
-        previousTab = lastHiddenTab;
+    if (logPrevious && tabsHidden > 0 && lastHiddenTab) {
+        navigationHistory.push(lastHiddenTab);
     }
 
     if (!instant) await wait(programaticAnimationDuration);
@@ -90,6 +90,14 @@ export async function show(id: string, options: TabOptions = {}) {
     const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];
     const thisDisplay = options.display ? options.display : "block";
     const thisElement = getEBD(id) as HTMLElement;
+
+    window.dispatchEvent(
+        new CustomEvent('tabchange', {
+            detail: {
+                tabId: id,
+            },
+        })
+    );
 
     if (instant) {
         thisElement.style.display = thisDisplay;
