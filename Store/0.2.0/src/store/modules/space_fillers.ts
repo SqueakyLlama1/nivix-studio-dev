@@ -19,7 +19,7 @@ let lastCombinationIndex: number | null = null; // Tracks previous selection to 
 // List of available floating animation keyframes defined in space_fillers.css
 const floatAnimations = ['float', 'float_slow', 'float_fast', 'float_subtle'];
 
-async function fillSpaceContainer() {
+export async function fillSpaceContainer() {
     const callId = ++currentCallId;
 
     const combinations = [

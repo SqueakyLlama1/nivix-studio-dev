@@ -1,9 +1,10 @@
 import { loadCSS } from './file_loader.ts';
 import { preferences, setPreference } from './settings.ts';
+import { fillSpaceContainer } from './space_fillers.ts';
 
 import * as tabs from './tabs.ts';
-import { store, electroview } from './index.ts';
 
+import { store, electroview } from './index.ts';
 import { type Space, type TabChangeEventDetail } from '../../shared/bun/store_types.ts';
 
 function getEBD(id: string) {return document.getElementById(id)}
@@ -73,13 +74,10 @@ export async function init() {
 }
 
 function toggleShapeAnimations() {
-    const shapes = document.querySelectorAll<HTMLElement>('.space_filler_shape');
-    shapes.forEach(function(shape) {
-        shape.style.animationPlayState = shapeAnimToggle.checked ? 'paused' : 'running';
-    });
     void setPreference('disableShapeAnimations', shapeAnimToggle.checked).catch(error => {
         console.error('Failed to save animation preference:', error);
     });
+    fillSpaceContainer();
 }
 
 export async function populate_spaces_prompt() {
