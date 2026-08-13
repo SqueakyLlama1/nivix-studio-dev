@@ -6,36 +6,9 @@
     display: none;
     
     overflow: auto;
-    
-    .halfpane {
-        position: relative;
-        display: flex;
-        flex-direction: row;
-        
-        width: 100%;
-        height: 100%;
-        
-        .divider {
-            position: relative;
-            
-            width: 4px;
-            height: 100%;
-            
-            background: var(--brand-color);
-        }
-        
-        .left, .right {
-            flex: 0.5;
-            min-width: 0;
-        }
-    }
 
     &.previsible-flex {
         display: flex;
-    }
-
-    &.previsible-block {
-        display: block;
     }
 }
 

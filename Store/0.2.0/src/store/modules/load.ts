@@ -10,15 +10,14 @@ import { electroview } from './index.ts';
 import { populateSVGs } from "./file_loader.ts";
 
 // Import all modules that listen for tabchange events, so electrobun can package them, and all top-level code is ran.
-
 import './connect_database.ts';
 import './create_space.ts';
 import './credits.ts';
 import './manage_spaces.ts';
 import './select_space.ts';
 
-function getEBD(id: string) {return document.getElementById(id);}
-function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
+function getEBD(id: string) {return document.getElementById(id)}
+function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
 const versionLabel = getEBD('load_footer_version');
 

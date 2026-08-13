@@ -6,7 +6,7 @@ import { store, electroview } from './index.ts';
 
 import { type Space, type TabChangeEventDetail } from '../../shared/bun/store_types.ts';
 
-function getEBD(id: string) {return document.getElementById(id);}
+function getEBD(id: string) {return document.getElementById(id)}
 
 const versionLabel = getEBD('select_space_footer_version') as HTMLSpanElement;
 const shapeAnimToggle = getEBD('select_space_shapeAnimToggle') as HTMLInputElement;

@@ -1,4 +1,5 @@
 /* Fonts */
+
 @font-face {
     font-family: "GochiHand";
     src: url("../fonts/GochiHand-Regular.ttf");
@@ -8,6 +9,7 @@
 }
 
 /* Page Setup and Defaults */
+
 :root {
     --brand-primary: #43a4eb;
     --brand-secondary: #258dd8;
@@ -47,6 +49,7 @@ body {
 }
 
 /* Heading Scaling Shorthand */
+
 h1 span { font-size: 1.5em; }
 h2 span { font-size: 1.17em; }
 h3 span { font-size: 1em; }
@@ -55,6 +58,7 @@ h5 span { font-size: 0.67em; }
 h6 span { font-size: 0.45em; }
 
 /* Custom Scrollbars */
+
 ::-webkit-scrollbar { width: 7px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--background-tertiary); }
 ::-webkit-scrollbar-thumb { background: var(--brand-secondary); }
@@ -65,6 +69,7 @@ h6 span { font-size: 0.45em; }
 }
 
 /* Layout Elements */
+
 .center, .vertical_center, .horizontal_center {
     display: flex;
     position: relative;
@@ -99,6 +104,7 @@ h6 span { font-size: 0.45em; }
 }
 
 /* Nivix Visual Identity Elements */
+
 .nivix_accent {
     font-family: "GochiHand", "Lucida Handwriting", serif;
     color: var(--brand-primary);
@@ -218,6 +224,7 @@ h6 span { font-size: 0.45em; }
 }
 
 /* Form Inputs (Text & Numbers) */
+
 .nivix_input {
     &:is(
     input[type="text"],
@@ -253,6 +260,7 @@ h6 span { font-size: 0.45em; }
     }
     
     /* Checkboxes */
+
     &[type="checkbox"] {
         -webkit-appearance: none;
         appearance: none;
@@ -298,6 +306,7 @@ h6 span { font-size: 0.45em; }
 }
 
 /* Checkbox Wrappers */
+
 .nivix_checkbox_wrapper {
     display: flex;
     align-items: center;
@@ -316,6 +325,7 @@ h6 span { font-size: 0.45em; }
 }
 
 /* Select and Options Dropdowns */
+
 .nivix_select {
     appearance: none;
     -webkit-appearance: none;
@@ -382,6 +392,7 @@ h6 span { font-size: 0.45em; }
 }
 
 /* Animations */
+
 @keyframes load_spin { 
     100% {
         transform: rotate(1turn);

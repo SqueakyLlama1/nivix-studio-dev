@@ -5,8 +5,8 @@ import * as select_space from './select_space.ts';
 import { electroview } from './index.ts';
 import type { TabChangeEventDetail } from '../../shared/bun/store_types.ts';
 
-function getEBD(id: string) {return document.getElementById(id);}
-function wait(ms: number) {return new Promise(resolve => setTimeout(resolve, ms));}
+function getEBD(id: string) {return document.getElementById(id)}
+function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
 let isInitialized: boolean = false;
 

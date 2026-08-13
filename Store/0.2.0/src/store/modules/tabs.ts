@@ -4,13 +4,13 @@ import { type TabOptions } from '../../shared/bun/store_types.ts';
 let navigationHistory: { id: string; display?: string }[] = [];
 let navigationQueue: Promise<void> = Promise.resolve();
 
-function getEBD(id: string) { return document.getElementById(id); }
-function wait(ms: number) { return new Promise((resolve) => { setTimeout(resolve, ms); }); }
+function getEBD(id: string) {return document.getElementById(id)}
+function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
-export let programaticAnimationDuration = preferences['disableAnimations'] ? 0 : 325;
+export const programaticAnimationDuration = preferences['disableAnimations'] ? 0 : 325;
 
 const fadeInAnimation = "fadeInPage 0.3s ease-out forwards";
-const fadeOutAnimation = "fadeOutPage 0.3s ease-in-out forwards";
+export const fadeOutAnimation = "fadeOutPage 0.3s ease-in-out forwards";
 
 export async function remove(id: string, options: TabOptions = {}) {
     const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];

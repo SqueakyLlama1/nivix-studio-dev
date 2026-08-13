@@ -1,12 +1,11 @@
 import { loadCSS } from "./file_loader.ts";
 
 import * as tabs from './tabs.ts';
-import * as create_space from './create_space.ts';
 
 import { electroview } from "./index.ts";
 import { type Space, type TabChangeEventDetail } from "../../shared/bun/store_types.ts";
 
-function getEBD(id: string) {return document.getElementById(id);}
+function getEBD(id: string) {return document.getElementById(id)}
 
 let isInitialized: boolean = false;
 

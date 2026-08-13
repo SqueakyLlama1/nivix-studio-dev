@@ -14,8 +14,8 @@ const rpc = Electroview.defineRPC<UpdaterRPCType>({
 });
 let electroview: Electroview<typeof rpc>;
 
-function wait(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
-function getEBD(id: string) { return document.getElementById(id); }
+function getEBD(id: string) {return document.getElementById(id)}
+function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
 async function displayDebug(message: string, type = '') {
     console.log(`Display Debug Function Recieved: ${message}, ${type}`);

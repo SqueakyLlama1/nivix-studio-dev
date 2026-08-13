@@ -2,7 +2,7 @@ import type { TabChangeEventDetail } from "../../shared/bun/store_types.ts";
 import { loadCSS } from "./file_loader.ts";
 import * as tabs from './tabs.ts';
 
-function getEBD(id: string) {return document.getElementById(id);}
+function getEBD(id: string) {return document.getElementById(id)}
 
 let isInitialized: boolean = false;
 
