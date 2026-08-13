@@ -101,9 +101,12 @@ export async function show(id: string, options: TabOptions = {}) {
 
     if (instant) {
         thisElement.style.display = thisDisplay;
+        thisElement.style.animation = "";
     } else {
         thisElement.style.display = thisDisplay;
         thisElement.style.animation = fadeInAnimation;
         await wait(programaticAnimationDuration);
+        
+        thisElement.style.animation = ""; 
     }
 }
