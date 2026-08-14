@@ -54,6 +54,7 @@
 		</div>
 		<div class="main_container">
 			<div class="center">
+				<span id="select_space_status"></span>
 				<div class="container">
 					<svgPlaceholder>assets/svg/favicon.svg</svgPlaceholder>
 					<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
@@ -75,14 +76,11 @@
 	</div>
 	
 	<div id="manage_spaces" class="tab">
-		<div class="center">
-			<div id="manage_spaces_list"></div>
-			<div class="button_container">
-				<button id="manage_spaces_back" class="nivix_primary_button">Back</button>
-				<button id="manage_spaces_refresh" class="nivix_primary_button">Refresh</button>
-				<button id="manage_spaces_create" class="nivix_primary_button">Create New</button>
-			</div>
-			<span class="nivix_disclaimer">Pro Tip: You can hold shift while clicking delete to bypass the popup.</span>
+		<div id="manage_spaces_list"></div>
+		<div class="button_container">
+			<button id="manage_spaces_back" class="nivix_primary_button">Back</button>
+			<button id="manage_spaces_refresh" class="nivix_primary_button">Refresh</button>
+			<button id="manage_spaces_create" class="nivix_primary_button">Create New</button>
 		</div>
 	</div>
 	
@@ -97,8 +95,10 @@
 			<h1 class="nivix_accent">Create a Space</h1>
 			<div class="button_container">
 				<p>Learn what a space is: <button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
-				<input id="create_space_name" class="nivix_input" type="text" placeholder="Space Name">
-				<button id="create_space_continue" class="nivix_primary_button">Create</button>
+				<form id="create_space_form">
+					<input id="create_space_name" class="nivix_input" type="text" placeholder="Space Name" required>
+					<button id="create_space_continue" class="nivix_primary_button" type="submit">Create</button>
+				</form>
 				
 				<hr>
 				<button id="create_space_import" class="nivix_primary_button">Import from file</button>

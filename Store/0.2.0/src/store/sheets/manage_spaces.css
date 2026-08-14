@@ -1,21 +1,22 @@
 #manage_spaces {
+    flex-direction: column;
+    gap: 5px;
+
     width: 100%;
     height: 100%;
-    
-    .center {
-        box-sizing: border-box;
-        gap: 5px;
-        
-        padding: 20px 20px 5px 20px;
-    }
     
     .button_container {
         position: relative;
         
         display: flex;
         flex-direction: row;
-        align-items: center;
+        justify-content: center;
         gap: 5px;
+
+        box-sizing: border-box;
+        width: 100%;
+
+        margin-bottom: 5px;
     }
     
     #manage_spaces_list {
@@ -25,11 +26,8 @@
         flex: 1;
         
         box-sizing: border-box;
-        
         width: 100%;
-        overflow-y: auto;
-        
-        margin: 5px;
+        overflow-y: scroll;
         
         .item {
             display: flex;
@@ -37,11 +35,9 @@
             align-items: center;
             
             box-sizing: border-box;
-            
             width: 100%;
             
             background: var(--background-secondary);
-            border-radius: var(--radius);
             color: var(--text-primary);
             
             padding: 0.3rem;

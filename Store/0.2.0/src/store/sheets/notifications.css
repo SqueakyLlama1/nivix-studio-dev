@@ -83,16 +83,22 @@
         padding: 5px;
         
         .message_container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
             box-sizing: border-box;
-            
-            background: var(--background-secondary);
-            border-radius: var(--radius);
             
             padding: 0.5rem 1.1rem;
             overflow: auto;
             
             span {
                 color: var(--text-primary);
+            }
+
+            input {
+                box-sizing: border-box;
+                width: 100%;
             }
         }
         

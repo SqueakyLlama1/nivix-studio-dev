@@ -10,8 +10,9 @@ function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve,
 
 let isInitialized: boolean = false;
 
-const nameInput = getEBD('create_space_name') as HTMLInputElement;
+const form = getEBD('create_space_form') as HTMLFormElement;
 const continueBtn = getEBD('create_space_continue') as HTMLButtonElement;
+const nameInput = getEBD('create_space_name') as HTMLInputElement;
 const cancelBtn = getEBD('create_space_cancel') as HTMLButtonElement;
 const errorOutput = getEBD('create_space_output') as HTMLSpanElement;
 
@@ -19,7 +20,8 @@ export async function init() {
     if (isInitialized) return;
     loadCSS('sheets/create_space.css');
     
-    continueBtn.addEventListener('click', async function() {
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
         if (continueBtn.disabled) return;
         if (!nameInput.value || !nameInput.value.trim() || nameInput.value.trim() === '') {
             errorOutput.innerText = `Space Name Cannot Be Empty`;
@@ -55,5 +57,8 @@ export async function init() {
 window.addEventListener('tabchange', (event) => {
     const eventDetails = event as CustomEvent<TabChangeEventDetail>;
     const { tabId } = eventDetails.detail;
-    if (tabId === 'create_space') init();
+    if (tabId === 'create_space') {
+        init();
+        nameInput.focus();
+    };
 });

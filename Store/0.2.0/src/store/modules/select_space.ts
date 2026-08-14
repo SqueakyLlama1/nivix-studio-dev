@@ -34,7 +34,7 @@ export async function init() {
     loadCSS('sheets/select_space.css');
 
     manageBtn.addEventListener('click', function() {
-        tabs.goto('manage_spaces');
+        tabs.goto('manage_spaces', { display: 'flex' });
     });
 
     connectRemoteServerBtn.addEventListener('click', function() {

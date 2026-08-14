@@ -35,8 +35,8 @@ export function init(): void {
         tabs.goto('previous');
     });
 
-    refreshBtn.addEventListener('click', () => {
-        populate_spaces_list(true);
+    refreshBtn.addEventListener('click', (e: MouseEvent) => {
+        populate_spaces_list(true, !e.shiftKey);
     });
 
     createBtn.addEventListener('click', () => {
@@ -46,11 +46,11 @@ export function init(): void {
     isInitialized = true;
 }
 
-async function populate_spaces_list(fadeOut?: boolean): Promise<void> {
+async function populate_spaces_list(fadeOut?: boolean, animate: boolean = !preferences['disableAnimations']): Promise<void> {
     const spacesList = getEBD<HTMLDivElement>('manage_spaces_list');
 
     // Smoothly fade out existing items
-    if (fadeOut && !preferences['disableAnimations']) {
+    if (fadeOut && animate) {
         const existingItems = spacesList.querySelectorAll<HTMLElement>('.item');
         if (existingItems.length > 0) {
             existingItems.forEach((item) => {
@@ -68,7 +68,7 @@ async function populate_spaces_list(fadeOut?: boolean): Promise<void> {
     // Fetch spaces list via RPC
     const spaces = await electroview.rpc!.request.listSpaces();
     if (!spaces.length) {
-        spacesList.innerText = `You have no spaces. Click 'Create New' at the bottom of this menu to get started!`;
+        spacesList.innerHTML = `<div class="center">You have no spaces. Click 'Create New' at the bottom of this menu to get started!</div>`;
     }
 
     // Sequentially build and append items so they pop up one by one
@@ -87,7 +87,7 @@ async function populate_spaces_list(fadeOut?: boolean): Promise<void> {
         renameBtn.className = 'nivix_primary_button';
         renameBtn.onclick = async () => {
             const new_name = await show_popup(
-                `Renaming '${space.name}'`, 
+                `Renaming '${space.name}'`,
                 "text", 
                 undefined, 
                 { placeholder: "New Name" }
@@ -113,9 +113,9 @@ async function populate_spaces_list(fadeOut?: boolean): Promise<void> {
 
             if (verified) {
                 try {
-                    show_notification(`Attempting to delete space '${space.name}'`);
                     await electroview.rpc!.request.deleteSpace(space.id);
-                    populate_spaces_list(true);
+                    show_notification(`Deleted Space '${space.name}'`);
+                    populate_spaces_list(true, !e.shiftKey);
                 } catch (err) {
                     const message = err instanceof Error ? err.message : String(err);
                     show_notification(`Failed to delete space '${space.name}': ${message}`, "error");
@@ -131,15 +131,13 @@ async function populate_spaces_list(fadeOut?: boolean): Promise<void> {
         containerEl.appendChild(actionsContainerEl);
 
         // Apply fade/pop animation if enabled in preferences
-        if (!preferences['disableAnimations']) {
-            containerEl.style.animation = fadeInAnimation;
-        }
+        if (animate) containerEl.style.animation = fadeInAnimation;
 
         // Append to DOM immediately
         spacesList.appendChild(containerEl);
 
         // Stagger delay before appending the next item
-        await wait(itemDelay);
+        if (animate) await wait(itemDelay);
     }
 }
 
