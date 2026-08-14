@@ -1,9 +1,9 @@
 import { Electroview } from "electrobun/view";
-import { type StoreRPCType } from '../../shared/bun/store_rpc_type.ts';
+import { type StoreRPCType } from '../../shared/bun/store_rpc_type';
 
-import * as load from './load.ts';
+import * as load from './load';
 // Register tab listeners for the database screen (and its select-space dependency).
-import './connect_database.ts';
+import './connect_database';
 
 const rpc = Electroview.defineRPC<StoreRPCType>({
     handlers: {

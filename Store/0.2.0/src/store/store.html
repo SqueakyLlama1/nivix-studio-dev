@@ -43,6 +43,7 @@
 			<h2 class="nivix_bookmark">Advanced</h2>
 			
 			<button id="select_space_issues" class="nivix_secondary_button"><svgPlaceholder>assets/svg/issue.svg</svgPlaceholder> Report a Problem</button>
+			<button id="select_space_terminal" class="nivix_secondary_button"><svgPlaceholder>assets/svg/terminal.svg</svgPlaceholder> Terminal</button>
 			<button id="select_space_connect_database" class="nivix_secondary_button"><svgPlaceholder>assets/svg/database.svg</svgPlaceholder> Connect to Remote Database</button>
 			<button id="select_space_start_interface" class="nivix_secondary_button"><svgPlaceholder>assets/svg/interface.svg</svgPlaceholder> Start Remote Interface</button>
 			
@@ -75,33 +76,13 @@
 	
 	<div id="manage_spaces" class="tab">
 		<div class="center">
-			<div id="manage_spaces_list">
-				<div class="item">
-					<span class="name-column">My Testing Space 1</span>
-					<span class="number-column">0 Items</span>
-					<span class="number-column">0 Categories</span>
-					<div class="actions">
-						<button class="nivix_primary_button">Rename</button>
-						<button class="nivix_primary_button">Export</button>
-						<button class="nivix_primary_button dangerous">Delete</button>
-					</div>
-				</div>
-				<div class="item selected">
-					<span class="name-column">My Testing Space 1</span>
-					<span class="number-column">0 Items</span>
-					<span class="number-column">0 Categories</span>
-					<div class="actions">
-						<button class="nivix_primary_button">Rename</button>
-						<button class="nivix_primary_button">Export</button>
-						<button class="nivix_primary_button dangerous">Delete</button>
-					</div>
-				</div>
-			</div>
+			<div id="manage_spaces_list"></div>
 			<div class="button_container">
 				<button id="manage_spaces_back" class="nivix_primary_button">Back</button>
 				<button id="manage_spaces_refresh" class="nivix_primary_button">Refresh</button>
 				<button id="manage_spaces_create" class="nivix_primary_button">Create New</button>
 			</div>
+			<span class="nivix_disclaimer">Pro Tip: You can hold shift while clicking delete to bypass the popup.</span>
 		</div>
 	</div>
 	

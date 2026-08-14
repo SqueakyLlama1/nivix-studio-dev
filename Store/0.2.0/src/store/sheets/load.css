@@ -7,7 +7,7 @@
     margin: 0;
     padding: 0;
     
-    animation: fadeInPage 0.8s ease-out forwards;
+    animation: nivixFadeIn 0.8s ease-out forwards;
     
     svg {
         width: 10%;

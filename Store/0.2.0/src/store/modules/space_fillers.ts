@@ -1,9 +1,9 @@
-import { loadCSS } from './file_loader.ts';
-import { programaticAnimationDuration, fadeOutAnimation } from './tabs.ts';
-import { preferences } from './settings.ts';
+import { loadCSS } from './file_loader';
+import { programaticAnimationDuration } from './tabs';
+import { preferences } from './settings';
 
-function getEBD(id: string) { return document.getElementById(id); }
-function wait(ms: number) { return new Promise((resolve) => { setTimeout(resolve, ms); }); }
+function getEBD(id: string) {return document.getElementById(id)}
+function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
 export async function init() {
     await loadCSS('sheets/space_fillers.css');
@@ -44,7 +44,7 @@ export async function fillSpaceContainer() {
     if (!disableAnimations && container.children.length > 0) {
         container.style.animation = 'none';
         void container.offsetWidth; // Force CSS reflow to restart animation keyframe reliably
-        container.style.animation = fadeOutAnimation;
+        container.style.animation = "nivixFadeOut 0.3s ease-out forwards";
     }
 
     // Pick a new combination index that is strictly different from the last one

@@ -1,20 +1,20 @@
-import { loadCSS, unloadCSS } from './file_loader.ts';
+import { loadCSS, unloadCSS } from './file_loader';
 
-import * as settings from './settings.ts';
-import * as tabs from './tabs.ts';
-import * as index from './index.ts';
-import * as space_fillers from './space_fillers.ts';
-import * as notifications from './notifications.ts';
+import * as settings from './settings';
+import * as tabs from './tabs';
+import * as index from './index';
+import * as space_fillers from './space_fillers';
+import * as notifications from './notifications';
 
-import { electroview } from './index.ts';
-import { populateSVGs } from "./file_loader.ts";
+import { electroview } from './index';
+import { populateSVGs } from "./file_loader";
 
 // Import all modules that listen for tabchange events, so electrobun can package them, and all top-level code is ran.
-import './connect_database.ts';
-import './create_space.ts';
-import './credits.ts';
-import './manage_spaces.ts';
-import './select_space.ts';
+import './connect_database';
+import './create_space';
+import './credits';
+import './manage_spaces';
+import './select_space';
 
 function getEBD(id: string) {return document.getElementById(id)}
 function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}

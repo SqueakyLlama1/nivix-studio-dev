@@ -1,4 +1,4 @@
-import { electroview } from './index.ts';
+import { electroview } from './index';
 
 export let preferences: Record<string, any> = {
     disableAnimations: false,

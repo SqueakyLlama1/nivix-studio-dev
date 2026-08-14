@@ -13,6 +13,7 @@
 	},
 	"devDependencies": {
 		"@types/bun": "latest",
-		"rcedit": "^5.0.2"
+		"rcedit": "^5.0.2",
+		"@types/node": "^26.2.0"
 	}
 }

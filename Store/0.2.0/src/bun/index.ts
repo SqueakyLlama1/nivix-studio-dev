@@ -7,9 +7,9 @@ import Database from 'bun:sqlite';
 import mysql from 'mysql2/promise';
 
 import * as updater from "./updater.js";
-import * as utils from "./updater_utils.ts";
-import { type UpdaterRPCType } from '../shared/bun/updater_rpc_type.ts';
-import { type StoreRPCType } from '../shared/bun/store_rpc_type.ts';
+import * as utils from "./updater_utils";
+import { type UpdaterRPCType } from '../shared/bun/updater_rpc_type';
+import { type StoreRPCType } from '../shared/bun/store_rpc_type';
 
 const studio_path = path.join(os.homedir(), 'nvxstdo');
 const store_path = path.join(studio_path, 'store');
@@ -76,8 +76,8 @@ async function configureDatabase(database: string, databasePath?: string): Promi
 			});
 			
 			const [{ default: createApi }, initModule] = await Promise.all([
-				import('./remote_sql_driver.ts'),
-				import('./init_remote_sql_database.ts')
+				import('./remote_sql_driver'),
+				import('./init_remote_sql_database')
 			]);
 			
 			await initModule.init_database(remoteDb);
@@ -97,8 +97,8 @@ async function configureDatabase(database: string, databasePath?: string): Promi
 		const localDb = new Database(path.join(store_path, 'inventory.db'));
 		try {
 			const [{ default: createApi }, initModule] = await Promise.all([
-				import('./local_sqlite_driver.ts'),
-				import('./init_local_sqlite_database.ts')
+				import('./local_sqlite_driver'),
+				import('./init_local_sqlite_database')
 			]);
 			initModule.init_database(localDb);
 			await closeDatabase();
@@ -169,30 +169,36 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 			async createSpace(name: string) {
 				return withDatabase(api => api['createSpace'](name));
 			},
+			async renameSpace({ id, name }: { id: number; name: string }) {
+				return withDatabase(api => api['renameSpace'](id, name));
+			},
 			async listSpaces() {
 				return withDatabase(api => api['listSpaces']());
 			},
-			async deleteSpace(id: string) {
+			async deleteSpace(id: number) {
 				return withDatabase(api => api['deleteSpace'](id));
 			},
 			async createCategory({
 				name,
 				space,
-				category = null,
+				id = null,
 				fields = []
 			}: {
 				name: string;
-				space: string;
-				category?: any;
+				space: number;
+				id?: any;
 				fields?: any[]
 			}) {
-				return withDatabase(api => api['createCategory'](name, space, category, fields));
+				return withDatabase(api => api['createCategory'](name, space, id, fields));
 			},
-			async listCategories(space: string) {
+			async renameCategory({ id, name }: { id: number; name: string }) {
+				return withDatabase(api => api['renameCategory'](id, name));
+			},
+			async listCategories(space: number) {
 				return withDatabase(api => api['listCategories'](space));
 			},
-			async deleteCategory(category: string) {
-				return withDatabase(api => api['deleteCategory'](category));
+			async deleteCategory(id: number) {
+				return withDatabase(api => api['deleteCategory'](id));
 			},
 			async createItem({
 				name,
@@ -202,21 +208,21 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 			}: {
 				name: string;
 				quantity?: number;
-				category: string;
+				category: number;
 				attributes?: object;
 			}) {
 				return withDatabase(api => api['createItem'](name, quantity, category, attributes));
 			},
-			async deleteItem(id: string) {
+			async deleteItem(id: number) {
 				return withDatabase(api => api['deleteItem'](id));
 			},
-			async updateItem({ id, updates = {} }: { id: string; updates?: object }) {
+			async updateItem({ id, updates = {} }: { id: number; updates?: object }) {
 				return withDatabase(api => api['updateItem'](id, updates));
 			},
-			async listItemsByCategory(category: string) {
-				return withDatabase(api => api['listItemsByCategory'](category));
+			async listItemsByCategory(id: number) {
+				return withDatabase(api => api['listItemsByCategory'](id));
 			},
-			async getItemById(id: string) {
+			async getItemById(id: number) {
 				return withDatabase(api => api['getItemById'](id));
 			},
 			async queryItems({
@@ -224,7 +230,7 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				rules = [],
 				logicalOp = 'AND'
 			}: {
-				category?: string | null;
+				category?: number | null;
 				rules?: any[];
 				logicalOp?: string;
 			} | void = {}) {
@@ -242,7 +248,7 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 				space
 			}: {
 				version: string;
-				space: string;
+				space: number;
 			}) {
 				return withDatabase(api => api['convert'](version, space));
 			},

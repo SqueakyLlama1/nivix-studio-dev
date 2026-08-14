@@ -19,58 +19,72 @@ export type StoreRPCType = {
                 params: void;
                 response: any;
             };
+            renameSpace: {
+                params: {
+                    id: number;
+                    name: string;
+                };
+                response: any;
+            };
             deleteSpace: {
-                params: string;
+                params: number;
                 response: any;
             };
             createCategory: {
                 params: {
                     name: string;
-                    space: string;
-                    category?: any;
+                    space: number;
+                    category?: number | null;
                     fields?: any[];
                 };
                 response: any;
             };
             listCategories: {
-                params: string;
+                params: number;
+                response: any;
+            };
+            renameCategory: {
+                params: {
+                    id: number;
+                    name: string;
+                };
                 response: any;
             };
             deleteCategory: {
-                params: string;
+                params: number;
                 response: any;
             };
             createItem: {
                 params: {
                     name: string;
-                    category: string;
+                    category: number;
                     quantity?: number;
                     attributes?: object;
                 };
                 response: any;
             };
             deleteItem: {
-                params: string;
+                params: number;
                 response: any;
             };
             updateItem: {
                 params: {
-                    id: string;
+                    id: number;
                     updates?: object;
                 };
                 response: any;
             };
             listItemsByCategory: {
-                params: string;
+                params: number;
                 response: any;
             };
             getItemById: {
-                params: string;
+                params: number;
                 response: any;
             };
             queryItems: {
                 params: {
-                    category?: string | null;
+                    category?: number | null;
                     rules?: any[];
                     logicalOp?: string;
                 } | void;
@@ -83,7 +97,7 @@ export type StoreRPCType = {
             convert: {
                 params: {
                     version: string;
-                    space: string;
+                    space: number;
                 };
                 response: any;
             };

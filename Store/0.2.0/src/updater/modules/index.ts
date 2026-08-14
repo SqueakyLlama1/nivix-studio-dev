@@ -19,7 +19,7 @@ function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve,
 
 async function displayDebug(message: string, type = '') {
     console.log(`Display Debug Function Recieved: ${message}, ${type}`);
-    const outputElement = getEBD('debug_output');
+    const outputElement = getEBD('debug_output') as HTMLSpanElement;
     
     const messageElement = document.createElement('span') as HTMLElement;
     messageElement.className = type;

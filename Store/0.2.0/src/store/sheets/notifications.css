@@ -3,25 +3,22 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-
+    
     position: fixed;
     bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 20px;
     
     box-sizing: border-box;
-    width: min(calc(100% - 20px), 480px);
+    width: 30%;
     min-height: 2.5em;
     
-    background: var(--background-secondary, #222);
+    background: var(--background-secondary);
     border: none;
-    border-radius: var(--radius, 8px);
-    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.15));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
     
     padding: 8px 12px 8px 16px;
     z-index: 9999;
-    
-    animation: fadeInNotification 0.3s ease-out forwards;
     
     &.error {
         background: #ff9b9b;
@@ -32,7 +29,7 @@
     }
     
     .notification-message {
-        color: var(--text-primary, #000);
+        color: var(--text-primary);
         margin: 0;
         font-size: 0.95rem;
         text-align: left;
@@ -43,7 +40,7 @@
     .notification-close {
         background: transparent;
         border: none;
-        color: var(--text-primary, #000);
+        color: var(--text-primary);
         font-size: 1.25rem;
         line-height: 1;
         cursor: pointer;
@@ -59,28 +56,64 @@
     }
 }
 
-@keyframes fadeInNotification {
-    from {
-        opacity: 0;
-        transform: translate(-50%, 10px) scale(0.95);
-        filter: blur(2px);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0) scale(1);
-        filter: blur(0);
+.popup_container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    
+    width: 100%;
+    height: 100%;
+    
+    background: var(--shade);
+    
+    z-index: 9998;
+    
+    .popup {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        
+        box-sizing: border-box;
+        width: max-content;
+        max-width: 35%;
+        
+        background: var(--background-primary);
+        border-radius: var(--radius);
+        
+        padding: 5px;
+        
+        .message_container {
+            box-sizing: border-box;
+            
+            background: var(--background-secondary);
+            border-radius: var(--radius);
+            
+            padding: 0.5rem 1.1rem;
+            overflow: auto;
+            
+            span {
+                color: var(--text-primary);
+            }
+        }
+        
+        .action_container {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            
+            button {
+                flex: 1;
+            }
+        }
     }
 }
 
-@keyframes fadeOutNotification {
-    from {
-        opacity: 1;
-        transform: translate(-50%, 0) scale(1);
-        filter: blur(0);
-    }
-    to {
-        opacity: 0;
-        transform: translate(-50%, 10px) scale(0.95);
-        filter: blur(4px);
-    }
+@keyframes popupFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popupFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }

@@ -1,6 +1,6 @@
-import type { TabChangeEventDetail } from "../../shared/bun/store_types.ts";
-import { loadCSS } from "./file_loader.ts";
-import * as tabs from './tabs.ts';
+import type { TabChangeEventDetail } from "../../shared/bun/store_types";
+import { loadCSS } from "./file_loader";
+import * as tabs from './tabs';
 
 function getEBD(id: string) {return document.getElementById(id)}
 

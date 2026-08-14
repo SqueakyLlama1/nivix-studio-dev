@@ -1,5 +1,5 @@
-import { preferences } from './settings.ts';
-import { type TabOptions } from '../../shared/bun/store_types.ts';
+import { preferences } from './settings';
+import { type TabOptions } from '../../shared/bun/store_types';
 
 let navigationHistory: { id: string; display?: string }[] = [];
 let navigationQueue: Promise<void> = Promise.resolve();
@@ -9,8 +9,8 @@ function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve,
 
 export const programaticAnimationDuration = preferences['disableAnimations'] ? 0 : 325;
 
-const fadeInAnimation = "fadeInPage 0.3s ease-out forwards";
-export const fadeOutAnimation = "fadeOutPage 0.3s ease-in-out forwards";
+const fadeInAnimation = "nivixFadeIn 0.3s ease-out forwards";
+const fadeOutAnimation = "nivixFadeOut 0.3s ease-out forwards";
 
 export async function remove(id: string, options: TabOptions = {}) {
     const instant = options.instant !== undefined ? options.instant : preferences['disableAnimations'];

@@ -28,7 +28,8 @@
     
     --radius: 4px;
     --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    --transition: 0.3s ease;
+    --transition: 0.2s ease-out;
+    --shade: rgba(0, 0, 0, 0.3);
     
     --outline: #ff6b00;
 }
@@ -397,4 +398,14 @@ h6 span { font-size: 0.45em; }
     100% {
         transform: rotate(1turn);
     }
+}
+
+@keyframes nivixFadeIn {
+    from { opacity: 0; transform: scale(0.95); filter: blur(2px); }
+    to { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+@keyframes nivixFadeOut {
+    from { opacity: 1; filter: blur(0); }
+    to { opacity: 0; filter: blur(10px); }
 }

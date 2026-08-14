@@ -1,10 +1,52 @@
 import { loadCSS } from "./file_loader";
+import { preferences } from "./settings";
 
 interface NotificationItem {
     message: string;
-    type: string;
+    type: ValidNotificationType;
     duration: number;
     sticky: boolean;
+}
+
+export type ValidNotificationType =
+    | "warning"
+    | "info"
+    | "error"
+
+export interface PopupOption {
+    content: string;
+    value: any;
+    highlighted?: boolean;
+}
+
+export type ValidInputType = 
+    | "text" 
+    | "number" 
+    | "password" 
+    | "email" 
+    | "url" 
+    | "tel" 
+    | "search" 
+    | "date" 
+    | "time" 
+    | "datetime-local";
+
+export type PopupType = "options" | ValidInputType;
+
+export interface PopupInputAttributes {
+    placeholder?: string;
+    value?: string | number;
+    minlength?: number;
+    maxlength?: number;
+    min?: number | string;
+    max?: number | string;
+    step?: number | string;
+    pattern?: string;
+    required?: boolean;
+    readonly?: boolean;
+    disabled?: boolean;
+    autocomplete?: string;
+    [key: string]: any; // Allow any additional standard HTML input attributes
 }
 
 const queue: NotificationItem[] = [];
@@ -12,11 +54,12 @@ let isProcessing = false;
 
 export function init(): void {
     loadCSS("sheets/notifications.css");
+    loadCSS("sheets/popups.css");
 }
 
 export function show_notification(
     message: string, 
-    type: string = "info", 
+    type: ValidNotificationType = "info", 
     duration: number = 3000, 
     sticky: boolean = type === "error"
 ): void {
@@ -59,6 +102,7 @@ function renderNotification(item: NotificationItem): Promise<void> {
         
         container.appendChild(messageOutput);
         container.appendChild(closeBtn);
+        if (!preferences['disableAnimations']) container.style.animation = "nivixFadeIn 0.3s ease-out forwards";
         document.body.appendChild(container);
         
         let dismissTimer: number | null = null;
@@ -72,7 +116,13 @@ function renderNotification(item: NotificationItem): Promise<void> {
                 clearTimeout(dismissTimer);
             }
             
-            container.style.animation = "fadeOutNotification 0.25s ease-in-out forwards";
+            if (preferences['disableAnimations']) {
+                container.remove();
+                resolve();
+                return;
+            }
+
+            container.style.animation = "nivixFadeOut 0.25s ease-out forwards";
             
             container.addEventListener("animationend", () => {
                 container.remove();
@@ -84,6 +134,126 @@ function renderNotification(item: NotificationItem): Promise<void> {
         
         if (!item.sticky) {
             dismissTimer = window.setTimeout(dismiss, item.duration);
+        }
+    });
+}
+
+export function show_popup<T = any>(
+    message: string, 
+    type: PopupType = "options",
+    options: PopupOption[] = [
+        { content: "No", value: false, highlighted: false },
+        { content: "Yes", value: true, highlighted: true }
+    ],
+    inputProps: PopupInputAttributes = {}
+): Promise<T> {
+    return new Promise((resolve) => {
+        // Create strict structural hierarchy
+        const popupContainer = document.createElement("div");
+        popupContainer.className = "popup_container center";
+
+        const popup = document.createElement("div");
+        popup.className = "popup";
+
+        const messageContainer = document.createElement("div");
+        messageContainer.className = "message_container";
+
+        const span = document.createElement("span");
+        span.textContent = message;
+        messageContainer.appendChild(span);
+
+        let inputElement: HTMLInputElement | null = null;
+
+        // If type is not "options", generate the requested input field
+        if (type !== "options") {
+            inputElement = document.createElement("input");
+            inputElement.type = type;
+            inputElement.className = "nivix_input";
+
+            // Apply all passed attributes dynamically
+            Object.entries(inputProps).forEach(([key, val]) => {
+                if (val !== undefined && val !== null) {
+                    inputElement!.setAttribute(key, String(val));
+                }
+            });
+
+            messageContainer.appendChild(inputElement);
+        }
+
+        const actionContainer = document.createElement("div");
+        actionContainer.className = "action_container";
+
+        const disableAnimations = preferences['disableAnimations'];
+
+        // Apply distinct animations for container and popup wrapper
+        if (!disableAnimations) {
+            popupContainer.style.animation = "popupFadeIn 0.3s ease-out forwards";
+            popup.style.animation = "nivixFadeIn 0.3s ease-out forwards";
+        }
+
+        let isClosing = false;
+        const closePopup = (selectedValue: any) => {
+            if (isClosing) return;
+            isClosing = true;
+
+            if (disableAnimations) {
+                popupContainer.remove();
+                resolve(selectedValue as T);
+                return;
+            }
+
+            popupContainer.style.animation = "popupFadeOut 0.3s ease-out forwards";
+            popup.style.animation = "nivixFadeOut 0.3s ease-out forwards";
+
+            popupContainer.addEventListener("animationend", () => {
+                popupContainer.remove();
+                resolve(selectedValue as T);
+            }, { once: true });
+        };
+
+        // Render input single "OK" button OR custom option buttons
+        if (type !== "options") {
+            const okBtn = document.createElement("button");
+            okBtn.textContent = "OK";
+            okBtn.className = "nivix_primary_button";
+
+            const submitInput = () => {
+                closePopup(inputElement ? inputElement.value : "");
+            };
+
+            okBtn.addEventListener("click", submitInput);
+
+            // Allow pressing "Enter" inside the input to submit
+            if (inputElement) {
+                inputElement.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        submitInput();
+                    }
+                });
+            }
+
+            actionContainer.appendChild(okBtn);
+        } else {
+            options.forEach((opt) => {
+                const btn = document.createElement("button");
+                btn.textContent = opt.content;
+                btn.className = opt.highlighted ? "nivix_primary_button" : "nivix_secondary_button";
+                
+                btn.addEventListener("click", () => closePopup(opt.value));
+                actionContainer.appendChild(btn);
+            });
+        }
+
+        // Assemble strict layout elements
+        popup.appendChild(messageContainer);
+        popup.appendChild(actionContainer);
+        popupContainer.appendChild(popup);
+        document.body.appendChild(popupContainer);
+
+        // Auto-focus input field if present
+        if (inputElement) {
+            requestAnimationFrame(() => inputElement?.focus());
         }
     });
 }

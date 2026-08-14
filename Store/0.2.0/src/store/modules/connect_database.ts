@@ -1,11 +1,11 @@
-import { loadCSS } from "./file_loader.ts";
+import { loadCSS } from "./file_loader";
 import * as tabs from './tabs.ts';
 import * as notifications from './notifications.ts';
 import * as select_space from './select_space.ts';
 import { preferences, setPreference } from './settings.ts';
 
-import { electroview } from "./index.ts";
-import type { TabChangeEventDetail } from "../../shared/bun/store_types.ts";
+import { electroview } from "./index";
+import type { TabChangeEventDetail } from "../../shared/bun/store_types";
 
 function getEBD<T extends HTMLElement>(id: string): T {
     const el = document.getElementById(id);

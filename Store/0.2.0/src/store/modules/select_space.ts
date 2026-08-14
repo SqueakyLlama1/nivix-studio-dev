@@ -1,11 +1,11 @@
-import { loadCSS } from './file_loader.ts';
-import { preferences, setPreference } from './settings.ts';
-import { fillSpaceContainer } from './space_fillers.ts';
+import { loadCSS } from './file_loader';
+import { preferences, setPreference } from './settings';
+import { fillSpaceContainer } from './space_fillers';
 
-import * as tabs from './tabs.ts';
+import * as tabs from './tabs';
 
-import { store, electroview } from './index.ts';
-import { type Space, type TabChangeEventDetail } from '../../shared/bun/store_types.ts';
+import { store, electroview } from './index';
+import { type Space, type TabChangeEventDetail } from '../../shared/bun/store_types';
 
 function getEBD(id: string) {return document.getElementById(id)}
 
