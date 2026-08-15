@@ -12,6 +12,12 @@
         .center {
             position: relative;
             
+            #select_space_status {
+                position: absolute;
+                top: 25px;
+                right: 25px;
+            }
+            
             .container {
                 width: max-content;
                 height: max-content;
