@@ -15,15 +15,17 @@ const shapeAnimToggle = getEBD('select_space_shapeAnimToggle') as HTMLInputEleme
 let isInitialized: boolean = false;
 let populateRequest = 0;
 
-const connectRemoteServerBtn = getEBD('select_space_connect_database') as HTMLButtonElement;
-const exposeRemoteInterfaceBtn = getEBD('select_space_start_interface') as HTMLButtonElement;
-const creditsBtn = getEBD('select_space_credits') as HTMLButtonElement;
-const sourceCodeBtn = getEBD('select_space_source') as HTMLButtonElement;
-const issuesBtn = getEBD('select_space_issues') as HTMLButtonElement;
-const websiteBtn = getEBD('select_space_webpage') as HTMLButtonElement;
+const settingsBtn = getEBD('select_space_settings') as HTMLButtonElement;
+const manageBtn = getEBD('select_space_manage') as HTMLButtonElement;
 const closeBtn = getEBD('select_space_quit') as HTMLButtonElement;
 const refreshBtn = getEBD('select_space_refresh') as HTMLButtonElement;
-const manageBtn = getEBD('select_space_manage') as HTMLButtonElement;
+
+const connectRemoteServerBtn = getEBD('select_space_connect_database') as HTMLButtonElement;
+const exposeRemoteInterfaceBtn = getEBD('select_space_start_interface') as HTMLButtonElement;
+const issuesBtn = getEBD('select_space_issues') as HTMLButtonElement;
+
+const sourceCodeBtn = getEBD('select_space_source') as HTMLButtonElement;
+const creditsBtn = getEBD('select_space_credits') as HTMLButtonElement;
 
 const choiceSelection = getEBD('select_space_option') as HTMLSelectElement;
 const continueBtn = getEBD('select_space_continue') as HTMLButtonElement;
@@ -53,10 +55,6 @@ export async function init() {
 
     issuesBtn.addEventListener('click', function() {
         window.open('https://github.com/SqueakyLlama1/nivix-studio-dev/issues', '_blank');
-    });
-    
-    websiteBtn.addEventListener('click', function() {
-        window.open('https://nivixtech.com/studio', '_blank');
     });
     
     closeBtn.addEventListener('click', function() {
