@@ -216,6 +216,9 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 			async deleteItem(id: number) {
 				return withDatabase(api => api['deleteItem'](id));
 			},
+			async listAllItemsInCategoryRecursive(id: number) {
+				return withDatabase(api => api['listAllItemsInCategoryRecursive'](id));
+			},
 			async updateItem({ id, updates = {} }: { id: number; updates?: object }) {
 				return withDatabase(api => api['updateItem'](id, updates));
 			},

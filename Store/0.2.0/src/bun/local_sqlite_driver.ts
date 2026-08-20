@@ -160,6 +160,7 @@ export default function createDatabaseApi(db: Database, ctx: AppContext) {
     );
     
     const listItemsByCategory = (categoryId: number | bigint): Item[] => {
+        // Returns the (id, name, quantity, quantity_commited, restock_point, attributes) from the item in the category by ID
         const stmt = db.prepare(
             'SELECT id, name, quantity, quantity_commited, restock_point, attributes FROM items WHERE category_id = ?'
         );
@@ -187,6 +188,7 @@ export default function createDatabaseApi(db: Database, ctx: AppContext) {
     };
     
     const listAllItemsInCategoryRecursive = (categoryId: number | bigint): Item[] => {
+        // Returns every item entry from the category (categoryId) and its subcategories
         const query = `
             WITH RECURSIVE subcategories AS (
                 SELECT id FROM categories WHERE id = ?

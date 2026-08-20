@@ -67,6 +67,10 @@ export type StoreRPCType = {
                 params: number;
                 response: any;
             };
+            listAllItemsInCategoryRecursive: {
+                params: number;
+                response: any;
+            };
             updateItem: {
                 params: {
                     id: number;
