@@ -1,0 +1,53 @@
+#workspace {
+    flex-direction: row;
+
+    width: 100%;
+    height: 100%;
+
+    background: var(--background-primary);
+
+    .navigation {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        box-sizing: border-box;
+        height: 100%;
+        width: max-content;
+        overflow-y: auto;
+
+        background: var(--background-secondary);
+
+        padding: 5px;
+
+        button {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            width: max-content;
+
+            background: transparent;
+            border: none;
+            border-radius: var(--radius);
+
+            color: var(--text-primary);
+            font-weight: bold;
+
+            cursor: pointer;
+            transition: background var(--transition), box-shadow var(--shadow);
+
+            svg {
+                width: 2.5em;
+                aspect-ratio: 1;
+                fill: var(--text-primary);
+            }
+
+            &:hover {
+                background: var(--background-tertiary);
+                box-shadow: var(--shadow);
+            }
+        }
+    }
+}

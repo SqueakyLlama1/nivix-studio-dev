@@ -96,6 +96,7 @@ h6 span { font-size: 0.45em; }
 .nivix_footer {
     flex-shrink: 0;
     min-height: 0;
+    box-sizing: border-box;
     background: var(--brand-primary);
     border-radius: var(--radius);
     color: white;

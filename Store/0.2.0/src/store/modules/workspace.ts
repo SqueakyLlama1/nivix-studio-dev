@@ -13,24 +13,24 @@ function wait(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-let isInitialized: boolean = false;
+let isInitialized = false;
 
 export function init(): void {
     if (isInitialized) return;
 
-    loadCSS('sheets/manage_spaces.css');
+    loadCSS('sheets/workspace.css');
 
     isInitialized = true;
 }
 
-export function gotoDashboard(space: number) {
-    
+export function gotoWorkspace(space: number) {
+    tabs.goto('workspace', { display: 'flex' });
 }
 
 window.addEventListener('tabchange', (event) => {
     const eventDetails = event as CustomEvent<TabChangeEventDetail>;
     const { tabId } = eventDetails.detail;
-    if (tabId === 'select_space') {
+    if (tabId === 'workspace') {
         init();
     }
 });

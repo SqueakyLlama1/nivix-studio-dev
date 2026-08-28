@@ -1,6 +1,7 @@
 import { loadCSS } from './file_loader';
 import { preferences, setPreference } from './settings';
 import { fillSpaceContainer } from './space_fillers';
+import { gotoWorkspace } from './workspace';
 
 import * as tabs from './tabs';
 
@@ -106,6 +107,8 @@ continueBtn.addEventListener('click', function() {
     const selection = choiceSelection.value;
     if (selection === 'create-new-space') {
         tabs.goto('create_space');
+    } else {
+        gotoWorkspace(Number(choiceSelection.value));
     }
 });
 

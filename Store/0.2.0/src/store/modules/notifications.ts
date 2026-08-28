@@ -51,10 +51,12 @@ export interface PopupInputAttributes {
 
 const queue: NotificationItem[] = [];
 let isProcessing = false;
+let isInitialized = false;
 
 export function init(): void {
+    if (isInitialized) return;
     loadCSS("sheets/notifications.css");
-    loadCSS("sheets/popups.css");
+    isInitialized = true;
 }
 
 export function show_notification(

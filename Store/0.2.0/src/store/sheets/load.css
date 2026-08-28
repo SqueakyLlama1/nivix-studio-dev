@@ -23,8 +23,11 @@
         }
     }
     
-    .footer {
-        font-weight: bold;
+    .nivix_footer {
+        position: absolute;
+        bottom: 0;
+        
+        width: 100%;
     }
 }
 
