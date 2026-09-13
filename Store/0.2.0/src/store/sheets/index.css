@@ -39,7 +39,7 @@ input:focus {
     background: color-mix(in srgb, var(--background-primary) 90%, transparent);
     border: 2px solid var(--background-secondary);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--outset-shadow);
     
     padding-left: calc(var(--radius) / 2);
     

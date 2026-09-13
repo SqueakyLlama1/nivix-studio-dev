@@ -27,7 +27,8 @@
     --background-quinary: #b6b6b6;
     
     --radius: 4px;
-    --shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    --inset-shadow: inset 0 20px 4px -6px rgba(0, 0, 0, 0.25);
+    --outset-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
     --transition: 0.2s ease-out;
     --shade: rgba(0, 0, 0, 0.3);
     
@@ -62,7 +63,7 @@ h6 span { font-size: 0.45em; }
 
 ::-webkit-scrollbar { width: 7px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--background-tertiary); }
-::-webkit-scrollbar-thumb { background: var(--brand-secondary); }
+::-webkit-scrollbar-thumb { transition: background var(--transition); background: var(--brand-secondary); }
 ::-webkit-scrollbar-thumb:hover { background: var(--brand-tertiary); }
 
 .hidden {
@@ -133,7 +134,7 @@ h6 span { font-size: 0.45em; }
     text-decoration: none;
     cursor: pointer;
     padding: 0.5rem 1.1rem;
-    transition: background var(--transition);
+    transition: box-shadow var(--transition), background var(--transition);
     
     svg {
         width: 2em;
@@ -142,10 +143,8 @@ h6 span { font-size: 0.45em; }
         transition: fill var(--transition);
     }
     
-    &:hover {
-        &:not(:disabled) {
-            background-image: linear-gradient(180deg, var(--brand-secondary), var(--brand-primary));
-        }
+    &:not(:disabled):hover {
+        box-shadow: var(--inset-shadow);
     }
     
     &.selected, &:active {
@@ -180,7 +179,7 @@ h6 span { font-size: 0.45em; }
     
     padding: 0.5rem 1.1rem;
     
-    transition: color var(--transition);
+    transition: box-shadow var(--transition), color var(--transition);
     
     svg {
         width: 2em;
@@ -189,11 +188,9 @@ h6 span { font-size: 0.45em; }
         transition: fill var(--transition);
     }
     
-    &:hover {
-        &:not(:disabled) {
-            color: var(--brand-secondary);
-            svg { fill: var(--brand-secondary); }
-        }
+    &:not(:disabled):hover {
+        color: var(--brand-secondary);
+        svg { fill: var(--brand-secondary); }
     }
     
     &.selected, &:active {
@@ -262,7 +259,7 @@ h6 span { font-size: 0.45em; }
     }
     
     /* Checkboxes */
-
+    
     &[type="checkbox"] {
         -webkit-appearance: none;
         appearance: none;
@@ -380,7 +377,7 @@ h6 span { font-size: 0.45em; }
     font-weight: bold;
     text-align: left;
     margin: 1.5rem 0 0 0;
-
+    
     &.top {
         margin: 0;
     }

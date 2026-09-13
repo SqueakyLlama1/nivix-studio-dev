@@ -15,7 +15,7 @@
     background: var(--background-secondary);
     border: none;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--outset-shadow);
     
     padding: 8px 12px 8px 16px;
     z-index: 9999;

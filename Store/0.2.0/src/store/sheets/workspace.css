@@ -36,7 +36,7 @@
             font-weight: bold;
 
             cursor: pointer;
-            transition: background var(--transition), box-shadow var(--shadow);
+            transition: background var(--transition), box-shadow var(--outset-shadow);
 
             svg {
                 width: 2.5em;
@@ -46,7 +46,7 @@
 
             &:hover {
                 background: var(--background-tertiary);
-                box-shadow: var(--shadow);
+                box-shadow: var(--outset-shadow);
             }
         }
     }
