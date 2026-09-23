@@ -45,8 +45,8 @@
 
 *:focus { outline: 2px solid var(--outline); }
 
-html { 
-    scroll-behavior: smooth; 
+html {
+    scroll-behavior: smooth;
     
     &, body {
         height: 100%;
@@ -110,21 +110,16 @@ h6 span { font-size: 0.45em; }
     flex-shrink: 0;
     min-height: 0;
     box-sizing: border-box;
-
+    
     background: var(--background-darker);
     border-radius: var(--radius);
-
+    
     color: var(--text-secondary);
     font-size: 0.85em;
     text-align: center;
-
+    
     padding: var(--resting-area-padding);
     margin: var(--resting-area-padding);
-    
-    &.primary {
-        background: var(--brand-primary);
-        color: var(--text-tertiary);
-    }
 }
 
 /* Nivix Visual Identity Elements */
@@ -139,9 +134,9 @@ h6 span { font-size: 0.45em; }
     width: 50px;
     aspect-ratio: 1;
     border-radius: 50%;
-    background: 
-        radial-gradient(farthest-side, var(--brand-primary) 94%, #0000) top/8px 8px no-repeat,
-        conic-gradient(#0000 30%, var(--brand-primary));
+    background:
+    radial-gradient(farthest-side, var(--brand-primary) 94%, #0000) top/8px 8px no-repeat,
+    conic-gradient(#0000 30%, var(--brand-primary));
     mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
     -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
     animation: load_spin 1s infinite linear;
@@ -163,33 +158,31 @@ h6 span { font-size: 0.45em; }
     font-size: 16px;
     font-weight: bold;
     color: var(--text-primary);
-    text-decoration: none;
     
     cursor: pointer;
     padding: var(--clickable-area-padding);
-    transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+    transition: background var(--transition), box-shadow var(--transition);
     
     & & svg {
-        width: 1.5em;
+        width: 2em;
         aspect-ratio: 1;
-        fill: var(--text-primary); 
+        fill: var(--text-primary);
         transition: fill var(--transition);
     }
     
     &:hover:not(:disabled) {
-        background: color-mix(in srgb, var(--background-darker), black 10%);
+        box-shadow: var(--inset-shadow);
     }
     
     &:active:not(:disabled) {
-        box-shadow: var(--inset-shadow);
+        background: color-mix(in srgb, var(--background-darker), black 10%);
     }
     
     &:disabled {
         color: var(--text-secondary);
-        opacity: 0.6;
         cursor: not-allowed;
     }
-
+    
     &.primary {
         background: var(--brand-primary);
         color: var(--text-tertiary);
@@ -198,43 +191,28 @@ h6 span { font-size: 0.45em; }
             fill: var(--text-tertiary);
         }
         
-        &:hover:not(:disabled) {
-            background: var(--brand-darker);
+        &:disabled {
+            color: var(--text-quarternary);
         }
     }
 }
 
 .nivix_secondary_button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--gap);
-    
     background: transparent;
     border: none;
     
     font-family: var(--font-primary);
-    font-size: 16px;
     color: var(--text-primary);
-    text-decoration: none;
     
     cursor: pointer;
     padding: var(--clickable-area-padding);
     transition: color var(--transition);
     
-    & svg {
-        width: 1.5em;
-        aspect-ratio: 1;
-        fill: var(--text-primary); 
-        transition: fill var(--transition);
-    }
-    
     &:hover:not(:disabled) {
         color: var(--brand-primary);
-        & svg { fill: var(--brand-primary); }
     }
     
-    &.selected, &:active {
+    &:active {
         color: var(--brand-darker);
         font-weight: bold;
     }
@@ -242,13 +220,10 @@ h6 span { font-size: 0.45em; }
     &:disabled {
         color: var(--text-secondary);
         cursor: not-allowed;
-        & svg { fill: var(--text-secondary); }
     }
-
+    
     &.primary {
         color: var(--brand-primary);
-        font-weight: bold;
-        & svg { fill: var(--brand-primary); }
     }
 }
 
@@ -264,11 +239,6 @@ h6 span { font-size: 0.45em; }
     
     &.right {
         border-radius: var(--radius) 0 0 var(--radius);
-    }
-
-    &.primary {
-        background: var(--brand-primary);
-        color: var(--text-tertiary);
     }
 }
 
@@ -292,23 +262,33 @@ h6 span { font-size: 0.45em; }
         border-radius: var(--radius);
         
         font-family: var(--font-primary);
-        font-size: 16px;
         color: var(--text-primary);
+        
         padding: var(--clickable-area-padding);
-        transition: background var(--transition), border-color var(--transition);
+        transition: box-shadow var(--transition), border-color var(--transition);
         
         &:focus {
-            background: var(--background-primary);
-            border-color: var(--brand-primary);
+            box-shadow: var(--inset-shadow);
+            border-color: var(--background-darker);
         }
-
+        
         &:disabled {
             color: var(--text-secondary);
             cursor: not-allowed;
         }
-
+        
         &.primary {
+            background: var(--brand-primary);
             border-color: var(--brand-primary);
+            color: var(--text-tertiary);
+            
+            &:disabled {
+                color: var(--text-quarternary);
+            }
+            
+            &:focus {
+                border-color: var(--brand-darker);
+            }
         }
     }
     
@@ -349,7 +329,7 @@ h6 span { font-size: 0.45em; }
                 border-radius: 50%;
             }
         }
-
+        
         &.primary:checked {
             border-color: var(--brand-primary);
             background: var(--brand-primary);
@@ -413,7 +393,7 @@ h6 span { font-size: 0.45em; }
         cursor: not-allowed;
         opacity: 0.6;
     }
-
+    
     &.primary {
         background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
         color: var(--text-tertiary);
@@ -501,7 +481,7 @@ h6 span { font-size: 0.45em; }
     .dropdown_content {
         display: none;
     }
-
+    
     &.primary {
         background: color-mix(in srgb, var(--brand-primary), white 80%);
     }
@@ -512,7 +492,7 @@ code {
     color: var(--text-primary);
     border-radius: var(--radius);
     padding: calc(var(--resting-area-padding) / 2);
-
+    
     &.code_block {
         display: block;
     }
@@ -520,7 +500,7 @@ code {
 
 /* Animations */
 
-@keyframes load_spin { 
+@keyframes load_spin {
     100% {
         transform: rotate(1turn);
     }
