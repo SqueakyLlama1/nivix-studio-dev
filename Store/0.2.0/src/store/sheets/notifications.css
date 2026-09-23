@@ -12,7 +12,7 @@
     width: 30%;
     min-height: 2.5em;
     
-    background: var(--background-secondary);
+    background: var(--background-darker);
     border: none;
     border-radius: var(--radius);
     box-shadow: var(--outset-shadow);
@@ -71,7 +71,7 @@
     .popup {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: var(--gap);
         
         box-sizing: border-box;
         width: max-content;
@@ -80,12 +80,12 @@
         background: var(--background-primary);
         border-radius: var(--radius);
         
-        padding: 5px;
+        padding: var(--resting-area-padding);
         
         .message_container {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: var(--gap);
 
             box-sizing: border-box;
             
@@ -105,7 +105,7 @@
         .action_container {
             display: flex;
             flex-direction: row;
-            gap: 5px;
+            gap: var(--gap);
             
             button {
                 flex: 1;

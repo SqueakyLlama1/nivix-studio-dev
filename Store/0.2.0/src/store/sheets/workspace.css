@@ -9,16 +9,16 @@
     .navigation {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: var(--gap);
 
         box-sizing: border-box;
         height: 100%;
         width: max-content;
         overflow-y: auto;
 
-        background: var(--background-secondary);
+        background: var(--background-darker);
 
-        padding: 5px;
+        padding: var(--resting-area-padding);
 
         button {
             display: flex;
@@ -45,7 +45,7 @@
             }
 
             &:hover {
-                background: var(--background-tertiary);
+                background: var(--background-darker);
                 box-shadow: var(--outset-shadow);
             }
         }

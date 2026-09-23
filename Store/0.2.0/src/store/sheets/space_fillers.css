@@ -2,20 +2,20 @@
 COLOR VARIABLES
 ========================================================================== */
 :root {
-    --shape-color-1: #1a1a1a;
-    --shape-color-2: #2a2a2a;
-    --shape-color-3: #101010;
-    --shape-color-4: #2f2f2f;
-    --shape-color-5: #242424;
-    --shape-color-6: #282828;
-    --shape-color-7: #202020;
-    --shape-color-8: #303030;
-    --shape-color-9: #1f1f1f;
-    --shape-color-10: #2b2b2b;
-    --shape-color-11: #1d1d1d;
-    --shape-color-12: #2c2c2c;
-    --shape-color-13: #232323;
-    --shape-color-14: #1c1c1c;
+    --shape-color-1: var(--background-darker);
+    --shape-color-2: var(--background-darker);
+    --shape-color-3: var(--background-darker);
+    --shape-color-4: var(--background-darker);
+    --shape-color-5: var(--background-darker);
+    --shape-color-6: var(--background-darker);
+    --shape-color-7: var(--background-darker);
+    --shape-color-8: var(--background-darker);
+    --shape-color-9: var(--background-darker);
+    --shape-color-10: var(--background-darker);
+    --shape-color-11: var(--background-darker);
+    --shape-color-12: var(--background-darker);
+    --shape-color-13: var(--background-darker);
+    --shape-color-14: var(--background-darker);
 }
 
 /* Container */
@@ -33,7 +33,6 @@ COLOR VARIABLES
 /* Base Shape Styling */
 .space_filler_shape {
     position: absolute;
-    opacity: 0.2;
 }
 
 /* ==========================================================================

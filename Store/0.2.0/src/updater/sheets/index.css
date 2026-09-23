@@ -24,7 +24,7 @@ h1 {
 }
 
 #debug_output {
-    background: var(--background-secondary);
+    background: var(--background-darker);
     border-radius: var(--radius);
     
     color: var(--text-primary);
@@ -43,13 +43,13 @@ h1 {
 .footer {
     display: flex;
     flex-direction: row;
-    gap: 5px;
+    gap: var(--gap);
     
     position: fixed;
     bottom: 0;
     
     width: calc(100% - 10px);
-    padding: 5px;
+    padding: var(--resting-area-padding);
     
     button, a {
         padding: 0.4rem 0.8rem;

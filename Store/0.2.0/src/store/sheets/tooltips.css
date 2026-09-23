@@ -1,57 +1,83 @@
-/* Tooltip trigger base */
+/* Tooltip Trigger Base */
+
 .tooltip-button,
 .tooltip-support-button,
+.tooltip-delayed-button,
 .tooltip-support-delayed-button {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     z-index: 1;
 }
 
-/* Styled tooltip button */
+/* Styled Tooltip Trigger Button */
+
 .tooltip-button,
 .tooltip-delayed-button {
-    height: 25px;
+    height: 24px;
+    width: 24px;
     aspect-ratio: 1;
 
-    background: var(--brand-primary);
-
+    background: var(--background-darker);
     border: none;
     border-radius: 50%;
 
-    color: var(--text-tertiary);
-    font-size: 18px;
-    font-family: monospace;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: bold;
+    font-family: var(--font-primary);
 
     cursor: pointer;
-
-    margin-left: 10px;
+    margin-left: 6px;
+    transition: background var(--transition), color var(--transition);
 
     &:hover,
-    &:focus {
-        background: var(--brand-secondary);
+    &:focus-visible {
+        background: color-mix(in srgb, var(--background-darker), black 10%);
+    }
+
+    /* Accent Modifier Class */
+    &.primary {
+        background: var(--brand-primary);
+        color: var(--text-tertiary);
+
+        &:hover,
+        &:focus-visible {
+            background: var(--brand-darker);
+        }
     }
 }
 
-/* Tooltip body */
+/* Tooltip Popup Box */
+
 .tooltip {
-    user-select: all;
+    position: absolute;
+    user-select: none;
+    pointer-events: none;
+    
     visibility: hidden;
     opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
+    
     width: max-content;
-    min-width: 100px;
-    max-width: 15vw;
-    background: var(--background-secondary, #333);
-    border: 1px solid var(--brand-primary);
-    font-weight: lighter;
-    color: var(--text-primary);
-    text-align: center;
+    min-width: 80px;
+    max-width: 220px;
+    
+    background: var(--text-primary);
+    color: var(--background-primary);
     border-radius: var(--radius);
-    padding: 5px 8px;
+    padding: 6px 10px;
+    
+    font-size: 13px;
+    font-weight: normal;
+    text-align: center;
+    line-height: 1.3;
+    box-shadow: var(--outset-shadow);
+    
     z-index: 9999;
-    position: absolute;
-    --tooltip-margin: 10px;
+    transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
 
+    --tooltip-margin: 8px;
     --tooltip-nudge-x: 0px;
     --tooltip-nudge-y: 0px;
 
@@ -60,33 +86,38 @@
     bottom: var(--tooltip-bottom, auto);
     left: var(--tooltip-left, auto);
 
-    transform: translate(calc(var(--tooltip-x-offset, 0%) + var(--tooltip-nudge-x)),
-            calc(var(--tooltip-y-offset, 0%) + var(--tooltip-nudge-y)));
-    
-    code {
-        display: block;
+    transform: translate(
+        calc(var(--tooltip-x-offset, 0%) + var(--tooltip-nudge-x)),
+        calc(var(--tooltip-y-offset, 0%) + var(--tooltip-nudge-y))
+    );
+
+    /* Primary Accent Variant for Tooltip Box */
+    &.primary {
+        background: var(--brand-primary);
+        color: var(--text-tertiary);
     }
 }
 
-/* Show tooltip on hover */
-.tooltip-button:hover .tooltip,
-.tooltip-support-button:hover .tooltip,
-.tooltip-ready-button:hover .tooltip,
-.tooltip-button:focus .tooltip,
-.tooltip-support-button:focus .tooltip,
-.tooltip-ready-button:focus .tooltip {
+/* Tooltip Visibility Triggers */
+
+:is(.tooltip-button, .tooltip-support-button, .tooltip-delayed-button, .tooltip-ready-button):is(:hover, :focus-within) > .tooltip {
     visibility: visible;
     opacity: 1;
-    z-index: 2;
+    pointer-events: auto;
 }
 
-/* Tooltip positions */
+/* Tooltip Positioning Logic */
+
+/* Bottom (Default) */
+:is(.tooltip-button, .tooltip-support-button, .tooltip-delayed-button) > .tooltip {
+    --tooltip-top: calc(100% + var(--tooltip-margin));
+    --tooltip-left: 50%;
+    --tooltip-x-offset: -50%;
+    --tooltip-y-offset: 0%;
+}
 
 /* Top */
-.tip-top.tooltip-button .tooltip,
-.tip-top.tooltip-support-button .tooltip,
-.tip-top.tooltip-delayed-button .tooltip,
-.tip-top.tooltip-delayed-support-button .tooltip {
+.tip-top > .tooltip {
     --tooltip-top: auto;
     --tooltip-bottom: calc(100% + var(--tooltip-margin));
     --tooltip-left: 50%;
@@ -94,22 +125,8 @@
     --tooltip-y-offset: 0%;
 }
 
-/* Bottom (default) */
-.tooltip-button .tooltip,
-.tooltip-support-button .tooltip,
-.tooltip-delayed-button .tooltip,
-.tooltip-delayed-support-button .tooltip {
-    --tooltip-top: calc(100% + var(--tooltip-margin));
-    --tooltip-left: 50%;
-    --tooltip-x-offset: -50%;
-    --tooltip-y-offset: 0%;
-}
-
 /* Left */
-.tip-left.tooltip-button .tooltip,
-.tip-left.tooltip-support-button .tooltip,
-.tip-left.tooltip-delayed-button .tooltip,
-.tip-left.tooltip-delayed-support-button .tooltip {
+.tip-left > .tooltip {
     --tooltip-top: 50%;
     --tooltip-right: calc(100% + var(--tooltip-margin));
     --tooltip-left: auto;
@@ -118,10 +135,7 @@
 }
 
 /* Right */
-.tip-right.tooltip-button .tooltip,
-.tip-right.tooltip-support-button .tooltip,
-.tip-right.tooltip-delayed-button .tooltip,
-.tip-right.tooltip-delayed-support-button .tooltip {
+.tip-right > .tooltip {
     --tooltip-top: 50%;
     --tooltip-left: calc(100% + var(--tooltip-margin));
     --tooltip-right: auto;

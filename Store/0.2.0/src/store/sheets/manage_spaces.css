@@ -1,6 +1,6 @@
 #manage_spaces {
     flex-direction: column;
-    gap: 5px;
+    gap: var(--gap);
 
     width: 100%;
     height: 100%;
@@ -11,7 +11,7 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
-        gap: 5px;
+        gap: var(--gap);
 
         box-sizing: border-box;
         width: 100%;
@@ -37,23 +37,19 @@
             box-sizing: border-box;
             width: 100%;
             
-            background: var(--background-secondary);
+            background: var(--background-darker);
             color: var(--text-primary);
             
             padding: 0.3rem;
             
-            transition: background var(--transition), color var(--transition);
+            transition: box-shadow var(--transition);
             
             &:nth-child(even) {
-                background: var(--background-tertiary);
-                
-                &:hover, &:focus {
-                    background-image: linear-gradient(180deg, var(--background-quarternary), var(--background-tertiary));
-                }
+                background: var(--background-darker);
             }
             
             &:hover, &:focus {
-                background-image: linear-gradient(180deg, var(--background-tertiary), var(--background-secondary));
+                box-shadow: var(--inset-shadow);
             }
             
             .name-column {
@@ -64,11 +60,11 @@
             .actions {
                 display: flex;
                 flex-direction: row;
-                gap: 5px;
+                gap: var(--gap);
             }
             
             .nivix_primary_button {
-                padding: 0.3rem 0.9rem;
+                padding: var(--clickable-button-padding);
             }
         }
     }

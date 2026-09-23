@@ -11,31 +11,39 @@
 /* Page Setup and Defaults */
 
 :root {
-    --brand-primary: #43a4eb;
-    --brand-secondary: #258dd8;
-    --brand-tertiary: #40afff;
+    --brand-color-step-amount: 20%;
+    --background-color-step-amount: 7%;
+    --text-color-step-amount: 10%;
     
-    --text-primary: #1c1c1c;
-    --text-secondary: #545454;
-    --text-tertiary: #f9f9f9;
-    --text-quarternary: #a1a1a1;
+    --brand-primary: #43a4eb;
+    --brand-darker: color-mix(in srgb, var(--brand-primary), black var(--brand-color-step-amount));
+    --brand-lighter: color-mix(in srgb, var(--brand-primary), white var(--brand-color-step-amount));
+    
+    --text-primary: #313131;
+    --text-secondary: color-mix(in srgb, var(--text-primary), black var(--text-color-step-amount));
+    --text-tertiary: #ffffff;
+    --text-quarternary: color-mix(in srgb, var(--text-tertiary), black var(--text-color-step-amount));
     
     --background-primary: #f6f6f6;
-    --background-secondary: #e0e0e0;
-    --background-tertiary: #cacaca;
-    --background-quarternary: #c0c0c0;
-    --background-quinary: #b6b6b6;
+    --background-darker: color-mix(in srgb, transparent, black var(--background-color-step-amount));
+    --background-ligher: color-mix(in srgb, transparent, white var(--background-color-step-amount));
     
     --radius: 4px;
-    --inset-shadow: inset 0 20px 4px -6px rgba(0, 0, 0, 0.25);
-    --outset-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
     --transition: 0.2s ease-out;
+    
+    --inset-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
+    --outset-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     --shade: rgba(0, 0, 0, 0.3);
     
+    --resting-area-padding: 5px;
+    --clickable-area-padding: 0.5rem 1.1rem;
+    --gap: 5px;
+    
     --outline: #ff6b00;
+    --font-primary: 'Arial', Helvetica, sans-serif;
 }
 
-*:focus { outline: 1px solid var(--outline); }
+*:focus { outline: 2px solid var(--outline); }
 
 html { 
     scroll-behavior: smooth; 
@@ -47,6 +55,8 @@ html {
 
 body {
     background: var(--background-primary);
+    font-family: var(--font-primary);
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -62,9 +72,9 @@ h6 span { font-size: 0.45em; }
 /* Custom Scrollbars */
 
 ::-webkit-scrollbar { width: 7px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--background-tertiary); }
-::-webkit-scrollbar-thumb { transition: background var(--transition); background: var(--brand-secondary); }
-::-webkit-scrollbar-thumb:hover { background: var(--brand-tertiary); }
+::-webkit-scrollbar-track { background: var(--background-lighter); }
+::-webkit-scrollbar-thumb { transition: background var(--transition); background: var(--text-secondary); }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-primary); }
 
 .hidden {
     display: none !important;
@@ -75,7 +85,6 @@ h6 span { font-size: 0.45em; }
 .center, .vertical_center, .horizontal_center {
     display: flex;
     position: relative;
-    min-height: 100%;
     flex-direction: column;
 }
 
@@ -83,27 +92,39 @@ h6 span { font-size: 0.45em; }
     align-items: center;
     justify-content: center;
     text-align: center;
+    min-height: 100%;
 }
 
 .vertical_center {
     justify-content: center;
+    min-height: 100%;
 }
 
 .horizontal_center {
     align-items: center;
     text-align: center;
+    height: fit-content;
 }
 
 .nivix_footer {
     flex-shrink: 0;
     min-height: 0;
     box-sizing: border-box;
-    background: var(--brand-primary);
+
+    background: var(--background-darker);
     border-radius: var(--radius);
-    color: white;
+
+    color: var(--text-secondary);
+    font-size: 0.85em;
     text-align: center;
-    padding: 5px;
-    margin: 5px;
+
+    padding: var(--resting-area-padding);
+    margin: var(--resting-area-padding);
+    
+    &.primary {
+        background: var(--brand-primary);
+        color: var(--text-tertiary);
+    }
 }
 
 /* Nivix Visual Identity Elements */
@@ -111,7 +132,7 @@ h6 span { font-size: 0.45em; }
 .nivix_accent {
     font-family: "GochiHand", "Lucida Handwriting", serif;
     color: var(--brand-primary);
-    text-shadow: 1.5px 1.5px 1px #8d8d8d;
+    text-shadow: 3px 3px 2px #8d8d8d;
 }
 
 .nivix_loader {
@@ -119,110 +140,139 @@ h6 span { font-size: 0.45em; }
     aspect-ratio: 1;
     border-radius: 50%;
     background: 
-    radial-gradient(farthest-side, var(--brand-primary) 94%, #0000) top/8px 8px no-repeat,
-    conic-gradient(#0000 30%, var(--brand-primary));
+        radial-gradient(farthest-side, var(--brand-primary) 94%, #0000) top/8px 8px no-repeat,
+        conic-gradient(#0000 30%, var(--brand-primary));
     mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
     -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
     animation: load_spin 1s infinite linear;
 }
 
-.nivix_primary_button {
-    background: var(--brand-primary);
+
+.nivix_primary_button,
+.nivix_button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap);
+    
+    background: var(--background-darker);
     border: none;
     border-radius: var(--radius);
-    color: var(--text-tertiary);
-    text-decoration: none;
-    cursor: pointer;
-    padding: 0.5rem 1.1rem;
-    transition: box-shadow var(--transition), background var(--transition);
     
-    svg {
-        width: 2em;
+    font-family: var(--font-primary);
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-primary);
+    text-decoration: none;
+    
+    cursor: pointer;
+    padding: var(--clickable-area-padding);
+    transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+    
+    & & svg {
+        width: 1.5em;
         aspect-ratio: 1;
-        fill: var(--text-tertiary); 
+        fill: var(--text-primary); 
         transition: fill var(--transition);
     }
     
-    &:not(:disabled):hover {
+    &:hover:not(:disabled) {
+        background: color-mix(in srgb, var(--background-darker), black 10%);
+    }
+    
+    &:active:not(:disabled) {
         box-shadow: var(--inset-shadow);
     }
     
-    &.selected, &:active {
-        background: var(--brand-secondary);
-        
-        &:disabled {
-            cursor: not-allowed;
-        }
-    }
-    
-    &:not(.selected):disabled {
-        background: #ccc;
-        color: var(--text-quarternary);
+    &:disabled {
+        color: var(--text-secondary);
+        opacity: 0.6;
         cursor: not-allowed;
+    }
+
+    &.primary {
+        background: var(--brand-primary);
+        color: var(--text-tertiary);
+        
+        & svg {
+            fill: var(--text-tertiary);
+        }
+        
+        &:hover:not(:disabled) {
+            background: var(--brand-darker);
+        }
     }
 }
 
 .nivix_secondary_button {
-    display: flex;
-    flex-direction: row;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: var(--gap);
     
     background: transparent;
     border: none;
     
-    color: var(--brand-primary);
+    font-family: var(--font-primary);
+    font-size: 16px;
+    color: var(--text-primary);
     text-decoration: none;
     
     cursor: pointer;
+    padding: var(--clickable-area-padding);
+    transition: color var(--transition);
     
-    padding: 0.5rem 1.1rem;
-    
-    transition: box-shadow var(--transition), color var(--transition);
-    
-    svg {
-        width: 2em;
+    & svg {
+        width: 1.5em;
         aspect-ratio: 1;
-        fill: var(--brand-primary); 
+        fill: var(--text-primary); 
         transition: fill var(--transition);
     }
     
-    &:not(:disabled):hover {
-        color: var(--brand-secondary);
-        svg { fill: var(--brand-secondary); }
+    &:hover:not(:disabled) {
+        color: var(--brand-primary);
+        & svg { fill: var(--brand-primary); }
     }
     
     &.selected, &:active {
-        color: var(--brand-secondary);
+        color: var(--brand-darker);
         font-weight: bold;
-        
-        &:disabled {
-            cursor: not-allowed;
-        }
     }
     
-    &:not(.selected):disabled {
-        color: var(--text-quarternary);
+    &:disabled {
+        color: var(--text-secondary);
         cursor: not-allowed;
+        & svg { fill: var(--text-secondary); }
+    }
+
+    &.primary {
+        color: var(--brand-primary);
+        font-weight: bold;
+        & svg { fill: var(--brand-primary); }
     }
 }
 
 .nivix_bookmark {
     display: block;
     width: fit-content;
-    background: var(--brand-primary);
-    border-radius: 0 var(--radius) var(--radius) 0;
-    color: var(--text-tertiary);
-    padding: 0.5rem 1.1rem;
     box-sizing: border-box;
+    
+    background: var(--background-darker);
+    color: var(--text-primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: var(--clickable-area-padding);
     
     &.right {
         border-radius: var(--radius) 0 0 var(--radius);
     }
+
+    &.primary {
+        background: var(--brand-primary);
+        color: var(--text-tertiary);
+    }
 }
 
-/* Form Inputs (Text & Numbers) */
+/* Form Inputs */
 
 .nivix_input {
     &:is(
@@ -235,47 +285,58 @@ h6 span { font-size: 0.45em; }
     input[type="search"],
     input[type="date"],
     input[type="time"],
-    input[type="datetime-local"],
-    textarea
+    input[type="datetime-local"]
     ) {
-        background: var(--background-secondary);
-        border: none;
+        background: var(--background-darker);
+        border: 1px solid transparent;
         border-radius: var(--radius);
-        text-decoration: none;
-        padding: 0.5rem 1.1rem;
+        
+        font-family: var(--font-primary);
+        font-size: 16px;
+        color: var(--text-primary);
+        padding: var(--clickable-area-padding);
+        transition: background var(--transition), border-color var(--transition);
         
         &:focus {
-            background-image: linear-gradient(
-            180deg,
-            var(--background-tertiary),
-            var(--background-secondary)
-            );
+            background: var(--background-primary);
+            border-color: var(--brand-primary);
+        }
+
+        &:disabled {
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        &.primary {
+            border-color: var(--brand-primary);
         }
     }
     
     &::placeholder {
         color: var(--text-secondary);
-        font-weight: bold;
     }
     
     /* Checkboxes */
     
     &[type="checkbox"] {
+        position: relative;
         -webkit-appearance: none;
         appearance: none;
+        
         width: 20px;
         height: 20px;
-        border: 2px solid #ff4d4d;
+        
+        background: var(--background-darker);
+        border: 2px solid var(--text-secondary);
         border-radius: 4px;
-        background: transparent;
-        cursor: default;
+        
+        cursor: pointer;
         transition: all var(--transition);
-        position: relative;
         margin: 0;
         
         &:checked {
-            border-color: #26a65b;
-            background: #26a65b;
+            border-color: var(--text-primary);
+            background: var(--text-primary);
             
             &::before {
                 content: '';
@@ -284,22 +345,19 @@ h6 span { font-size: 0.45em; }
                 left: 2px;
                 width: 12px;
                 height: 12px;
-                background: #fff;
+                background: var(--background-primary);
                 border-radius: 50%;
             }
         }
-        
-        &:hover:not(:disabled) {
-            filter: brightness(1.2);
+
+        &.primary:checked {
+            border-color: var(--brand-primary);
+            background: var(--brand-primary);
         }
         
         &:disabled {
             cursor: not-allowed;
             opacity: 0.5;
-        }
-        
-        &:focus {
-            outline: 1px solid var(--outline);
         }
     }
 }
@@ -309,7 +367,7 @@ h6 span { font-size: 0.45em; }
 .nivix_checkbox_wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: calc(var(--gap) + 3px);
     margin-bottom: 6px;
     
     &.centered {
@@ -317,9 +375,10 @@ h6 span { font-size: 0.45em; }
     }
     
     & label {
-        font-size: 18px;
+        font-size: 16px;
+        color: var(--text-primary);
         user-select: none;
-        cursor: default;
+        cursor: pointer;
     }
 }
 
@@ -330,41 +389,40 @@ h6 span { font-size: 0.45em; }
     -webkit-appearance: none;
     -moz-appearance: none;
     
-    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231c1c1c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--background-darker);
     
-    border: none;
+    border: 1px solid transparent;
     border-radius: var(--radius);
     
-    text-align: center;
-    font-family: inherit;
-    color: var(--text-tertiary);
-    
+    font-family: var(--font-primary);
+    font-size: 16px;
+    text-align: left;
+    color: var(--text-primary);
     cursor: pointer;
     
-    padding: 0.5rem 1.1rem;
+    padding: var(--clickable-area-padding);
+    padding-right: 2.5rem;
+    transition: background var(--transition), border-color var(--transition);
     
-    transition: background var(--transition);
-    
-    &:hover:not(:disabled),
-    &:focus-visible:not(:disabled) {
-        background-color: var(--brand-secondary);
-        
-        &:open {
-            background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 15 12 9 18 15'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
-        }
+    &:hover:not(:disabled) {
+        background-color: color-mix(in srgb, var(--background-darker), black 5%);
     }
     
     &:disabled {
-        background: #ccc;
-        color: var(--text-quarternary);
+        color: var(--text-secondary);
         cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    &.primary {
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 0.8rem center / 1rem, var(--brand-primary);
+        color: var(--text-tertiary);
     }
     
     & option {
         color: var(--text-primary);
-        background: var(--background-secondary);
-        
-        padding: 0;
+        background: var(--background-primary);
+        padding: 8px;
         
         &:disabled {
             color: var(--text-secondary);
@@ -373,13 +431,13 @@ h6 span { font-size: 0.45em; }
 }
 
 .nivix_label {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-weight: bold;
     text-align: left;
-    margin: 1.5rem 0 0 0;
+    margin: 1.5rem 0 0.5rem 0;
     
     &.top {
-        margin: 0;
+        margin: 0 0 0.5rem 0;
     }
 }
 
@@ -388,6 +446,76 @@ h6 span { font-size: 0.45em; }
     color: var(--text-secondary);
     font-size: 0.8em;
     text-align: left;
+}
+
+.nivix_dropdown_container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    
+    background: var(--background-darker);
+    border-radius: var(--radius);
+    padding: var(--resting-area-padding);
+    margin: var(--resting-area-padding);
+    
+    .dropdown_label {
+        display: inline-flex;
+        align-items: center;
+        user-select: none;
+        gap: var(--gap);
+        
+        input[type="checkbox"] {
+            display: none;
+        }
+        
+        label {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--gap);
+            font-size: 1em;
+            color: var(--text-primary);
+            cursor: pointer;
+            
+            &::before {
+                content: "";
+                display: inline-block;
+                width: 0;
+                height: 0;
+                border-top: 0.35em solid transparent;
+                border-bottom: 0.35em solid transparent;
+                border-left: 0.6em solid var(--text-primary);
+                transition: transform var(--transition);
+                transform-origin: 35% 50%;
+            }
+        }
+        
+        input[type="checkbox"]:checked + label::before {
+            transform: rotate(90deg);
+        }
+    }
+    
+    &:has(input[type="checkbox"]:checked) .dropdown_content {
+        display: block;
+    }
+    
+    .dropdown_content {
+        display: none;
+    }
+
+    &.primary {
+        background: color-mix(in srgb, var(--brand-primary), white 80%);
+    }
+}
+
+code {
+    background: var(--background-darker);
+    color: var(--text-primary);
+    border-radius: var(--radius);
+    padding: calc(var(--resting-area-padding) / 2);
+
+    &.code_block {
+        display: block;
+    }
 }
 
 /* Animations */

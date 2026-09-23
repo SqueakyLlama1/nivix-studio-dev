@@ -40,7 +40,7 @@
                 .button_container {
                     display: flex;
                     flex-direction: column;
-                    gap: 5px;
+                    gap: var(--gap);
                     
                     width: max-content;
                     
@@ -72,11 +72,11 @@
         height: calc(100% - 5px);
         overflow-y: auto;
         
-        background: color-mix(in srgb, var(--background-secondary) 80%, transparent);
+        background: color-mix(in srgb, var(--background-darker) 80%, transparent);
         
         border-radius: var(--radius);
         
-        margin-left: 5px;
+        margin-left: var(--resting-space-padding);
         
         .nivix_secondary_button {
             justify-content: left;
@@ -86,10 +86,14 @@
             
             border-radius: var(--radius);
             
-            transition: color var(--transition);
+            transition: box-shadow var(--transition), background var(--transition);
             
-            &:hover, &:focus {
-                background-image: linear-gradient(180deg, var(--background-tertiary), var(--background-secondary));
+            &:hover {
+                box-shadow: var(--inset-shadow);
+            }
+
+            &:focus {
+                background: var(--background-darker);
             }
         }
         

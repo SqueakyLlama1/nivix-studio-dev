@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 html, head, body {
 	margin: 0;
 	padding: 0;
@@ -5,116 +13,11 @@ html, head, body {
 }
 
 body {
-	font-family: 'Roboto', Arial, Helvetica, sans-serif;
+	font-family: "Roboto", Arial, Helvetica, sans-serif;
 	width: 100%;
 	height: 100vh;
 
 	font-size: 18px;
 
 	color: var(--text-primary);
-}
-
-input:focus {
-	outline: none;
-}
-
-#shade {
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
-	z-index: 5000;
-	position: fixed;
-	top: 0;
-	left: 0;
-	display: none;
-}
-
-.heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-    height: 2.5rem;
-    
-    background: color-mix(in srgb, var(--background-primary) 90%, transparent);
-    border: 2px solid var(--background-secondary);
-    border-radius: var(--radius);
-    box-shadow: var(--outset-shadow);
-    
-    padding-left: calc(var(--radius) / 2);
-    
-    
-    .logo_container {
-        display: flex;
-        align-items: center;
-        
-        font-family: "Megrim", monospace;
-        font-weight: bolder;
-        font-size: 1.5em;
-        
-        cursor: default;
-        user-select: none;
-        
-        .logo {
-            height: 1.5rem;
-        }
-    }
-    
-    span {
-        flex: 1;
-        
-        text-align: center;
-        font-size: 1.5em;
-        font-weight: bolder;
-    }
-    
-    .nav {
-        height: 100%;
-        
-        display: flex;
-        align-items: center;
-        margin-left: auto;
-        flex-wrap: wrap;
-        
-        button {
-            height: 100%;
-            
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            
-            background: var(--background-secondary);
-            border: none;
-            
-            color: var(--brand-primary);
-            font: bold 0.9rem sans-serif;
-            text-align: center;
-            
-            padding: 0 0.6rem;
-            cursor: pointer;
-            
-            transition: background var(--transition), color var(--transition);
-            
-            svg { 
-                fill: var(--brand-primary); 
-                transition: fill var(--transition);
-            }
-            
-            &:hover {
-                background: var(--background-tertiary);
-                color: var(--brand-tertiary);
-                svg { fill: var(--brand-tertiary); }
-            }
-            
-            &:last-child {
-                border-radius: 0 calc(var(--radius) - 2px) calc(var(--radius) - 2px) 0;
-            }
-        }
-    }
-}
-
-.nivix_primary_button, .nivix_secondary_button, .nivix_input, .nivix_select {
-	font-size: 18px;
 }

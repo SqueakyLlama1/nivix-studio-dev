@@ -15,14 +15,14 @@
     form {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: var(--gap);
         width: max-content;
     }
 
     .button_container {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: var(--gap);
         
         width: max-content;
         
