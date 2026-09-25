@@ -1,4 +1,4 @@
-import { loadCSS } from "./file_loader";
+import { loadCSS } from "./file-loader";
 import { preferences } from "./settings";
 
 interface NotificationItem {
@@ -59,7 +59,7 @@ export function init(): void {
     isInitialized = true;
 }
 
-export function show_notification(
+export function showNotification(
     message: string, 
     type: ValidNotificationType = "info", 
     duration: number = 3000, 
@@ -140,7 +140,7 @@ function renderNotification(item: NotificationItem): Promise<void> {
     });
 }
 
-export function show_popup<T = any>(
+export function showPopup<T = any>(
     message: string, 
     type: PopupType = "options",
     options: PopupOption[] = [
@@ -152,13 +152,13 @@ export function show_popup<T = any>(
     return new Promise((resolve) => {
         // Create strict structural hierarchy
         const popupContainer = document.createElement("div");
-        popupContainer.className = "popup_container center";
+        popupContainer.className = "popup-container center";
 
         const popup = document.createElement("div");
         popup.className = "popup";
 
         const messageContainer = document.createElement("div");
-        messageContainer.className = "message_container";
+        messageContainer.className = "message-container";
 
         const span = document.createElement("span");
         span.textContent = message;
@@ -170,7 +170,7 @@ export function show_popup<T = any>(
         if (type !== "options") {
             inputElement = document.createElement("input");
             inputElement.type = type;
-            inputElement.className = "nivix_input";
+            inputElement.className = "nivix-input";
 
             // Apply all passed attributes dynamically
             Object.entries(inputProps).forEach(([key, val]) => {
@@ -183,7 +183,7 @@ export function show_popup<T = any>(
         }
 
         const actionContainer = document.createElement("div");
-        actionContainer.className = "action_container";
+        actionContainer.className = "action-container";
 
         const disableAnimations = preferences['disableAnimations'];
 
@@ -217,7 +217,7 @@ export function show_popup<T = any>(
         if (type !== "options") {
             const okBtn = document.createElement("button");
             okBtn.textContent = "OK";
-            okBtn.className = "nivix_primary_button";
+            okBtn.className = "nivix-primary-button";
 
             const submitInput = () => {
                 closePopup(inputElement ? inputElement.value : "");
@@ -240,7 +240,7 @@ export function show_popup<T = any>(
             options.forEach((opt) => {
                 const btn = document.createElement("button");
                 btn.textContent = opt.content;
-                btn.className = opt.highlighted ? "nivix_primary_button" : "nivix_secondary_button";
+                btn.className = opt.highlighted ? "nivix-primary-button" : "nivix-secondary-button";
                 
                 btn.addEventListener("click", () => closePopup(opt.value));
                 actionContainer.appendChild(btn);

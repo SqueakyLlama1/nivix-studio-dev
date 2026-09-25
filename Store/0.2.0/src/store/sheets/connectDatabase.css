@@ -5,7 +5,7 @@
     width: 100%;
     height: 100%;
     
-    .tab_container {
+    .tab-container {
         display: flex;
         flex-direction: column;
         flex: 1;
@@ -28,19 +28,19 @@
         }
     }
     
-    .horizontal_container {
+    .horizontal-container {
         display: flex;
         flex-direction: row;
         gap: var(--gap);
         
         width: 100%;
         
-        .flex_primary {
+        .flex-primary {
             flex: 1;
         }
     }
     
-    .form_container {
+    .form-container {
         display: flex;
         flex-direction: column;
         gap: var(--gap);
@@ -51,8 +51,8 @@
         margin: 5px;
     }
 
-    .nivix_horizontal_navigation {
-        #connectDatabase_status {
+    .nivix-horizontal-navigation {
+        #connectDatabase-status {
             text-align: center;
         }
 

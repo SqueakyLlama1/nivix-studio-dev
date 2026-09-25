@@ -1,6 +1,6 @@
 import type mysql from 'mysql2/promise';
 
-export async function init_database(db: mysql.Pool): Promise<void> {
+export async function initDatabase(db: mysql.Pool): Promise<void> {
     const expectedTables = ['spaces', 'categories', 'items', 'item_attributes_index'];
 
     const tableQueries = [

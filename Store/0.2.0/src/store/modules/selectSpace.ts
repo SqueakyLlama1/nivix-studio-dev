@@ -1,35 +1,33 @@
-import { loadCSS } from './file_loader';
+import { loadCSS } from './file-loader';
 import { preferences, setPreference } from './settings';
-import { fillSpaceContainer } from './space_fillers';
+import { fillSpaceContainer } from './space-fillers';
 import { gotoWorkspace } from './workspace';
 
 import * as tabs from './tabs';
 
 import { store, electroview } from './index';
-import { type Space, type TabChangeEventDetail } from '../../shared/bun/store_types';
+import { type Space, type TabChangeEventDetail } from '../../shared/bun/store-types';
 
 function getEBD(id: string) {return document.getElementById(id)}
 
-const versionLabel = getEBD('selectSpace_footer_version') as HTMLSpanElement;
-const shapeAnimToggle = getEBD('selectSpace_shapeAnimToggle') as HTMLInputElement;
+const versionLabel = getEBD('selectSpace-footer-version') as HTMLSpanElement;
+const shapeAnimToggle = getEBD('selectSpace-shapeAnimToggle') as HTMLInputElement;
 
 let isInitialized: boolean = false;
 let populateRequest = 0;
 
-const settingsBtn = getEBD('selectSpace_settings') as HTMLButtonElement;
-const manageBtn = getEBD('selectSpace_manage') as HTMLButtonElement;
-const closeBtn = getEBD('selectSpace_quit') as HTMLButtonElement;
-const refreshBtn = getEBD('selectSpace_refresh') as HTMLButtonElement;
+const manageBtn = getEBD('selectSpace-manage') as HTMLButtonElement;
+const closeBtn = getEBD('selectSpace-quit') as HTMLButtonElement;
+const refreshBtn = getEBD('selectSpace-refresh') as HTMLButtonElement;
 
-const connectRemoteServerBtn = getEBD('selectSpace_connectDatabase') as HTMLButtonElement;
-const exposeRemoteInterfaceBtn = getEBD('selectSpace_start_interface') as HTMLButtonElement;
-const issuesBtn = getEBD('selectSpace_issues') as HTMLButtonElement;
+const connectRemoteServerBtn = getEBD('selectSpace-connectDatabase') as HTMLButtonElement;
+const issuesBtn = getEBD('selectSpace-issues') as HTMLButtonElement;
 
-const sourceCodeBtn = getEBD('selectSpace_source') as HTMLButtonElement;
-const creditsBtn = getEBD('selectSpace_credits') as HTMLButtonElement;
+const sourceCodeBtn = getEBD('selectSpace-source') as HTMLButtonElement;
+const creditsBtn = getEBD('selectSpace-credits') as HTMLButtonElement;
 
-const choiceSelection = getEBD('selectSpace_option') as HTMLSelectElement;
-const continueBtn = getEBD('selectSpace_continue') as HTMLButtonElement;
+const choiceSelection = getEBD('selectSpace-option') as HTMLSelectElement;
+const continueBtn = getEBD('selectSpace-continue') as HTMLButtonElement;
 
 export async function init() {
     if (isInitialized) return;
@@ -48,7 +46,7 @@ export async function init() {
         tabs.goto('credits');
     });
 
-    refreshBtn.addEventListener('click', populate_spaces_prompt);
+    refreshBtn.addEventListener('click', populateSpacesPrompt);
     
     sourceCodeBtn.addEventListener('click', function() {
         window.open('https://github.com/SqueakyLlama1/nivix-studio-dev/tree/main/Store/0.2.0', '_blank');
@@ -79,7 +77,7 @@ function toggleShapeAnimations() {
     fillSpaceContainer();
 }
 
-export async function populate_spaces_prompt() {
+export async function populateSpacesPrompt() {
     const request = ++populateRequest;
     const spaces = await electroview.rpc?.request.listSpaces() ?? [];
 	// Do not let an older response overwrite a newer refresh or database switch.
@@ -117,6 +115,6 @@ window.addEventListener('tabchange', (event) => {
     const { tabId } = eventDetails.detail;
     if (tabId === 'selectSpace') {
         init();
-        populate_spaces_prompt();
+        populateSpacesPrompt();
     }
 });

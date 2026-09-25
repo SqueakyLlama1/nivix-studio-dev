@@ -1,17 +1,8 @@
-import { loadCSS } from "./file_loader";
+import { loadCSS } from "./file-loader";
 
 import * as tabs from './tabs';
 
-import { electroview } from "./index";
-import { type TabChangeEventDetail } from "../../shared/bun/store_types";
-
-function getEBD<T extends HTMLElement = HTMLElement>(id: string): T {
-    return document.getElementById(id) as T;
-}
-
-function wait(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import { type TabChangeEventDetail } from "../../shared/bun/store-types";
 
 let isInitialized = false;
 
@@ -23,7 +14,7 @@ export function init(): void {
     isInitialized = true;
 }
 
-export function gotoWorkspace(space: number) {
+export function gotoWorkspace(_space: number) {
     tabs.goto('workspace', { display: 'flex' });
 }
 

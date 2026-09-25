@@ -1,5 +1,5 @@
 import { Electroview } from "electrobun/view";
-import { type UpdaterRPCType } from "../../shared/bun/updater_rpc_type";
+import { type UpdaterRPCType } from "../../shared/bun/updater-rpc-types";
 
 const rpc = Electroview.defineRPC<UpdaterRPCType>({
     handlers: {
@@ -19,7 +19,7 @@ function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve,
 
 async function displayDebug(message: string, type = '') {
     console.log(`Display Debug Function Recieved: ${message}, ${type}`);
-    const outputElement = getEBD('debug_output') as HTMLSpanElement;
+    const outputElement = getEBD('debug-output') as HTMLSpanElement;
     
     const messageElement = document.createElement('span') as HTMLElement;
     messageElement.className = type;

@@ -90,7 +90,7 @@ h6 span { font-size: 0.45em; }
 
 /* Layout Elements */
 
-.center, .vertical_center, .horizontal_center {
+.center, .vertical-center, .horizontal-center {
     display: flex;
     position: relative;
     flex-direction: column;
@@ -103,18 +103,18 @@ h6 span { font-size: 0.45em; }
     min-height: 100%;
 }
 
-.vertical_center {
+.vertical-center {
     justify-content: center;
     min-height: 100%;
 }
 
-.horizontal_center {
+.horizontal-center {
     align-items: center;
     text-align: center;
     height: fit-content;
 }
 
-.nivix_footer {
+.nivix-footer {
     flex-shrink: 0;
     min-height: 0;
     box-sizing: border-box;
@@ -132,13 +132,13 @@ h6 span { font-size: 0.45em; }
 
 /* Nivix Visual Identity Elements */
 
-.nivix_accent {
+.nivix-accent {
     font-family: "GochiHand", "Lucida Handwriting", serif;
     color: var(--brand-primary);
     text-shadow: 3px 3px 2px #8d8d8d;
 }
 
-.nivix_loader {
+.nivix-loader {
     width: 50px;
     aspect-ratio: 1;
     border-radius: 50%;
@@ -147,12 +147,12 @@ h6 span { font-size: 0.45em; }
     conic-gradient(#0000 30%, var(--brand-primary));
     mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
     -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
-    animation: load_spin 1s infinite linear;
+    animation: load-spin 1s infinite linear;
 }
 
 
-.nivix_primary_button,
-.nivix_button {
+.nivix-primary-button,
+.nivix-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -204,7 +204,7 @@ h6 span { font-size: 0.45em; }
     }
 }
 
-.nivix_secondary_button {
+.nivix-secondary-button {
     background: transparent;
     border: none;
     
@@ -235,7 +235,7 @@ h6 span { font-size: 0.45em; }
     }
 }
 
-.nivix_bookmark {
+.nivix-bookmark {
     display: block;
     width: fit-content;
     box-sizing: border-box;
@@ -252,7 +252,7 @@ h6 span { font-size: 0.45em; }
 
 /* Form Inputs */
 
-.nivix_input {
+.nivix-input {
     &:is(
     input[type="text"],
     input[type="number"],
@@ -356,7 +356,7 @@ h6 span { font-size: 0.45em; }
 
 /* Checkbox Wrappers */
 
-.nivix_checkbox_wrapper {
+.nivix-checkbox-wrapper {
     display: flex;
     align-items: center;
     gap: var(--gap);
@@ -374,7 +374,7 @@ h6 span { font-size: 0.45em; }
 
 /* Select and Options Dropdowns */
 
-.nivix_select {
+.nivix-select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -419,7 +419,7 @@ h6 span { font-size: 0.45em; }
     }
 }
 
-.nivix_label {
+.nivix-label {
     color: var(--text-primary);
     font-weight: bold;
     text-align: left;
@@ -430,14 +430,14 @@ h6 span { font-size: 0.45em; }
     }
 }
 
-.nivix_disclaimer {
+.nivix-disclaimer {
     margin: 0;
     color: var(--text-secondary);
     font-size: 0.8em;
     text-align: left;
 }
 
-.nivix_dropdown_container {
+.nivix-dropdown-container {
     display: flex;
     flex-direction: column;
     gap: var(--gap);
@@ -447,7 +447,7 @@ h6 span { font-size: 0.45em; }
     padding: var(--resting-area-padding);
     margin: var(--resting-area-padding);
     
-    .dropdown_label {
+    .dropdown-label {
         display: inline-flex;
         align-items: center;
         user-select: none;
@@ -483,11 +483,11 @@ h6 span { font-size: 0.45em; }
         }
     }
     
-    &:has(input[type="checkbox"]:checked) .dropdown_content {
+    &:has(input[type="checkbox"]:checked) .dropdown-content {
         display: block;
     }
     
-    .dropdown_content {
+    .dropdown-content {
         display: none;
     }
     
@@ -502,13 +502,13 @@ code {
     border-radius: var(--radius);
     padding: calc(var(--resting-area-padding) / 2);
     
-    &.code_block {
+    &.code-block {
         display: block;
     }
 }
 
 /* Navigation Elements */
-.nivix_horizontal_navigation {
+.nivix-horizontal-navigation {
     display: flex;
     gap: var(--gap);
     align-items: center;
@@ -526,18 +526,18 @@ code {
         margin-left: auto;
     }
     
-    &.divider_bottom {
+    &.divider-bottom {
         border-bottom: 2px solid var(--background-darker);
     }
     
-    &.divider_top {
+    &.divider-top {
         border-top: 2px solid var(--background-darker);
     }
 }
 
 /* Animations */
 
-@keyframes load_spin {
+@keyframes load-spin {
     100% {
         transform: rotate(1turn);
     }

@@ -1,11 +1,11 @@
-import { loadCSS } from "./file_loader.ts";
+import { loadCSS } from "./file-loader.ts";
 import * as tabs from './tabs.ts';
 import * as notifications from './notifications.ts';
 import * as selectSpace from './selectSpace.ts';
 import { preferences, setPreference } from './settings.ts';
 
 import { electroview } from "./index";
-import type { TabChangeEventDetail } from "../../shared/bun/store_types.ts";
+import type { TabChangeEventDetail } from "../../shared/bun/store-types.ts";
 
 function getEBD<T extends HTMLElement>(id: string): T {
     const el = document.getElementById(id);
@@ -15,45 +15,29 @@ function getEBD<T extends HTMLElement>(id: string): T {
     return el as T;
 }
 
-const backBtn = getEBD<HTMLButtonElement>('connectDatabase_back');
-const form = getEBD<HTMLFormElement>('connectDatabase_form');
-const submitBtn = getEBD<HTMLButtonElement>('connectDatabase_connect');
+const backBtn = getEBD<HTMLButtonElement>('connectDatabase-back');
+const form = getEBD<HTMLFormElement>('connectDatabase-form');
+const submitBtn = getEBD<HTMLButtonElement>('connectDatabase-connect');
 
-const prefixInput = getEBD<HTMLInputElement>('connectDatabase_prefix');
-const hostnameInput = getEBD<HTMLInputElement>('connectDatabase_hostname');
-const portInput = getEBD<HTMLInputElement>('connectDatabase_port');
-const databaseInput = getEBD<HTMLInputElement>('connectDatabase_database');
-const usernameInput = getEBD<HTMLInputElement>('connectDatabase_username');
-const passwordInput = getEBD<HTMLInputElement>('connectDatabase_password');
+const prefixInput = getEBD<HTMLInputElement>('connectDatabase-prefix');
+const hostnameInput = getEBD<HTMLInputElement>('connectDatabase-hostname');
+const portInput = getEBD<HTMLInputElement>('connectDatabase-port');
+const databaseInput = getEBD<HTMLInputElement>('connectDatabase-database');
+const usernameInput = getEBD<HTMLInputElement>('connectDatabase-username');
+const passwordInput = getEBD<HTMLInputElement>('connectDatabase-password');
 
-const urlInput = getEBD<HTMLInputElement>('connectDatabase_url');
-const urlSubmitBtn = getEBD<HTMLButtonElement>('connectDatabase_url_submit');
+const urlInput = getEBD<HTMLInputElement>('connectDatabase-url');
+const urlSubmitBtn = getEBD<HTMLButtonElement>('connectDatabase-url-submit');
 
-const profileSelection = getEBD<HTMLSelectElement>('connectDatabase_profiles');
-const profileLoadBtn = getEBD<HTMLButtonElement>('connectDatabase_profile_load');
-const profileNameInput = getEBD<HTMLInputElement>('connectDatabase_profile_name');
-const profileSaveBtn = getEBD<HTMLButtonElement>('connectDatabase_profile_save');
-const profileDeleteBtn = getEBD<HTMLButtonElement>('connectDatabase_profile_delete');
-const saveLastProfileToggle = getEBD<HTMLInputElement>('connectDatabase_save_last_profile');
+const profileSelection = getEBD<HTMLSelectElement>('connectDatabase-profiles');
+const profileLoadBtn = getEBD<HTMLButtonElement>('connectDatabase-profile-load');
+const profileNameInput = getEBD<HTMLInputElement>('connectDatabase-profile-name');
+const profileSaveBtn = getEBD<HTMLButtonElement>('connectDatabase-profile-save');
+const profileDeleteBtn = getEBD<HTMLButtonElement>('connectDatabase-profile-delete');
+const saveLastProfileToggle = getEBD<HTMLInputElement>('connectDatabase-save-last-profile');
 
-const statusOutput = getEBD<HTMLSpanElement>('connectDatabase_status');
-const disconnectBtn = getEBD<HTMLButtonElement>('connectDatabase_disconnect');
-
-const connectionProfilesTabBtn = getEBD<HTMLButtonElement>('navigation:connectDatabase_profiles');
-const quickConnectTabBtn = getEBD<HTMLElement>('navigation:connectDatabase_quickConnect');
-const urlConnectTabBtn = getEBD<HTMLElement>('navigation:connectDatabase_urlConnect');
-
-connectionProfilesTabBtn.addEventListener('click', function() {
-    tabs.goto('tab:connectDatabase_profiles');
-});
-
-quickConnectTabBtn.addEventListener('click', function() {
-    tabs.goto('tab:connectDatabase_quickConnect');
-});
-
-urlConnectTabBtn.addEventListener('click', function() {
-    tabs.goto('tab:connectDatabase_urlConnect');
-});
+const statusOutput = getEBD<HTMLSpanElement>('connectDatabase-status');
+const disconnectBtn = getEBD<HTMLButtonElement>('connectDatabase-disconnect');
 
 let isInitialized = false;
 let connected = false;
@@ -140,23 +124,23 @@ function loadSelectedProfile() {
     : getProfiles().find(profile => profile.name === selected)?.connection;
     if (!connection) return;
     loadConnectionDetails(connection);
-    notifications.show_notification('Connection profile loaded.');
+    notifications.showNotification('Connection profile loaded.');
 }
 
 async function saveProfile() {
     const name = profileNameInput?.value.trim() || '';
     const connection = currentConnectionDetails();
     if (!name) {
-        notifications.show_notification('Enter a name for this connection profile.', 'warning');
+        notifications.showNotification('Enter a name for this connection profile.', 'warning');
         profileNameInput?.focus();
         return;
     }
     if (!connection) {
-        notifications.show_notification('Enter a valid custom URL before saving this profile.', 'warning');
+        notifications.showNotification('Enter a valid custom URL before saving this profile.', 'warning');
         return;
     }
     if (connection.mode === 'fields' && (!connection.hostname || !connection.database)) {
-        notifications.show_notification('Enter a host and database before saving this profile.', 'warning');
+        notifications.showNotification('Enter a host and database before saving this profile.', 'warning');
         return;
     }
     
@@ -167,7 +151,7 @@ async function saveProfile() {
     if (profileSelection) profileSelection.value = name;
     updateProfileActions();
     if (profileNameInput) profileNameInput.value = '';
-    notifications.show_notification(`Saved connection profile “${name}”.`);
+    notifications.showNotification(`Saved connection profile “${name}”.`);
 }
 
 async function deleteSelectedProfile() {
@@ -176,13 +160,13 @@ async function deleteSelectedProfile() {
     
     if (selected === '__last_connection__') {
         await setPreference('lastDatabaseConnection', null);
-        notifications.show_notification('Deleted "Last Connection" profile.');
+        notifications.showNotification('Deleted "Last Connection" profile.');
     } else {
         await setPreference(
             'databaseConnectionProfiles', 
             getProfiles().filter(profile => profile.name !== selected)
         );
-        notifications.show_notification(`Deleted connection profile “${selected}”.`);
+        notifications.showNotification(`Deleted connection profile “${selected}”.`);
     }
     
     renderProfiles();
@@ -284,14 +268,14 @@ async function connectDatabase(customURL?: string) {
     let target = '';
     
     if (!electroview?.rpc?.request?.setDatabase) {
-        notifications?.show_notification('RPC Connection unavailable. Please restart the application.', 'error');
+        notifications?.showNotification('RPC Connection unavailable. Please restart the application.', 'error');
         return;
     }
     
     if (customURL) {
         target = customURL.trim();
         if (!target) {
-            notifications?.show_notification('Please enter a valid connection URL.', 'warning');
+            notifications?.showNotification('Please enter a valid connection URL.', 'warning');
             return;
         }
     } else {
@@ -303,13 +287,13 @@ async function connectDatabase(customURL?: string) {
         const password = passwordInput?.value?.trim() || '';
         
         if (!hostname) {
-            notifications?.show_notification('Please provide a host or IP address.', 'warning');
+            notifications?.showNotification('Please provide a host or IP address.', 'warning');
             hostnameInput?.focus();
             return;
         }
         
         if (!database) {
-            notifications?.show_notification('Please specify a database name.', 'warning');
+            notifications?.showNotification('Please specify a database name.', 'warning');
             databaseInput?.focus();
             return;
         }
@@ -317,7 +301,7 @@ async function connectDatabase(customURL?: string) {
         if (port) {
             const parsedPort = Number(port);
             if (isNaN(parsedPort) || parsedPort <= 0 || parsedPort > 65535) {
-                notifications?.show_notification('Please enter a valid port number (1-65535).', 'warning');
+                notifications?.showNotification('Please enter a valid port number (1-65535).', 'warning');
                 portInput?.focus();
                 return;
             }
@@ -334,13 +318,13 @@ async function connectDatabase(customURL?: string) {
     }
     
     if (!isValidConnectionString(target)) {
-        notifications?.show_notification('Invalid connection URL format generated. Please check your inputs.', 'error');
+        notifications?.showNotification('Invalid connection URL format generated. Please check your inputs.', 'error');
         return;
     }
     
     try {
         setLoadingState(true);
-        notifications?.show_notification('Attempting to connect to database...');
+        notifications?.showNotification('Attempting to connect to database...');
         if (statusOutput) statusOutput.innerText = 'Connecting to database...';
         
         await electroview.rpc.request.setDatabase({
@@ -354,14 +338,14 @@ async function connectDatabase(customURL?: string) {
             await setPreference('lastDatabaseConnection', lastConnection);
             renderProfiles();
         }
-        notifications?.show_notification('Successfully connected to database!');
+        notifications?.showNotification('Successfully connected to database!');
         if (statusOutput) statusOutput.innerText = 'Connected to Database';
         
-        await selectSpace.populate_spaces_prompt();
+        await selectSpace.populateSpacesPrompt();
     } catch (err) {
         connected = false;
         const message = getErrorMessage(err);
-        notifications?.show_notification(`Failed to connect to database: ${message}`, 'error');
+        notifications?.showNotification(`Failed to connect to database: ${message}`, 'error');
         if (statusOutput) statusOutput.innerText = 'Connection Failed';
     } finally {
         setLoadingState(false);
@@ -370,29 +354,29 @@ async function connectDatabase(customURL?: string) {
 
 async function disconnectDatabase() {
     if (!connected) {
-        notifications?.show_notification("You aren't connected to a remote database.", 'warning');
+        notifications?.showNotification("You aren't connected to a remote database.", 'warning');
         return;
     }
     
     if (!electroview?.rpc?.request?.setDatabase) {
-        notifications?.show_notification('RPC Connection unavailable. Please restart the application.', 'error');
+        notifications?.showNotification('RPC Connection unavailable. Please restart the application.', 'error');
         return;
     }
     
     try {
         setLoadingState(true);
-        notifications?.show_notification('Disconnecting from remote database...');
+        notifications?.showNotification('Disconnecting from remote database...');
         if (statusOutput) statusOutput.innerText = 'Disconnecting...';
         
         await electroview.rpc.request.setDatabase({ database: 'sqlite' });
         
         connected = false;
-        await selectSpace.populate_spaces_prompt();
+        await selectSpace.populateSpacesPrompt();
         if (statusOutput) statusOutput.innerText = 'Not Connected';
-        notifications?.show_notification('Disconnected from remote database. Switched to local SQLite.');
+        notifications?.showNotification('Disconnected from remote database. Switched to local SQLite.');
     } catch (err) {
         const message = getErrorMessage(err);
-        notifications?.show_notification(`Failed to disconnect from remote database: ${message}`, 'error');
+        notifications?.showNotification(`Failed to disconnect from remote database: ${message}`, 'error');
         if (statusOutput) statusOutput.innerText = 'Connected to Database';
     } finally {
         setLoadingState(false);

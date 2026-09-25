@@ -1,4 +1,4 @@
-import { loadCSS } from './file_loader';
+import { loadCSS } from './file-loader';
 import { programaticAnimationDuration } from './tabs';
 import { preferences } from './settings';
 
@@ -6,18 +6,18 @@ function getEBD(id: string) {return document.getElementById(id)}
 function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
 export async function init() {
-    await loadCSS('sheets/space_fillers.css');
+    await loadCSS('sheets/space-fillers.css');
     fillSpaceContainer();
 }
 
 const shapeElementType: string = 'div';
-const baseShapeClass: string = 'space_filler_shape';
+const baseShapeClass: string = 'space-filler-shape';
 const delay: number = 25; // Delay between each shape being added, in milliseconds.
 let currentCallId = 0;
 let lastCombinationIndex: number | null = null; // Tracks previous selection to prevent duplicates
 
-// List of available floating animation keyframes defined in space_fillers.css
-const floatAnimations = ['float', 'float_slow', 'float_fast', 'float_subtle'];
+// List of available floating animation keyframes defined in space-fillers.css
+const floatAnimations = ['float', 'float-slow', 'float-fast', 'float-subtle'];
 
 export async function fillSpaceContainer() {
     const callId = ++currentCallId;
@@ -35,7 +35,7 @@ export async function fillSpaceContainer() {
         [ "circle3", "polygon2", "triangle4", "polygon1", "triangle5", "circle2", "circle6", "polygon6", "triangle7", "circle4", "polygon5" ]
     ];
     
-    const container = getEBD('space_filler_container') as HTMLDivElement;
+    const container = getEBD('space-filler-container') as HTMLDivElement;
     if (!container) return;
 
     const disableAnimations = !!preferences['disableAnimations'];

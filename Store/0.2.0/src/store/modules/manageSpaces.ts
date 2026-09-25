@@ -1,11 +1,11 @@
-import { loadCSS } from "./file_loader";
-import { show_notification, show_popup } from "./notifications";
+import { loadCSS } from "./file-loader";
+import { showNotification, showPopup } from "./notifications";
 import { preferences } from "./settings";
 
 import * as tabs from './tabs';
 
 import { electroview } from "./index";
-import { type TabChangeEventDetail } from "../../shared/bun/store_types";
+import { type TabChangeEventDetail } from "../../shared/bun/store-types";
 
 function getEBD<T extends HTMLElement = HTMLElement>(id: string): T {
     return document.getElementById(id) as T;
@@ -36,7 +36,7 @@ export function init(): void {
     });
 
     refreshBtn.addEventListener('click', (e: MouseEvent) => {
-        populate_spaces_list(true, !e.shiftKey);
+        populateSpacesList(true, !e.shiftKey);
     });
 
     createBtn.addEventListener('click', () => {
@@ -46,7 +46,7 @@ export function init(): void {
     isInitialized = true;
 }
 
-async function populate_spaces_list(fadeOut?: boolean, animate: boolean = !preferences['disableAnimations']): Promise<void> {
+async function populateSpacesList(fadeOut?: boolean, animate: boolean = !preferences['disableAnimations']): Promise<void> {
     const spacesList = getEBD<HTMLDivElement>('manageSpaces_list');
 
     // Smoothly fade out existing items
@@ -84,25 +84,25 @@ async function populate_spaces_list(fadeOut?: boolean, animate: boolean = !prefe
         nameEl.innerText = space.name;
 
         renameBtn.textContent = 'Rename';
-        renameBtn.className = 'nivix_primary_button';
+        renameBtn.className = 'nivix-primary-button';
         renameBtn.onclick = async () => {
-            const new_name = await show_popup(
+            const newName = await showPopup(
                 `Renaming '${space.name}'`,
                 "text", 
                 undefined, 
                 { placeholder: "New Name" }
             );
 
-            if (new_name && new_name !== space.name) {
-                await electroview.rpc!.request.renameSpace({ id: space.id, name: new_name });
-                populate_spaces_list(true);
+            if (newName && newName !== space.name) {
+                await electroview.rpc!.request.renameSpace({ id: space.id, name: newName });
+                populateSpacesList(true);
             }
         };
 
         deleteBtn.textContent = 'Delete';
-        deleteBtn.className = 'nivix_primary_button';
+        deleteBtn.className = 'nivix-primary-button';
         deleteBtn.onclick = async (e: MouseEvent) => {
-            const verified = e.shiftKey ? true : await show_popup(
+            const verified = e.shiftKey ? true : await showPopup(
                 `Are you sure you want to delete the space '${space.name}'? This cannot be undone.`, 
                 "options", 
                 [
@@ -114,11 +114,11 @@ async function populate_spaces_list(fadeOut?: boolean, animate: boolean = !prefe
             if (verified) {
                 try {
                     await electroview.rpc!.request.deleteSpace(space.id);
-                    show_notification(`Deleted Space '${space.name}'`);
-                    populate_spaces_list(true, !e.shiftKey);
+                    showNotification(`Deleted Space '${space.name}'`);
+                    populateSpacesList(true, !e.shiftKey);
                 } catch (err) {
                     const message = err instanceof Error ? err.message : String(err);
-                    show_notification(`Failed to delete space '${space.name}': ${message}`, "error");
+                    showNotification(`Failed to delete space '${space.name}': ${message}`, "error");
                 }
             }
         };
@@ -146,6 +146,6 @@ window.addEventListener('tabchange', (event) => {
     const { tabId } = eventDetails.detail;
     if (tabId === 'manageSpaces') {
         init();
-        populate_spaces_list();
+        populateSpacesList();
     }
 });

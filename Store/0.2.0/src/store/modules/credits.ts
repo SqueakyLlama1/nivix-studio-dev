@@ -1,12 +1,12 @@
-import type { TabChangeEventDetail } from "../../shared/bun/store_types";
-import { loadCSS } from "./file_loader";
+import type { TabChangeEventDetail } from "../../shared/bun/store-types";
+import { loadCSS } from "./file-loader";
 import * as tabs from './tabs';
 
 function getEBD(id: string) {return document.getElementById(id)}
 
 let isInitialized: boolean = false;
 
-const backBtn = getEBD('credits_back') as HTMLButtonElement;
+const backBtn = getEBD('credits-back') as HTMLButtonElement;
 
 export function init() {
     if (isInitialized) return;

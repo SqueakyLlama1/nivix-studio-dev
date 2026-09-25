@@ -5,8 +5,8 @@ import * as os from 'node:os';
 import type { Database } from 'bun:sqlite';
 
 export interface AppContext {
-    studio_path: string;
-    old_formats: Record<string, string>;
+    studioPath: string;
+    oldFormats: Record<string, string>;
 }
 
 export interface Space {
@@ -328,7 +328,7 @@ export default function createDatabaseApi(db: Database, ctx: AppContext) {
         };
         
         const convert = async (version: string, space_id: number | bigint, chunk_cap: ChunkCap = 5000): Promise<void> => {
-            if (!ctx.old_formats[version]) return;
+            if (!ctx.oldFormats[version]) return;
             
             const spaces = listSpaces();
             
@@ -342,7 +342,7 @@ export default function createDatabaseApi(db: Database, ctx: AppContext) {
             }
             
             if (version === "0.1.0") {
-                const oldPath = path.join(ctx.studio_path, ctx.old_formats[version]);
+                    const oldPath = path.join(ctx.studioPath, ctx.oldFormats[version]);
                 const oldInventory = fsSync.createReadStream(oldPath);
                 const stats = fsSync.statSync(oldPath);
                 const totalBytes = stats.size;

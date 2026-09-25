@@ -1,13 +1,13 @@
-import { loadCSS } from './file_loader';
+import { loadCSS } from './file-loader';
 
 import * as settings from './settings';
 import * as tabs from './tabs';
 import * as index from './index';
-import * as space_fillers from './space_fillers';
+import * as spaceFillers from './space-fillers';
 import * as notifications from './notifications';
 
 import { electroview } from './index';
-import { populateSVGs } from "./file_loader";
+import { populateSVGs } from "./file-loader";
 
 // Import all modules that listen for tabchange events, so electrobun can package them, and all top-level code is ran.
 import './connectDatabase';
@@ -19,7 +19,7 @@ import './selectSpace';
 function getEBD(id: string) {return document.getElementById(id)}
 function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
-const versionLabel = getEBD('load_footer_version');
+const versionLabel = getEBD('load-footer-version');
 
 let isFinishing = false;
 let initialization: Promise<void> | null = null;
@@ -54,7 +54,7 @@ async function initialize() {
         menuDelay = settings.preferences['menuDelay'] ?? 750;
     } catch (err) {
         const message = err as string;
-        notifications.show_notification(`Non-Critical Error: Failed to load user preferences: ${message}`, 'warning');
+        notifications.showNotification(`Non-Critical Error: Failed to load user preferences: ${message}`, 'warning');
     }
     
     // Replace SVG Placeholders with SVGs
@@ -65,7 +65,7 @@ async function initialize() {
             await populateSVGs();
         } catch (err) {
             const message = err as string;
-            notifications?.show_notification(`Non-Critical Error: Failed to replace icon placeholders: ${message}`, 'warning');
+            notifications?.showNotification(`Non-Critical Error: Failed to replace icon placeholders: ${message}`, 'warning');
         }
     }
     
@@ -99,22 +99,22 @@ async function initialize() {
         });
     } catch (err) {
         const message = err as string;
-        notifications?.show_notification(`Non-Critical Error: Failed to load keyboard navigation fix: ${message}`, 'warning');
+        notifications?.showNotification(`Non-Critical Error: Failed to load keyboard navigation fix: ${message}`, 'warning');
     }
     
     // Initialize space filler shapes
     try {
-        space_fillers.init();
+        spaceFillers.init();
     } catch (err) {
         const message = err as string;
-        notifications?.show_notification(`Non-Critical Error: Failed to load space filler shapes: ${message}`, 'warning');
+        notifications?.showNotification(`Non-Critical Error: Failed to load space filler shapes: ${message}`, 'warning');
     }
     
     await wait(menuDelay);
-    await finish_loading();
+    await finishLoading();
 }
 
-async function finish_loading() {
+async function finishLoading() {
     if (isFinishing) return;
     isFinishing = true;
     

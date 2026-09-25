@@ -8,7 +8,7 @@
 
     padding: var(--resting-area-padding);
     
-    #manageSpaces_list {
+    #manageSpaces-list {
         display: flex;
         flex-direction: column;
         gap: 1px;
@@ -52,7 +52,7 @@
                 gap: var(--gap);
             }
             
-            .nivix_primary_button {
+            .nivix-primary-button {
                 padding: var(--resting-area-padding);
             }
         }

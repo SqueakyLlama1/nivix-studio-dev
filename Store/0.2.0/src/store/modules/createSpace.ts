@@ -1,20 +1,20 @@
-import { loadCSS } from './file_loader';
+import { loadCSS } from './file-loader';
 import * as tabs from './tabs';
 import * as selectSpace from './selectSpace';
 
 import { electroview } from './index';
-import type { TabChangeEventDetail } from '../../shared/bun/store_types';
+import type { TabChangeEventDetail } from '../../shared/bun/store-types';
 
 function getEBD(id: string) {return document.getElementById(id)}
 function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
 let isInitialized: boolean = false;
 
-const form = getEBD('createSpace_form') as HTMLFormElement;
-const continueBtn = getEBD('createSpace_continue') as HTMLButtonElement;
-const nameInput = getEBD('createSpace_name') as HTMLInputElement;
-const cancelBtn = getEBD('createSpace_cancel') as HTMLButtonElement;
-const errorOutput = getEBD('createSpace_output') as HTMLSpanElement;
+const form = getEBD('createSpace-form') as HTMLFormElement;
+const continueBtn = getEBD('createSpace-continue') as HTMLButtonElement;
+const nameInput = getEBD('createSpace-name') as HTMLInputElement;
+const cancelBtn = getEBD('createSpace-cancel') as HTMLButtonElement;
+const errorOutput = getEBD('createSpace-output') as HTMLSpanElement;
 
 export async function init() {
     if (isInitialized) return;
@@ -35,7 +35,7 @@ export async function init() {
                 errorOutput.innerText = 'Haha. Very Funny';
                 await wait(500);
             }
-            await selectSpace.populate_spaces_prompt();
+            await selectSpace.populateSpacesPrompt();
             tabs.goto('previous');
             await wait(tabs.programaticAnimationDuration);
             errorOutput.innerText = '';

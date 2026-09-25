@@ -3,16 +3,16 @@ import os from 'node:os';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 
-const studio_path = path.join(os.homedir(), 'nvxstdo');
-const store_path = path.join(studio_path, 'store');
-const skippedVersionFilePath = path.join(store_path, 'skippedVersion.txt');
+const studioPath = path.join(os.homedir(), 'nvxstdo');
+const storePath = path.join(studioPath, 'store');
+const skippedVersionFilePath = path.join(storePath, 'skippedVersion.txt');
 
 let updateInfo: any = null;
 let skippedVersion: string | null = null;
 
 export async function init() {
     try {
-        await fs.mkdir(store_path, { recursive: true });
+        await fs.mkdir(storePath, { recursive: true });
     } catch {
         // Ignore if directory already exists
     }
@@ -74,7 +74,7 @@ export async function skipVersion() {
     if (!versionToSkip) return;
 
     try {
-        await fs.mkdir(store_path, { recursive: true });
+        await fs.mkdir(storePath, { recursive: true });
         await fs.writeFile(skippedVersionFilePath, versionToSkip.trim(), { encoding: 'utf-8' });
         skippedVersion = versionToSkip;
     } catch (err: any) {

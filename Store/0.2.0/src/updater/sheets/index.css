@@ -9,11 +9,11 @@ body {
     background: var(--background-primary);
     border-radius: var(--radius);
     
-    animation: window_open 0.25s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    animation: window-open 0.25s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
     transform-origin: center center;
 }
 
-.nivix_loader {
+.nivix-loader {
     margin-bottom: 25px;
 }
 
@@ -23,7 +23,7 @@ h1 {
     user-select: none;
 }
 
-#debug_output {
+#debug-output {
     background: var(--background-darker);
     border-radius: var(--radius);
     
@@ -56,7 +56,7 @@ h1 {
     }
 }
 
-@keyframes window_open {
+@keyframes window-open {
     0% {
         opacity: 0;
         transform: scale(0.92);

@@ -7,20 +7,20 @@ import Database from 'bun:sqlite';
 import mysql from 'mysql2/promise';
 
 import * as updater from "./updater.js";
-import * as utils from "./updater_utils";
-import { type UpdaterRPCType } from '../shared/bun/updater_rpc_type';
-import { type StoreRPCType } from '../shared/bun/store_rpc_type';
+import * as utils from "./updater-utils";
+import { type UpdaterRPCType } from '../shared/bun/updater-rpc-types';
+import { type StoreRPCType } from '../shared/bun/store-rpc-types.js';
 
-const studio_path = path.join(os.homedir(), 'nvxstdo');
-const store_path = path.join(studio_path, 'store');
-const preferences_path = path.join(store_path, 'preferences.json');
+const studioPath = path.join(os.homedir(), 'nvxstdo');
+const storePath = path.join(studioPath, 'store');
+const preferencesPath = path.join(storePath, 'preferences.json');
 
-const old_formats = {
+const oldFormats = {
 	"0.1.0-hub": path.join('appdata', 'store', 'inventory.ndjson'),
 	"0.1.0": path.join('store', 'inventory.ndjson')
 };
 
-const ctx = { studio_path, old_formats };
+const ctx = { studioPath, oldFormats };
 
 let functions: Record<string, (...args: any[]) => any> = {};
 let db: Database | mysql.Pool | null = null;
@@ -76,11 +76,10 @@ async function configureDatabase(database: string, databasePath?: string): Promi
 			});
 			
 			const [{ default: createApi }, initModule] = await Promise.all([
-				import('./remote_sql_driver'),
-				import('./init_remote_sql_database')
+				import('./remote-sql-driver'),
+				import('./init-remote-sql-database')
 			]);
-			
-			await initModule.init_database(remoteDb);
+			await initModule.initDatabase(remoteDb);
 			await closeDatabase();
 			
 			db = remoteDb;
@@ -92,24 +91,19 @@ async function configureDatabase(database: string, databasePath?: string): Promi
 		}
 		return;
 	}
-	
+
 	if (database === 'sqlite') {
-		const localDb = new Database(path.join(store_path, 'inventory.db'));
-		try {
-			const [{ default: createApi }, initModule] = await Promise.all([
-				import('./local_sqlite_driver'),
-				import('./init_local_sqlite_database')
-			]);
-			initModule.init_database(localDb);
-			await closeDatabase();
-			
-			db = localDb;
-			functions = createApi(localDb, ctx);
-			activeDB = 'sqlite';
-		} catch (error) {
-			localDb.close();
-			throw error;
-		}
+		const localDb = new Database(databasePath ?? path.join(storePath, 'store.sqlite'));
+		const [{ default: createApi }, initModule] = await Promise.all([
+			import('./local-sqlite-driver'),
+			import('./init-local-sqlite-database')
+		]);
+		initModule.initDatabase(localDb);
+		await closeDatabase();
+
+		db = localDb;
+		functions = createApi(localDb, ctx);
+		activeDB = 'sqlite';
 		return;
 	}
 	
@@ -153,7 +147,7 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 		requests: {
 			async getPreferences() {
 				try {
-					const preferencesContents = await fs.readFile(preferences_path, 'utf-8');
+					const preferencesContents = await fs.readFile(preferencesPath, 'utf-8');
 					return JSON.parse(preferencesContents);
 				} catch {
 					return {};
@@ -161,7 +155,7 @@ const storeRPC = BrowserView.defineRPC<StoreRPCType>({
 			},
 			async setPreferences(preferences: object) {
 				const data = JSON.stringify(preferences || {}, null, 2);
-				const write = preferencesWrite.then(() => fs.writeFile(preferences_path, data));
+				const write = preferencesWrite.then(() => fs.writeFile(preferencesPath, data));
 				preferencesWrite = write.catch(() => undefined);
 				await write;
 				return true;
@@ -351,8 +345,8 @@ function init(): Promise<void> {
 	if (!initialization) {
 		initialization = (async () => {
 			updaterWindow?.webview.rpc?.send.displayDebug({ message: 'Initializing App Sandbox...' });
-			await fs.mkdir(studio_path, { recursive: true });
-			await fs.mkdir(store_path, { recursive: true });
+			await fs.mkdir(studioPath, { recursive: true });
+			await fs.mkdir(storePath, { recursive: true });
 			await updater.init();
 			await enqueueDatabaseTask(() => configureDatabase('sqlite'));
 		})().catch(error => {
@@ -368,6 +362,6 @@ function init(): Promise<void> {
 openUpdater();
 
 export default {
-	store_path,
-	studio_path
+	storePath,
+	studioPath
 };

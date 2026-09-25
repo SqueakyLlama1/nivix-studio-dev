@@ -1,5 +1,5 @@
 import { preferences } from './settings';
-import { type TabOptions } from '../../shared/bun/store_types';
+import { type TabOptions } from '../../shared/bun/store-types';
 
 interface NavigationHistoryItem {
     id: string;

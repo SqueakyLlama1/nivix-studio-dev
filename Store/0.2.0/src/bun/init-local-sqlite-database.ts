@@ -1,6 +1,6 @@
 import type { Database } from 'bun:sqlite';
 
-export function init_database(db: Database) {
+export function initDatabase(db: Database) {
     db.run(`
             PRAGMA foreign_keys = ON;
             PRAGMA journal_mode = WAL;
