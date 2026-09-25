@@ -1,6 +1,6 @@
 import { loadCSS } from './file_loader';
 import * as tabs from './tabs';
-import * as select_space from './select_space';
+import * as selectSpace from './selectSpace';
 
 import { electroview } from './index';
 import type { TabChangeEventDetail } from '../../shared/bun/store_types';
@@ -10,15 +10,15 @@ function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve,
 
 let isInitialized: boolean = false;
 
-const form = getEBD('create_space_form') as HTMLFormElement;
-const continueBtn = getEBD('create_space_continue') as HTMLButtonElement;
-const nameInput = getEBD('create_space_name') as HTMLInputElement;
-const cancelBtn = getEBD('create_space_cancel') as HTMLButtonElement;
-const errorOutput = getEBD('create_space_output') as HTMLSpanElement;
+const form = getEBD('createSpace_form') as HTMLFormElement;
+const continueBtn = getEBD('createSpace_continue') as HTMLButtonElement;
+const nameInput = getEBD('createSpace_name') as HTMLInputElement;
+const cancelBtn = getEBD('createSpace_cancel') as HTMLButtonElement;
+const errorOutput = getEBD('createSpace_output') as HTMLSpanElement;
 
 export async function init() {
     if (isInitialized) return;
-    loadCSS('sheets/create_space.css');
+    loadCSS('sheets/createSpace.css');
     
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
@@ -35,7 +35,7 @@ export async function init() {
                 errorOutput.innerText = 'Haha. Very Funny';
                 await wait(500);
             }
-            await select_space.populate_spaces_prompt();
+            await selectSpace.populate_spaces_prompt();
             tabs.goto('previous');
             await wait(tabs.programaticAnimationDuration);
             errorOutput.innerText = '';
@@ -48,6 +48,8 @@ export async function init() {
     });
     
     cancelBtn.addEventListener('click', function() {
+        errorOutput.innerText = '';
+        nameInput.value = '';
         tabs.goto('previous');
     });
     
@@ -57,7 +59,7 @@ export async function init() {
 window.addEventListener('tabchange', (event) => {
     const eventDetails = event as CustomEvent<TabChangeEventDetail>;
     const { tabId } = eventDetails.detail;
-    if (tabId === 'create_space') {
+    if (tabId === 'createSpace') {
         init();
         nameInput.focus();
     };

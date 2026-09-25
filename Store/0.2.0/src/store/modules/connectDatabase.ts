@@ -1,11 +1,11 @@
-import { loadCSS } from "./file_loader";
+import { loadCSS } from "./file_loader.ts";
 import * as tabs from './tabs.ts';
 import * as notifications from './notifications.ts';
-import * as select_space from './select_space.ts';
+import * as selectSpace from './selectSpace.ts';
 import { preferences, setPreference } from './settings.ts';
 
 import { electroview } from "./index";
-import type { TabChangeEventDetail } from "../../shared/bun/store_types";
+import type { TabChangeEventDetail } from "../../shared/bun/store_types.ts";
 
 function getEBD<T extends HTMLElement>(id: string): T {
     const el = document.getElementById(id);
@@ -15,29 +15,45 @@ function getEBD<T extends HTMLElement>(id: string): T {
     return el as T;
 }
 
-const backBtn = getEBD<HTMLButtonElement>('connect_database_back');
-const form = getEBD<HTMLFormElement>('connect_database_form');
-const submitBtn = getEBD<HTMLButtonElement>('connect_database_connect');
+const backBtn = getEBD<HTMLButtonElement>('connectDatabase_back');
+const form = getEBD<HTMLFormElement>('connectDatabase_form');
+const submitBtn = getEBD<HTMLButtonElement>('connectDatabase_connect');
 
-const prefixInput = getEBD<HTMLInputElement>('connect_database_prefix');
-const hostnameInput = getEBD<HTMLInputElement>('connect_database_hostname');
-const portInput = getEBD<HTMLInputElement>('connect_database_port');
-const databaseInput = getEBD<HTMLInputElement>('connect_database_database');
-const usernameInput = getEBD<HTMLInputElement>('connect_database_username');
-const passwordInput = getEBD<HTMLInputElement>('connect_database_password');
+const prefixInput = getEBD<HTMLInputElement>('connectDatabase_prefix');
+const hostnameInput = getEBD<HTMLInputElement>('connectDatabase_hostname');
+const portInput = getEBD<HTMLInputElement>('connectDatabase_port');
+const databaseInput = getEBD<HTMLInputElement>('connectDatabase_database');
+const usernameInput = getEBD<HTMLInputElement>('connectDatabase_username');
+const passwordInput = getEBD<HTMLInputElement>('connectDatabase_password');
 
-const urlInput = getEBD<HTMLInputElement>('connect_database_url');
-const urlSubmitBtn = getEBD<HTMLButtonElement>('connect_database_url_submit');
+const urlInput = getEBD<HTMLInputElement>('connectDatabase_url');
+const urlSubmitBtn = getEBD<HTMLButtonElement>('connectDatabase_url_submit');
 
-const profileSelection = getEBD<HTMLSelectElement>('connect_database_profiles');
-const profileLoadBtn = getEBD<HTMLButtonElement>('connect_database_profile_load');
-const profileNameInput = getEBD<HTMLInputElement>('connect_database_profile_name');
-const profileSaveBtn = getEBD<HTMLButtonElement>('connect_database_profile_save');
-const profileDeleteBtn = getEBD<HTMLButtonElement>('connect_database_profile_delete');
-const saveLastProfileToggle = getEBD<HTMLInputElement>('connect_database_save_last_profile');
+const profileSelection = getEBD<HTMLSelectElement>('connectDatabase_profiles');
+const profileLoadBtn = getEBD<HTMLButtonElement>('connectDatabase_profile_load');
+const profileNameInput = getEBD<HTMLInputElement>('connectDatabase_profile_name');
+const profileSaveBtn = getEBD<HTMLButtonElement>('connectDatabase_profile_save');
+const profileDeleteBtn = getEBD<HTMLButtonElement>('connectDatabase_profile_delete');
+const saveLastProfileToggle = getEBD<HTMLInputElement>('connectDatabase_save_last_profile');
 
-const statusOutput = getEBD<HTMLSpanElement>('connect_database_status');
-const disconnectBtn = getEBD<HTMLButtonElement>('connect_database_disconnect');
+const statusOutput = getEBD<HTMLSpanElement>('connectDatabase_status');
+const disconnectBtn = getEBD<HTMLButtonElement>('connectDatabase_disconnect');
+
+const connectionProfilesTabBtn = getEBD<HTMLButtonElement>('navigation:connectDatabase_profiles');
+const quickConnectTabBtn = getEBD<HTMLElement>('navigation:connectDatabase_quickConnect');
+const urlConnectTabBtn = getEBD<HTMLElement>('navigation:connectDatabase_urlConnect');
+
+connectionProfilesTabBtn.addEventListener('click', function() {
+    tabs.goto('tab:connectDatabase_profiles');
+});
+
+quickConnectTabBtn.addEventListener('click', function() {
+    tabs.goto('tab:connectDatabase_quickConnect');
+});
+
+urlConnectTabBtn.addEventListener('click', function() {
+    tabs.goto('tab:connectDatabase_urlConnect');
+});
 
 let isInitialized = false;
 let connected = false;
@@ -228,7 +244,7 @@ export function init() {
     profileSaveBtn?.addEventListener('click', () => void saveProfile());
     profileDeleteBtn?.addEventListener('click', () => void deleteSelectedProfile());
     
-    loadCSS('sheets/connect_database.css');
+    loadCSS('sheets/connectDatabase.css');
     isInitialized = true;
     renderProfiles();
     void syncConnectionState();
@@ -341,7 +357,7 @@ async function connectDatabase(customURL?: string) {
         notifications?.show_notification('Successfully connected to database!');
         if (statusOutput) statusOutput.innerText = 'Connected to Database';
         
-        await select_space.populate_spaces_prompt();
+        await selectSpace.populate_spaces_prompt();
     } catch (err) {
         connected = false;
         const message = getErrorMessage(err);
@@ -371,7 +387,7 @@ async function disconnectDatabase() {
         await electroview.rpc.request.setDatabase({ database: 'sqlite' });
         
         connected = false;
-        await select_space.populate_spaces_prompt();
+        await selectSpace.populate_spaces_prompt();
         if (statusOutput) statusOutput.innerText = 'Not Connected';
         notifications?.show_notification('Disconnected from remote database. Switched to local SQLite.');
     } catch (err) {
@@ -386,7 +402,7 @@ async function disconnectDatabase() {
 window.addEventListener('tabchange', (event) => {
     const eventDetails = event as CustomEvent<TabChangeEventDetail>;
     const { tabId } = eventDetails.detail;
-    if (tabId === 'connect_database') {
+    if (tabId === 'connectDatabase') {
         if (!init()) void syncConnectionState();
     }
 });

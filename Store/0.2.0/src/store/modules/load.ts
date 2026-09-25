@@ -1,4 +1,4 @@
-import { loadCSS, unloadCSS } from './file_loader';
+import { loadCSS } from './file_loader';
 
 import * as settings from './settings';
 import * as tabs from './tabs';
@@ -10,18 +10,17 @@ import { electroview } from './index';
 import { populateSVGs } from "./file_loader";
 
 // Import all modules that listen for tabchange events, so electrobun can package them, and all top-level code is ran.
-import './connect_database';
-import './create_space';
+import './connectDatabase';
+import './createSpace';
 import './credits';
-import './manage_spaces';
-import './select_space';
+import './manageSpaces';
+import './selectSpace';
 
 function getEBD(id: string) {return document.getElementById(id)}
 function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
 
 const versionLabel = getEBD('load_footer_version');
 
-let load_stylesheet: string;
 let isFinishing = false;
 let initialization: Promise<void> | null = null;
 
@@ -38,7 +37,6 @@ export function init(): Promise<void> {
 async function initialize() {
     versionLabel!.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
     
-    load_stylesheet = loadCSS('sheets/load.css');
     loadCSS('sheets/tooltips.css');
     
     let menuDelay: number = 750;
@@ -120,10 +118,9 @@ async function finish_loading() {
     if (isFinishing) return;
     isFinishing = true;
     
-    await tabs.remove('load_menu');
-    unloadCSS(load_stylesheet);
+    await tabs.remove('loadMenu');
     
-    tabs.goto('select_space', { display: 'flex' });
+    tabs.goto('selectSpace', { display: 'flex' });
 }
 
 export function checkLoadState() {

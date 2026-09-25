@@ -1,4 +1,4 @@
-#create_space {
+#createSpace {
     flex-direction: column;
 
     width: 100%;
@@ -31,7 +31,7 @@
         }
     }
 
-    #create_space_output {
+    #createSpace_output {
         color: #ac0000;
         font-weight: bold;
     }

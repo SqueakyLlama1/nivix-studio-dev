@@ -22,14 +22,14 @@ const fadeInAnimation = "nivixFadeIn 0.3s ease-out forwards";
 const programaticAnimationDuration = 200;
 const itemDelay = 25; // Adjust this (in ms) to make the staggered pops faster or slower
 
-const backBtn = getEBD<HTMLButtonElement>('manage_spaces_back');
-const refreshBtn = getEBD<HTMLButtonElement>('manage_spaces_refresh');
-const createBtn = getEBD<HTMLButtonElement>('manage_spaces_create');
+const backBtn = getEBD<HTMLButtonElement>('manageSpaces_back');
+const refreshBtn = getEBD<HTMLButtonElement>('manageSpaces_refresh');
+const createBtn = getEBD<HTMLButtonElement>('manageSpaces_create');
 
 export function init(): void {
     if (isInitialized) return;
 
-    loadCSS('sheets/manage_spaces.css');
+    loadCSS('sheets/manageSpaces.css');
 
     backBtn.addEventListener('click', () => {
         tabs.goto('previous');
@@ -40,14 +40,14 @@ export function init(): void {
     });
 
     createBtn.addEventListener('click', () => {
-        tabs.goto('create_space');
+        tabs.goto('createSpace');
     });
 
     isInitialized = true;
 }
 
 async function populate_spaces_list(fadeOut?: boolean, animate: boolean = !preferences['disableAnimations']): Promise<void> {
-    const spacesList = getEBD<HTMLDivElement>('manage_spaces_list');
+    const spacesList = getEBD<HTMLDivElement>('manageSpaces_list');
 
     // Smoothly fade out existing items
     if (fadeOut && animate) {
@@ -144,7 +144,7 @@ async function populate_spaces_list(fadeOut?: boolean, animate: boolean = !prefe
 window.addEventListener('tabchange', (event) => {
     const eventDetails = event as CustomEvent<TabChangeEventDetail>;
     const { tabId } = eventDetails.detail;
-    if (tabId === 'manage_spaces') {
+    if (tabId === 'manageSpaces') {
         init();
         populate_spaces_list();
     }

@@ -26,15 +26,15 @@
     color: var(--text-primary);
     font-size: 14px;
     font-weight: bold;
-    font-family: var(--font-primary);
+    font-family: monospace;
 
     cursor: pointer;
     margin-left: 6px;
     transition: background var(--transition), color var(--transition);
 
     &:hover,
-    &:focus-visible {
-        background: color-mix(in srgb, var(--background-darker), black 10%);
+    &:focus {
+        background: color-mix(in srgb, var(--background-darker), black var(--background-color-step-amount));
     }
 
     /* Accent Modifier Class */
@@ -43,7 +43,7 @@
         color: var(--text-tertiary);
 
         &:hover,
-        &:focus-visible {
+        &:focus {
             background: var(--brand-darker);
         }
     }

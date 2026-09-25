@@ -9,10 +9,11 @@
 	
 	<link rel="stylesheet" type="text/css" href="sheets/tabs.css">
 	<link rel="stylesheet" type="text/css" href="sheets/index.css">
+	<link rel="stylesheet" type="text/css" href="sheets/load.css">
 </head>
 <body>
 	<div id="space_filler_container"></div>
-	<div id="load_menu" class="tab previsible-flex">
+	<div id="loadMenu" class="tab previsible-flex">
 		<div class="center">
 			<svgPlaceholder>assets/svg/favicon.svg</svgPlaceholder>
 			<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
@@ -23,56 +24,58 @@
 		</div>
 	</div>
 	
-	<div id="select_space" class="tab">
+	<div id="selectSpace" class="tab">
 		<div class="action_container">
 			<h2 class="nivix_bookmark">General</h2>
 			
-			<button id="select_space_settings" class="nivix_secondary_button"><svgPlaceholder>assets/svg/settings.svg</svgPlaceholder> Settings</button>
-			<button id="select_space_manage" class="nivix_secondary_button"><svgPlaceholder>assets/svg/manage_spaces.svg</svgPlaceholder> Manage Spaces</button>
-			<button id="select_space_quit" class="nivix_secondary_button"><svgPlaceholder>assets/svg/exit.svg</svgPlaceholder> Exit Store</button>
-			<button id="select_space_refresh" class="nivix_secondary_button"><svgPlaceholder>assets/svg/refresh.svg</svgPlaceholder> Refresh</button>
+			<button id="selectSpace_settings" class="nivix_primary_button"><svgPlaceholder>assets/svg/settings.svg</svgPlaceholder> Settings</button>
+			<button id="selectSpace_manage" class="nivix_primary_button"><svgPlaceholder>assets/svg/manageSpaces.svg</svgPlaceholder> Manage Spaces</button>
+			<button id="selectSpace_quit" class="nivix_primary_button"><svgPlaceholder>assets/svg/exit.svg</svgPlaceholder> Exit Store</button>
+			<button id="selectSpace_refresh" class="nivix_primary_button"><svgPlaceholder>assets/svg/refresh.svg</svgPlaceholder> Refresh</button>
 			
 			<h2 class="nivix_bookmark">Advanced</h2>
 			
-			<button id="select_space_connect_database" class="nivix_secondary_button"><svgPlaceholder>assets/svg/database.svg</svgPlaceholder> Connect to Remote Database</button>
-			<button id="select_space_start_interface" class="nivix_secondary_button"><svgPlaceholder>assets/svg/interface.svg</svgPlaceholder> Start Remote Interface</button>
-			<button id="select_space_issues" class="nivix_secondary_button"><svgPlaceholder>assets/svg/issue.svg</svgPlaceholder> Report a Problem</button>
+			<button id="selectSpace_connectDatabase" class="nivix_primary_button"><svgPlaceholder>assets/svg/database.svg</svgPlaceholder> Connect to Remote Database</button>
+			<button id="selectSpace_start_interface" class="nivix_primary_button"><svgPlaceholder>assets/svg/interface.svg</svgPlaceholder> Start Remote Interface</button>
+			<button id="selectSpace_issues" class="nivix_primary_button"><svgPlaceholder>assets/svg/issue.svg</svgPlaceholder> Report a Problem</button>
 			
 			<h2 class="nivix_bookmark">Developers</h2>
 			
-			<button id="select_space_source" class="nivix_secondary_button"><svgPlaceholder>assets/svg/source.svg</svgPlaceholder> Source Code</button>
-			<button id="select_space_credits" class="nivix_secondary_button"><svgPlaceholder>assets/svg/credits.svg</svgPlaceholder> Credits</button>
+			<button id="selectSpace_source" class="nivix_primary_button"><svgPlaceholder>assets/svg/source.svg</svgPlaceholder> Source Code</button>
+			<button id="selectSpace_credits" class="nivix_primary_button"><svgPlaceholder>assets/svg/credits.svg</svgPlaceholder> Credits</button>
 		</div>
 		<div class="main_container">
 			<div class="center">
-				<span id="select_space_status"></span>
+				<span id="selectSpace_status"></span>
 				<div class="container">
 					<svgPlaceholder>assets/svg/favicon.svg</svgPlaceholder>
 					<h1><span class="nivix_accent" aria-label="Nivix">NiViX</span> Store<sup aria-label="Trademark">TM</sup></h1>
 					<div class="button_container">
 						<p>Select a Space or Create a New One<button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
-						<select id="select_space_option" class="nivix_select"></select>
-						<button id="select_space_continue" class="nivix_primary_button">Continue</button>
+						<select id="selectSpace_option" class="nivix_select primary"></select>
+						<button id="selectSpace_continue" class="nivix_primary_button primary">Continue</button>
 						<div class="nivix_checkbox_wrapper centered">
 							<label>Disable Shape Animation</label>
-							<input id="select_space_shapeAnimToggle" class="nivix_input" type="checkbox">
+							<input id="selectSpace_shapeAnimToggle" class="nivix_input" type="checkbox">
 						</div>
 					</div>
 				</div>
 				<div class="nivix_footer">
-					<span>Store </span><span id="select_space_footer_version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
+					<span>Store </span><span id="selectSpace_footer_version">vX.X.X</span><span> | &copy; 2026 Nivix Technology. All rights reserved.</span>
 				</div>
 			</div>
 		</div>
 	</div>
 	
-	<div id="manage_spaces" class="tab">
-		<div id="manage_spaces_list"></div>
-		<div class="button_container">
-			<button id="manage_spaces_back" class="nivix_primary_button">Back</button>
-			<button id="manage_spaces_refresh" class="nivix_primary_button">Refresh</button>
-			<button id="manage_spaces_create" class="nivix_primary_button">Create New</button>
+	<div id="manageSpaces" class="tab">
+		<div class="nivix_horizontal_navigation bottom_divider">
+			<button id="manageSpaces_back" class="nivix_primary_button">Back</button>
+			<button id="manageSpaces_refresh" class="nivix_primary_button">Refresh</button>
+			<div class="right">
+				<button id="manageSpaces_create" class="nivix_primary_button">Create New</button>
+			</div>
 		</div>
+		<div id="manageSpaces_list"></div>
 	</div>
 	
 	<div id="credits" class="tab">
@@ -81,79 +84,83 @@
 		</div>
 	</div>
 	
-	<div id="create_space" class="tab">
+	<div id="createSpace" class="tab">
 		<div class="center">
 			<h1 class="nivix_accent">Create a Space</h1>
 			<div class="button_container">
 				<p>Learn what a space is: <button class="tooltip-button tip-right">i<span class="tooltip">A "Space" is like a location. Each Space contains its own categories and items. Examples include "Office" and "Warehouse".</span></button></p>
-				<form id="create_space_form">
-					<input id="create_space_name" class="nivix_input" type="text" placeholder="Space Name">
-					<button id="create_space_continue" class="nivix_primary_button" type="submit">Create</button>
+				<form id="createSpace_form">
+					<input id="createSpace_name" class="nivix_input" type="text" placeholder="Space Name">
+					<button id="createSpace_continue" class="nivix_primary_button primary" type="submit">Create</button>
 				</form>
 				
 				<hr>
-				<button id="create_space_import" class="nivix_primary_button">Import from file</button>
-				<button id="create_space_convert" class="nivix_primary_button">Import from old inventory</button>
+				<button id="createSpace_import" class="nivix_primary_button">Import from file</button>
+				<button id="createSpace_convert" class="nivix_primary_button">Import from old inventory</button>
 				
 				<hr>
-				<button id="create_space_cancel" class="nivix_secondary_button">Cancel</button>
+				<button id="createSpace_cancel" class="nivix_secondary_button">Cancel</button>
 			</div>
-			<p id="create_space_output"></p>
+			<p id="createSpace_output"></p>
 		</div>
 	</div>
 	
-	<div id="connect_database" class="tab">
-		<div class="center">
-			<h1 class="nivix_accent">Connect to a Remote Database</h1>
-			<div class="container">
-				<p class="nivix_label top">Connection Profiles</p>
-				<hr>
-				<div class="horizontal_container connection_profiles">
-					<select id="connect_database_profiles" class="nivix_select"></select>
-					<button id="connect_database_profile_load" class="nivix_primary_button" type="button">Load</button>
-					<button id="connect_database_profile_delete" class="nivix_secondary_button" type="button" disabled>Delete</button>
-				</div>
-				<p class="nivix_disclaimer">Passwords aren't saved.</p>
-				
-				<p class="nivix_label">Quick Connect</p>
-				<hr>
-				<form id="connect_database_form">
-					<div class="horizontal_container">
-						<input id="connect_database_prefix" class="nivix_input" type="text" placeholder="Prefix" value="mysql://" required>
-						<input id="connect_database_hostname" class="nivix_input" type="text" placeholder="Hostname" required>
-						<input id="connect_database_port" class="nivix_input" type="number" min="0" max="65535" placeholder="Port" required>
-					</div>
-					<input id="connect_database_database" class="nivix_input" type="text" placeholder="Database Name" required>
-					<input id="connect_database_username" class="nivix_input" type="text" placeholder="Username" required>
-					<input id="connect_database_password" class="nivix_input" type="password" placeholder="Password" required>
-					<button id="connect_database_connect" class="nivix_primary_button" type="submit">Connect</button>
-					
-					<hr>
-					<input id="connect_database_profile_name" class="nivix_input" type="text" maxlength="64" placeholder="Profile Name">
-					<button id="connect_database_profile_save" class="nivix_primary_button" type="button">Save as Profile</button>
-					<div class="nivix_checkbox_wrapper">
-						<label for="connect_database_save_last_profile">Save Last Connection</label>
-						<input id="connect_database_save_last_profile" class="nivix_input" type="checkbox">
-					</div>
-				</form>
-				
-				<p class="nivix_label">Custom URL Connection</p>
-				<hr>
-				<input id="connect_database_url" class="nivix_input" type="url" placeholder="Custom URL (Optional)">
-				<button id="connect_database_url_submit" class="nivix_primary_button">Connect with Custom URL</button>
-				<p class="nivix_disclaimer">Use this if the Quick Connect scheme doesn't work.</p>
-				
+	<div id="connectDatabase" class="tab">
+		<div class="nivix_horizontal_navigation divider_bottom">
+			<button class="nivix_primary_button" id="navigation:connectDatabase_profiles">Connection Profiles</button>
+			<button class="nivix_primary_button" id="navigation:connectDatabase_quickConnect">Quick Connect</button>
+			<button class="nivix_primary_button" id="navigation:connectDatabase_urlConnect">Custom URL Connection</button>
+		</div>
+		<div class="tab_container">
+			<div class="tab previsible-flex" id="tab:connectDatabase_profiles">
+				<span class="nivix_label">Load Saved Profile</span>
 				<hr>
 				<div class="horizontal_container">
-					<button id="connect_database_back" class="nivix_primary_button">Back</button>
-					<button class="nivix_primary_button tooltip-support-button tip-bottom">Disclaimer<span class="tooltip">This feature currently only officially supports SQL based providers like MySQL and MariaDB.</span></button>
+					<select id="connectDatabase_profiles" class="nivix_select flex_primary"></select>
+					<button id="connectDatabase_profile_load" class="nivix_primary_button" type="button">Load</button>
+					<button id="connectDatabase_profile_delete" class="nivix_primary_button" type="button" disabled>Delete</button>
 				</div>
 				
-				<p class="nivix_label">Connection Status</p>
+				<span class="nivix_label">Save Current Connection as Profile</span>
 				<hr>
-				<span id="connect_database_status" class="nivix_input">Not Connected</span>
-				<button id="connect_database_disconnect" class="nivix_primary_button" disabled>Disconnect</button>
+				<div class="horizontal_container">
+					<input id="connectDatabase_profile_name" class="nivix_input flex_primary" type="text" maxlength="64" placeholder="Profile Name">
+					<button id="connectDatabase_profile_save" class="nivix_primary_button" type="button">Save as Profile</button>
+				</div>
+				
+				<span class="nivix_label">Options</span>
+				<hr>
+				<div class="nivix_checkbox_wrapper">
+					<label for="connectDatabase_save_last_profile">Automatically save my last connection as a profile</label>
+					<input id="connectDatabase_save_last_profile" class="nivix_input" type="checkbox">
+				</div>
 			</div>
+			<div class="tab" id="tab:connectDatabase_quickConnect">
+				<form id="connectDatabase_form">
+					<div class="horizontal_container">
+						<input id="connectDatabase_prefix" class="nivix_input" type="text" placeholder="Prefix" value="mysql://" required>
+						<input id="connectDatabase_hostname" class="nivix_input" type="text" placeholder="Hostname" required>
+						<input id="connectDatabase_port" class="nivix_input" type="number" min="0" max="65535" placeholder="Port" required>
+					</div>
+					<input id="connectDatabase_database" class="nivix_input" type="text" placeholder="Database Name" required>
+					<input id="connectDatabase_username" class="nivix_input" type="text" placeholder="Username" required>
+					<input id="connectDatabase_password" class="nivix_input" type="password" placeholder="Password" required>
+					<button id="connectDatabase_connect" class="nivix_primary_button" type="submit">Connect</button>
+				</form>
+			</div>
+			<div class="tab" id="tab:connectDatabase_urlConnect">
+				<input id="connectDatabase_url" class="nivix_input" type="url" placeholder="Custom URL (Optional)">
+				<button id="connectDatabase_url_submit" class="nivix_primary_button">Connect with Custom URL</button>
+				<p class="nivix_disclaimer">Use this if the Quick Connect scheme doesn't work.</p>
+			</div>
+		</div>
+		
+		<div class="nivix_horizontal_navigation divider_top">
+			<span id="connectDatabase_status">Not Connected</span>
+			<button id="connectDatabase_disconnect" class="nivix_primary_button" disabled>Disconnect</button>
+		</div>
+		<div class="nivix_horizontal_navigation divider_top">
+			<button id="connectDatabase_back" class="nivix_primary_button">Back</button>
 		</div>
 	</div>
 	

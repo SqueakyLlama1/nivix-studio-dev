@@ -10,38 +10,38 @@ import { type Space, type TabChangeEventDetail } from '../../shared/bun/store_ty
 
 function getEBD(id: string) {return document.getElementById(id)}
 
-const versionLabel = getEBD('select_space_footer_version') as HTMLSpanElement;
-const shapeAnimToggle = getEBD('select_space_shapeAnimToggle') as HTMLInputElement;
+const versionLabel = getEBD('selectSpace_footer_version') as HTMLSpanElement;
+const shapeAnimToggle = getEBD('selectSpace_shapeAnimToggle') as HTMLInputElement;
 
 let isInitialized: boolean = false;
 let populateRequest = 0;
 
-const settingsBtn = getEBD('select_space_settings') as HTMLButtonElement;
-const manageBtn = getEBD('select_space_manage') as HTMLButtonElement;
-const closeBtn = getEBD('select_space_quit') as HTMLButtonElement;
-const refreshBtn = getEBD('select_space_refresh') as HTMLButtonElement;
+const settingsBtn = getEBD('selectSpace_settings') as HTMLButtonElement;
+const manageBtn = getEBD('selectSpace_manage') as HTMLButtonElement;
+const closeBtn = getEBD('selectSpace_quit') as HTMLButtonElement;
+const refreshBtn = getEBD('selectSpace_refresh') as HTMLButtonElement;
 
-const connectRemoteServerBtn = getEBD('select_space_connect_database') as HTMLButtonElement;
-const exposeRemoteInterfaceBtn = getEBD('select_space_start_interface') as HTMLButtonElement;
-const issuesBtn = getEBD('select_space_issues') as HTMLButtonElement;
+const connectRemoteServerBtn = getEBD('selectSpace_connectDatabase') as HTMLButtonElement;
+const exposeRemoteInterfaceBtn = getEBD('selectSpace_start_interface') as HTMLButtonElement;
+const issuesBtn = getEBD('selectSpace_issues') as HTMLButtonElement;
 
-const sourceCodeBtn = getEBD('select_space_source') as HTMLButtonElement;
-const creditsBtn = getEBD('select_space_credits') as HTMLButtonElement;
+const sourceCodeBtn = getEBD('selectSpace_source') as HTMLButtonElement;
+const creditsBtn = getEBD('selectSpace_credits') as HTMLButtonElement;
 
-const choiceSelection = getEBD('select_space_option') as HTMLSelectElement;
-const continueBtn = getEBD('select_space_continue') as HTMLButtonElement;
+const choiceSelection = getEBD('selectSpace_option') as HTMLSelectElement;
+const continueBtn = getEBD('selectSpace_continue') as HTMLButtonElement;
 
 export async function init() {
     if (isInitialized) return;
     
-    loadCSS('sheets/select_space.css');
+    loadCSS('sheets/selectSpace.css');
 
     manageBtn.addEventListener('click', function() {
-        tabs.goto('manage_spaces', { display: 'flex' });
+        tabs.goto('manageSpaces', { display: 'flex' });
     });
 
     connectRemoteServerBtn.addEventListener('click', function() {
-        tabs.goto('connect_database');
+        tabs.goto('connectDatabase', { display: 'flex' });
     });
 
     creditsBtn.addEventListener('click', function() {
@@ -106,7 +106,7 @@ export async function populate_spaces_prompt() {
 continueBtn.addEventListener('click', function() {
     const selection = choiceSelection.value;
     if (selection === 'create-new-space') {
-        tabs.goto('create_space');
+        tabs.goto('createSpace');
     } else {
         gotoWorkspace(Number(choiceSelection.value));
     }
@@ -115,7 +115,7 @@ continueBtn.addEventListener('click', function() {
 window.addEventListener('tabchange', (event) => {
     const eventDetails = event as CustomEvent<TabChangeEventDetail>;
     const { tabId } = eventDetails.detail;
-    if (tabId === 'select_space') {
+    if (tabId === 'selectSpace') {
         init();
         populate_spaces_prompt();
     }
