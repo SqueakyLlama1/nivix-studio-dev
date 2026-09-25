@@ -22,9 +22,9 @@ const fadeInAnimation = "nivixFadeIn 0.3s ease-out forwards";
 const programaticAnimationDuration = 200;
 const itemDelay = 25; // Adjust this (in ms) to make the staggered pops faster or slower
 
-const backBtn = getEBD<HTMLButtonElement>('manageSpaces_back');
-const refreshBtn = getEBD<HTMLButtonElement>('manageSpaces_refresh');
-const createBtn = getEBD<HTMLButtonElement>('manageSpaces_create');
+const backBtn = getEBD<HTMLButtonElement>('manageSpaces-back');
+const refreshBtn = getEBD<HTMLButtonElement>('manageSpaces-refresh');
+const createBtn = getEBD<HTMLButtonElement>('manageSpaces-create');
 
 export function init(): void {
     if (isInitialized) return;
@@ -47,7 +47,7 @@ export function init(): void {
 }
 
 async function populateSpacesList(fadeOut?: boolean, animate: boolean = !preferences['disableAnimations']): Promise<void> {
-    const spacesList = getEBD<HTMLDivElement>('manageSpaces_list');
+    const spacesList = getEBD<HTMLDivElement>('manageSpaces-list');
 
     // Smoothly fade out existing items
     if (fadeOut && animate) {

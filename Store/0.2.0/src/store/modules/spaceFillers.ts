@@ -1,22 +1,48 @@
 import { loadCSS } from './file-loader';
-import { programaticAnimationDuration } from './tabs';
 import { preferences } from './settings';
 
-function getEBD(id: string) {return document.getElementById(id)}
-function wait(ms: number) {return new Promise((resolve) => { setTimeout(resolve, ms)})}
+function getEBD(id: string) { return document.getElementById(id); }
+function wait(ms: number) { return new Promise((resolve) => { setTimeout(resolve, ms); }); }
+
+function waitForAnimation(element: HTMLElement, instant: boolean, fallbackMs: number = 350): Promise<void> {
+    if (instant) return Promise.resolve();
+
+    return new Promise((resolve) => {
+        let timer: number;
+
+        const onEnd = (e: AnimationEvent) => {
+            if (e.target === element) {
+                cleanup();
+                resolve();
+            }
+        };
+
+        const cleanup = () => {
+            element.removeEventListener('animationend', onEnd);
+            clearTimeout(timer);
+        };
+
+        element.addEventListener('animationend', onEnd);
+
+        // Safety fallback timer so JS promises never hang
+        timer = window.setTimeout(() => {
+            cleanup();
+            resolve();
+        }, fallbackMs);
+    });
+}
 
 export async function init() {
-    await loadCSS('sheets/space-fillers.css');
+    await loadCSS('sheets/spaceFillers.css');
     fillSpaceContainer();
 }
 
 const shapeElementType: string = 'div';
 const baseShapeClass: string = 'space-filler-shape';
-const delay: number = 25; // Delay between each shape being added, in milliseconds.
+const delay: number = 25; // Delay between shapes (ms)
 let currentCallId = 0;
-let lastCombinationIndex: number | null = null; // Tracks previous selection to prevent duplicates
+let lastCombinationIndex: number | null = null;
 
-// List of available floating animation keyframes defined in space-fillers.css
 const floatAnimations = ['float', 'float-slow', 'float-fast', 'float-subtle'];
 
 export async function fillSpaceContainer() {
@@ -41,13 +67,25 @@ export async function fillSpaceContainer() {
     const disableAnimations = !!preferences['disableAnimations'];
     const disableShapeAnimations = !!preferences['disableShapeAnimations'];
 
-    if (!disableAnimations && container.children.length > 0) {
-        container.style.animation = 'none';
-        void container.offsetWidth; // Force CSS reflow to restart animation keyframe reliably
-        container.style.animation = "nivixFadeOut 0.3s ease-out forwards";
+    // Fade out container if it has active elements
+    if (container.children.length > 0) {
+        container.style.animationDuration = disableAnimations ? '0s' : '';
+
+        // Restart container fade-out animation via class toggle + reflow
+        container.classList.remove('is-fading-out');
+        void container.offsetWidth; // Force CSS reflow to reset keyframe sequence
+        container.classList.add('is-fading-out');
+
+        await waitForAnimation(container, disableAnimations);
     }
 
-    // Pick a new combination index that is strictly different from the last one
+    if (callId !== currentCallId) return;
+
+    // Reset container state and clear children
+    container.classList.remove('is-fading-out');
+    container.replaceChildren();
+
+    // Pick new combination strictly different from previous
     let randNum: number;
     do {
         randNum = Math.floor(Math.random() * combinations.length);
@@ -56,40 +94,30 @@ export async function fillSpaceContainer() {
     lastCombinationIndex = randNum;
     const combination = combinations[randNum];
 
-    // Wait out the fade duration if animations are enabled
-    if (!disableAnimations) {
-        await wait(programaticAnimationDuration);
-    }
-
-    if (callId !== currentCallId) return;
-
-    container.style.animation = 'none';
-    container.replaceChildren();
-
-    for (let shapeClass of combination) {
+    for (const shapeClass of combination) {
         if (callId !== currentCallId) return;
 
         const shapeElement = document.createElement(shapeElementType);
+        const randomFloatClass = floatAnimations[Math.floor(Math.random() * floatAnimations.length)];
         shapeElement.classList.add(baseShapeClass, shapeClass);
 
-        const randomFloat = floatAnimations[Math.floor(Math.random() * floatAnimations.length)];
-        const randomDuration = Math.floor(Math.random() * 16) + 10;
-        const floatStyle = `${randomFloat} ${randomDuration}s ease-in-out infinite`;
-
         if (disableAnimations) {
-            if (!disableShapeAnimations) {
-                shapeElement.style.animation = floatStyle;
+            shapeElement.style.animationDuration = '0s';
+        }
+
+        if (disableShapeAnimations) {
+            if (!disableAnimations) {
+                shapeElement.classList.add('is-appearing');
             }
         } else {
-            shapeElement.style.animation = 'fadeInShape 0.3s ease-out forwards';
+            shapeElement.addEventListener('animationend', (e: AnimationEvent) => {
+                if (e.animationName === 'fadeInShape') {
+                    shapeElement.classList.remove('is-appearing');
+                    shapeElement.classList.add(randomFloatClass, 'is-floating');
+                }
+            }, { once: true });
 
-            if (!disableShapeAnimations) {
-                shapeElement.addEventListener('animationend', (e: AnimationEvent) => {
-                    if (e.animationName === 'fadeInShape') {
-                        shapeElement.style.animation = floatStyle;
-                    }
-                }, { once: true });
-            }
+            shapeElement.classList.add('is-appearing');
         }
 
         container.appendChild(shapeElement);

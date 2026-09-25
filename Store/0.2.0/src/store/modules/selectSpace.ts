@@ -1,6 +1,6 @@
 import { loadCSS } from './file-loader';
 import { preferences, setPreference } from './settings';
-import { fillSpaceContainer } from './space-fillers';
+import { fillSpaceContainer } from './spaceFillers';
 import { gotoWorkspace } from './workspace';
 
 import * as tabs from './tabs';

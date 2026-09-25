@@ -3,7 +3,7 @@ import { loadCSS } from './file-loader';
 import * as settings from './settings';
 import * as tabs from './tabs';
 import * as index from './index';
-import * as spaceFillers from './space-fillers';
+import * as spaceFillers from './spaceFillers';
 import * as notifications from './notifications';
 
 import { electroview } from './index';
