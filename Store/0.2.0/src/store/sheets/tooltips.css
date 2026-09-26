@@ -3,6 +3,7 @@
 .tooltip-button,
 .tooltip-support-button,
 .tooltip-delayed-button,
+.tooltip-delayed-support-button,
 .tooltip-support-delayed-button {
     position: relative;
     display: inline-flex;
@@ -49,10 +50,10 @@
     }
 }
 
-/* Tooltip Popup Box */
+/* Shared tooltip popup, mounted directly under body */
 
-.tooltip {
-    position: absolute;
+.tooltip-popup {
+    position: fixed;
     user-select: none;
     pointer-events: none;
     
@@ -61,7 +62,7 @@
     
     width: max-content;
     min-width: 80px;
-    max-width: 220px;
+    max-width: min(220px, calc(100vw - 20px));
     
     background: var(--text-primary);
     color: var(--background-primary);
@@ -74,22 +75,15 @@
     line-height: 1.3;
     box-shadow: var(--outset-shadow);
     
-    z-index: 9999;
+    z-index: 2147483647;
     transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+    transform: translateY(2px);
 
-    --tooltip-margin: 8px;
-    --tooltip-nudge-x: 0px;
-    --tooltip-nudge-y: 0px;
-
-    top: var(--tooltip-top, auto);
-    right: var(--tooltip-right, auto);
-    bottom: var(--tooltip-bottom, auto);
-    left: var(--tooltip-left, auto);
-
-    transform: translate(
-        calc(var(--tooltip-x-offset, 0%) + var(--tooltip-nudge-x)),
-        calc(var(--tooltip-y-offset, 0%) + var(--tooltip-nudge-y))
-    );
+    &.is-visible {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+    }
 
     /* Primary Accent Variant for Tooltip Box */
     &.primary {
@@ -98,47 +92,11 @@
     }
 }
 
-/* Tooltip Visibility Triggers */
-
-:is(.tooltip-button, .tooltip-support-button, .tooltip-delayed-button, .tooltip-ready-button):is(:hover, :focus-within) > .tooltip {
-    visibility: visible;
-    opacity: 1;
-    pointer-events: auto;
+.tooltip-popup.primary {
+    background: var(--brand-primary);
+    color: var(--text-tertiary);
 }
 
-/* Tooltip Positioning Logic */
-
-/* Bottom (Default) */
-:is(.tooltip-button, .tooltip-support-button, .tooltip-delayed-button) > .tooltip {
-    --tooltip-top: calc(100% + var(--tooltip-margin));
-    --tooltip-left: 50%;
-    --tooltip-x-offset: -50%;
-    --tooltip-y-offset: 0%;
-}
-
-/* Top */
-.tip-top > .tooltip {
-    --tooltip-top: auto;
-    --tooltip-bottom: calc(100% + var(--tooltip-margin));
-    --tooltip-left: 50%;
-    --tooltip-x-offset: -50%;
-    --tooltip-y-offset: 0%;
-}
-
-/* Left */
-.tip-left > .tooltip {
-    --tooltip-top: 50%;
-    --tooltip-right: calc(100% + var(--tooltip-margin));
-    --tooltip-left: auto;
-    --tooltip-x-offset: 0%;
-    --tooltip-y-offset: -50%;
-}
-
-/* Right */
-.tip-right > .tooltip {
-    --tooltip-top: 50%;
-    --tooltip-left: calc(100% + var(--tooltip-margin));
-    --tooltip-right: auto;
-    --tooltip-x-offset: 0%;
-    --tooltip-y-offset: -50%;
+.tooltip:not(.tooltip-popup) {
+    display: none;
 }

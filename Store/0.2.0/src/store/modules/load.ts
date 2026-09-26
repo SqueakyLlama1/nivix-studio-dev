@@ -5,6 +5,7 @@ import * as tabs from './tabs';
 import * as index from './index';
 import * as spaceFillers from './spaceFillers';
 import * as notifications from './notifications';
+import { initTooltips } from './tooltips';
 
 import { electroview } from './index';
 import { populateSVGs } from "./file-loader";
@@ -38,6 +39,7 @@ async function initialize() {
     versionLabel!.innerText = `v${index.store.sessionVersion}` || "Failed to get session version";
     
     loadCSS('sheets/tooltips.css');
+    initTooltips();
     
     let menuDelay: number = 750;
     
@@ -117,8 +119,6 @@ async function initialize() {
 async function finishLoading() {
     if (isFinishing) return;
     isFinishing = true;
-    
-    await tabs.remove('loadMenu');
     
     tabs.goto('selectSpace', { display: 'flex' });
 }

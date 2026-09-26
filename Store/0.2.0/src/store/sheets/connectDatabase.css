@@ -50,14 +50,8 @@
         
         margin: 5px;
     }
-
-    .nivix-horizontal-navigation {
-        #connectDatabase-status {
-            text-align: center;
-        }
-
-        * {
-        flex: 1;
-        }
+    
+    #connectDatabase-status {
+        text-align: center;
     }
 }

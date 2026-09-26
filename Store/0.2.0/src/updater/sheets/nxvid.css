@@ -20,8 +20,8 @@
 
 :root {
     --brand-color-step-amount: 20%;
-    --background-color-step-amount: 7%;
-    --text-color-step-amount: 50%;
+    --background-color-step-amount: 12%;
+    --text-color-step-amount: 40%;
     
     --brand-primary: #43a4eb;
     --brand-darker: color-mix(in srgb, var(--brand-primary), black var(--brand-color-step-amount));
@@ -34,7 +34,7 @@
     
     --background-primary: #f6f6f6;
     --background-darker: color-mix(in srgb, transparent, black var(--background-color-step-amount));
-    --background-ligher: color-mix(in srgb, transparent, white var(--background-color-step-amount));
+    --background-lighter: color-mix(in srgb, transparent, white var(--background-color-step-amount));
     
     --radius: 4px;
     --transition: 0.2s ease-out;
@@ -514,9 +514,9 @@ code {
     border: none;
     
     padding: calc(var(--resting-area-padding) / 2);
-    
-    .right {
-        margin-left: auto;
+
+    .filler {
+        flex: 1;
     }
     
     &.divider-bottom {
@@ -525,6 +525,10 @@ code {
     
     &.divider-top {
         border-top: 2px solid var(--background-darker);
+    }
+
+    &.distribute-contents * {
+        flex: 1;
     }
 }
 
